@@ -496,10 +496,8 @@ public abstract class LinearOpModeBase extends LinearOpMode {
 
         while(opModeIsActive() && areDriveMotorsBusy()) {
             error = getGyroError(angle);
-            rangeError = rangeDistance - frontRange.cmUltrasonic();
-
             steer = error * P_GYRO_DRIVE_COEFF;
-            rangeSteer = rangeError * P_RANGE_DRIVE_COEFF;
+
 
             // reset power variables every iteration of loop
             frontRightPower = speed;
@@ -538,44 +536,52 @@ public abstract class LinearOpModeBase extends LinearOpMode {
                 }
             }
 
-            if(Math.abs(rangeError) > RANGE_SENSOR_THRESHOLD) {
-                proportionalSpeed = rangeSteer;
 
+            // rangeDistance is set to 15 most of the time
+            // P_RANGE_DRIVE_COEFF is set to 0.4
+            // P_RANGE_DRIVE_COEFF is set to 1
+
+            //example1 rangeError is -20
+            //this value is accurate from 5-255
+            rangeError = rangeDistance - frontRange.cmUltrasonic();
+            //example1 rangeSteer is -8
+            rangeSteer = rangeError * P_RANGE_DRIVE_COEFF;
+            if(Math.abs(rangeError) > RANGE_SENSOR_THRESHOLD) {
                 // too far from wall
                 if(rangeError < 0) {
                     // if driving right
                     if(frontInches > 0 && backInches > 0) {
-                        frontLeftPower -= proportionalSpeed;
-                        backRightPower -= proportionalSpeed;
+                        frontLeftPower -= rangeSteer;
+                        backRightPower -= rangeSteer;
 
                         state = "driving right, too far";
                     } else {
                         // if driving left
-                        frontRightPower -= proportionalSpeed;
-                        backLeftPower -= proportionalSpeed;
+                        frontRightPower -= rangeSteer;
+                        backLeftPower -= rangeSteer;
 
 //                        frontLeftPower = 0;
 //                        backRightPower = 0;
 
-                        state = "driving left, too far: " + proportionalSpeed;
+                        state = "driving left, too far: " + rangeSteer;
                     }
                 // too close to wall
                 } else {
                     // if driving right
                     if(frontInches > 0 && backInches > 0) {
-                        frontRightPower += proportionalSpeed;
-                        backLeftPower += proportionalSpeed;
+                        frontRightPower += rangeSteer;
+                        backLeftPower += rangeSteer;
 
                         state = "driving right, too close";
                     } else {
                         // if driving left
-                        frontLeftPower += proportionalSpeed;
-                        backRightPower += proportionalSpeed;
+                        frontLeftPower += rangeSteer;
+                        backRightPower += rangeSteer;
 
 //                        frontRightPower = 0;
 //                        backLeftPower = 0;
 
-                        state = "driving left, too close: " + proportionalSpeed;
+                        state = "driving left, too close: " + rangeSteer;
                     }
                 }
             }

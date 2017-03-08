@@ -19,7 +19,6 @@ public class SensorTest extends LinearOpModeBase {
     @Override
     public void runOpMode() throws InterruptedException {
         initializeHardware();
-        autonomousInitLoop();
         while (this.opModeIsActive()) {
 
 
