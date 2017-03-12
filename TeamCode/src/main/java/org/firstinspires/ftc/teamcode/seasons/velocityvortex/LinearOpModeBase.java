@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.seasons.velocityvortex;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cCompassSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.CompassSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cController;
@@ -16,10 +18,12 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynchImpl;
 import com.qualcomm.robotcore.hardware.LightSensor;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.seasons.velocityvortex.utilities.examples.MRIColorBeacon;
 
 /**
  * Created by ftc6347 on 10/16/16.
@@ -80,6 +84,11 @@ public abstract class LinearOpModeBase extends LinearOpMode {
 
     private ElapsedTime robotRuntime;
 
+    private MRIColorBeacon colorbeacon;
+    private ModernRoboticsI2cCompassSensor compassSensor;
+    private TouchSensor touchSensor;
+
+
     protected void initializeHardware() {
         // initialize robotRuntime instance variable
         robotRuntime = new ElapsedTime();
@@ -119,6 +128,26 @@ public abstract class LinearOpModeBase extends LinearOpMode {
         ods3 = hardwareMap.opticalDistanceSensor.get("ods3");
 
         gyroSensor = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gy");
+
+        //sensor testing
+        try {
+            colorbeacon = new MRIColorBeacon();
+            colorbeacon.init(hardwareMap,"colorbeacon");
+            compassSensor = hardwareMap.get(ModernRoboticsI2cCompassSensor.class,"compass");
+            touchSensor = hardwareMap.get(TouchSensor.class,"touch");
+
+        }
+        catch (Exception e)
+        {
+            telemetry.addData("New Sensor Error", e.getMessage());
+        }
+
+
+
+
+
+
+
 
         // reverse only one spool motor
         spoolMotor1.setDirection(DcMotor.Direction.REVERSE);
@@ -848,4 +877,15 @@ public abstract class LinearOpModeBase extends LinearOpMode {
         return robotRuntime;
     }
 
+    public MRIColorBeacon getColorbeacon() {
+        return colorbeacon;
+    }
+
+    public ModernRoboticsI2cCompassSensor getCompassSensor() {
+        return compassSensor;
+    }
+
+    public TouchSensor getTouchSensor() {
+        return touchSensor;
+    }
 }
