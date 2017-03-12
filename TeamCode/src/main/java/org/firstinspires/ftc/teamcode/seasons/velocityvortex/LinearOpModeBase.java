@@ -37,7 +37,7 @@ public abstract class LinearOpModeBase extends LinearOpMode {
     private static final double GYRO_ERROR_THRESHOLD = 1.0;
 
     private static final double P_GYRO_TURN_COEFF = 0.01;
-    private static final double P_GYRO_DRIVE_COEFF = 0.01;
+    private static final double P_GYRO_DRIVE_COEFF = 0.008;
 
     protected static final int COUNTS_PER_INCH = (int)(COUNTS_PER_MOTOR_REV /
             (WHEEL_DIAMETER_INCHES * Math.PI));
@@ -46,9 +46,7 @@ public abstract class LinearOpModeBase extends LinearOpMode {
 
     private static final double LIGHT_THRESHOLD = 1.0;
 
-    private static final int RANGE_SENSOR_THRESHOLD = 1; // 1cm threshold
-
-    private static final double P_RANGE_DRIVE_COEFF = 0.4;
+    private static final double P_RANGE_DRIVE_COEFF = 0.04;
 
     private DcMotor frontLeftDrive;
     private DcMotor frontRightDrive;
@@ -212,68 +210,56 @@ public abstract class LinearOpModeBase extends LinearOpMode {
     }
 
     protected void autonomousInitLoop() {
-        int autonomousDelay = 0;
+        int delay = 0;
 
         while(!opModeIsActive() && !isStopRequested()) {
-            if (gamepad1.a) {
-                telemetry.addData(">", "Calibrating Gyro");
-                telemetry.update();
-
-                gyroSensor.calibrate();
-            } else if (gamepad1.b) {
-                telemetry.addData(">", "Performing black-level calibration... ");
-                telemetry.update();
-
-                // command register = 0x03
-                // 0x43 = command for black-level calibration
-//                colorSensor1Sync.write8(0x03, 0x42);
-//                colorSensor2Sync.write8(0x03, 0x42);
-            }
-
             // dpad control to set the delay
             if(gamepad1.dpad_up) {
-                autonomousDelay = 1;
+                delay = 1;
             } else if(gamepad1.dpad_down) {
-                autonomousDelay = 2;
+                delay = 2;
             } else if(gamepad1.dpad_left) {
-                autonomousDelay = 5;
+                delay = 5;
             } else if(gamepad1.dpad_right) {
-                autonomousDelay = 10;
+                delay = 10;
             }
 
-            if(gamepad1.left_trigger > 0) {
-                robotRuntime.reset();
-                while(opModeIsActive() && robotRuntime.milliseconds() < 500) {
-                    idle();
+            if(robotRuntime.milliseconds() > 250) {
+                // set the delay using the left and right triggers
+                if (gamepad1.right_trigger > 0) {
+                    delay++;
+                } else if (gamepad1.left_trigger > 0) {
+                    if(delay > 0) {
+                        delay--;
+                    }
                 }
-                autonomousDelay++;
 
-            } else if(gamepad1.right_trigger > 0) {
-                robotRuntime.reset();
-                while(opModeIsActive() && robotRuntime.milliseconds() < 500) {
-                    idle();
+                // allow the gyro to be reset in initialization
+                if(gamepad1.a) {
+                    gyroSensor.resetZAxisIntegrator();
                 }
-                autonomousDelay--;
+
+                robotRuntime.reset();
             }
+
+            // print sensor values
+            telemetry.addData("gyro Z axis", gyroSensor.getIntegratedZValue());
+
+            telemetry.addData("color sensor 1", "red: %d, blue: %d",
+                    getColorSensor1().red(), getColorSensor1().blue());
+            telemetry.addData("color sensor 2", "red: %d, blue: %d",
+                    getColorSensor2().red(), getColorSensor2().blue());
 
             // print the delay
-            telemetry.addData("Autonomous delay", autonomousDelay);
+            telemetry.addData("delay", "%ds", delay);
 
-            telemetry.addData("Gyro Z axis", gyroSensor.getIntegratedZValue());
-
-            // print color sensor values
-            telemetry.addData("Left color sensor", "red: %d, blue: %d",
-                    getColorSensor1().red(), getColorSensor1().blue());
-            telemetry.addData("Right color sensor", "red: %d, blue: %d",
-                    getColorSensor2().red(), getColorSensor2().blue());
             telemetry.update();
         }
 
-        // actual delay
-        while(opModeIsActive() && robotRuntime.seconds() < autonomousDelay) {
-            telemetry.addData(">", "Autonomous delay in progress... ");
+        // actual delay loop
+        while(opModeIsActive() && robotRuntime.seconds() < delay) {
+            telemetry.addData("starting in", "%.2fs", delay - robotRuntime.seconds());
             telemetry.update();
-            idle();
         }
     }
 
@@ -401,7 +387,7 @@ public abstract class LinearOpModeBase extends LinearOpMode {
 
         // first push
         while(opModeIsActive() &&
-                (getFrontRange().cmUltrasonic() >= 6 && robotRuntime.milliseconds() < 800)) {
+                (getFrontRange().cmUltrasonic() >= 6 && robotRuntime.milliseconds() < 1500)) {
             // run without encoders again
             driveForward(0.2);
         }
@@ -420,7 +406,7 @@ public abstract class LinearOpModeBase extends LinearOpMode {
 
             // second push
             while(opModeIsActive() &&
-                    (getFrontRange().cmUltrasonic() >= 6 && robotRuntime.milliseconds() < 800)) {
+                    (getFrontRange().cmUltrasonic() >= 6 && robotRuntime.milliseconds() < 1500)) {
                 // run without encoders again
                 driveForward(0.2);
             }
@@ -485,22 +471,21 @@ public abstract class LinearOpModeBase extends LinearOpMode {
         setDriveMotorsMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    protected void rangeGyroStrafe(double speed, double angle, double rangeDistance,
-                                   double frontInches, double backInches, boolean enableGyro) {
-        double error;
-        double rangeError;
-        double steer;
+    protected void rangeGyroStrafe(double angle, double rangeDistance,
+                                   double frontInches, double backInches) {
+        double gyroSteer;
         double rangeSteer;
 
-        double proportionalSpeed;
+        double gyroDiffFromTarget;
+        double rangeDiffFromTarget;
 
-        // initialize motor powers to the initial speed
         double frontRightPower;
         double frontLeftPower;
         double backRightPower;
         double backLeftPower;
 
-        String state = "none";
+        // speed is constant for now
+        final double SPEED = 0.8;
 
         setDriveMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -515,122 +500,74 @@ public abstract class LinearOpModeBase extends LinearOpMode {
         getBackRightDrive().setTargetPosition(-backTarget);
         getBackLeftDrive().setTargetPosition(-backTarget);
 
-        // set the power for the left drive motors
-        getFrontLeftDrive().setPower(speed);
-        getBackLeftDrive().setPower(speed);
+        // set the power initially for the left drive motors
+        getFrontLeftDrive().setPower(SPEED);
+        getBackLeftDrive().setPower(SPEED);
 
-        // set the power for the right drive motors
-        getFrontRightDrive().setPower(speed);
-        getBackRightDrive().setPower(speed);
+        // set the power initially for the right drive motors
+        getFrontRightDrive().setPower(SPEED);
+        getBackRightDrive().setPower(SPEED);
 
         while(opModeIsActive() && areDriveMotorsBusy()) {
-            error = getGyroError(angle);
-            steer = error * P_GYRO_DRIVE_COEFF;
+            gyroDiffFromTarget = getGyroError(angle);
+            rangeDiffFromTarget = rangeDistance - frontRange.cmUltrasonic();
 
+            gyroSteer = gyroDiffFromTarget * P_GYRO_DRIVE_COEFF;
+            rangeSteer = Math.abs(rangeDiffFromTarget * P_RANGE_DRIVE_COEFF);
 
-            // reset power variables every iteration of loop
-            frontRightPower = speed;
-            frontLeftPower = speed;
-            backRightPower = speed;
-            backLeftPower = speed;
+            // if driving right
+            if(frontInches > 0 && backInches > 0) {
+                gyroSteer *= -1;
+            }
 
-            if(enableGyro && Math.abs(error) > GYRO_ERROR_THRESHOLD) {
-                // if robot is rotated counterclockwise from 0
-                if (error < 0) {
-                    proportionalSpeed = steer;
+            // adjust powers for front motors
+            frontLeftPower = SPEED + gyroSteer;
+            frontRightPower = SPEED + gyroSteer;
 
-                    // if driving right
-                    if(frontInches > 0 && backInches > 0) {
-                        // decrease power of back motors
-                        frontRightPower += proportionalSpeed;
-                        frontLeftPower += proportionalSpeed;
-                    } else {
-                        backRightPower += proportionalSpeed;
-                        backLeftPower += proportionalSpeed;
-                    }
+            // adjust powers for back motors
+            backLeftPower = SPEED - gyroSteer;
+            backRightPower = SPEED - gyroSteer;
 
-                // else the robot is rotated clockwise from 0
+            // too far from wall
+            if (rangeDiffFromTarget < 0) {
+                // if driving right
+                if (frontInches > 0 && backInches > 0) {
+                    frontRightPower -= rangeSteer;
+                    backLeftPower -= rangeSteer;
                 } else {
-                    proportionalSpeed = -steer;
-
-                    // if driving right
-                    if(frontInches > 0 && backInches > 0) {
-                        // decrease power of front motors
-                        frontLeftPower += proportionalSpeed;
-                        backRightPower += proportionalSpeed;
-                    } else {
-                        backRightPower += proportionalSpeed;
-                        frontLeftPower += proportionalSpeed;
-                    }
+                    // if driving left
+                    frontLeftPower -= rangeSteer;
+                    backRightPower -= rangeSteer;
+                }
+            // too close to wall
+            } else {
+                // if driving right
+                if (frontInches > 0 && backInches > 0) {
+                    frontLeftPower -= rangeSteer;
+                    backRightPower -= rangeSteer;
+                } else {
+                    // if driving left
+                    frontRightPower -= rangeSteer;
+                    backLeftPower -= rangeSteer;
                 }
             }
 
+            // set the motor powers and clip them on a range of 0 to speed
+            getFrontLeftDrive().setPower(Range.clip(frontLeftPower, 0, SPEED));
+            getFrontRightDrive().setPower(Range.clip(frontRightPower, 0, SPEED));
+            getBackLeftDrive().setPower(Range.clip(backLeftPower, 0, SPEED));
+            getBackRightDrive().setPower(Range.clip(backRightPower, 0, SPEED));
 
-            // rangeDistance is set to 15 most of the time
-            // P_RANGE_DRIVE_COEFF is set to 0.4
-            // P_RANGE_DRIVE_COEFF is set to 1
-
-            //example1 rangeError is -20
-            //this value is accurate from 5-255
-            rangeError = rangeDistance - frontRange.cmUltrasonic();
-            //example1 rangeSteer is -8
-            rangeSteer = rangeError * P_RANGE_DRIVE_COEFF;
-            if(Math.abs(rangeError) > RANGE_SENSOR_THRESHOLD) {
-                // too far from wall
-                if(rangeError < 0) {
-                    // if driving right
-                    if(frontInches > 0 && backInches > 0) {
-                        frontLeftPower -= rangeSteer;
-                        backRightPower -= rangeSteer;
-
-                        state = "driving right, too far";
-                    } else {
-                        // if driving left
-                        frontRightPower -= rangeSteer;
-                        backLeftPower -= rangeSteer;
-
-//                        frontLeftPower = 0;
-//                        backRightPower = 0;
-
-                        state = "driving left, too far: " + rangeSteer;
-                    }
-                // too close to wall
-                } else {
-                    // if driving right
-                    if(frontInches > 0 && backInches > 0) {
-                        frontRightPower += rangeSteer;
-                        backLeftPower += rangeSteer;
-
-                        state = "driving right, too close";
-                    } else {
-                        // if driving left
-                        frontLeftPower += rangeSteer;
-                        backRightPower += rangeSteer;
-
-//                        frontRightPower = 0;
-//                        backLeftPower = 0;
-
-                        state = "driving left, too close: " + rangeSteer;
-                    }
-                }
-            }
-
-            telemetry.addData("gyro steer", steer);
+            telemetry.addData("gyro steer", gyroSteer);
             telemetry.addData("range steer", rangeSteer);
             telemetry.addData("range sensor value", frontRange.cmUltrasonic());
-            telemetry.addData("State", state);
 
-            telemetry.addData("front right", frontRightPower);
-            telemetry.addData("front left", frontLeftPower);
-            telemetry.addData("back right", backRightPower);
-            telemetry.addData("back left", backLeftPower);
+            telemetry.addData("front right", getFrontRightDrive().getPower());
+            telemetry.addData("front left", getFrontLeftDrive().getPower());
+            telemetry.addData("back right", getBackRightDrive().getPower());
+            telemetry.addData("back left", getBackLeftDrive().getPower());
+
             telemetry.update();
-
-            // set the motor powers
-            getFrontLeftDrive().setPower(Range.clip(frontLeftPower, -1, 1));
-            getFrontRightDrive().setPower(Range.clip(frontRightPower, -1, 1));
-            getBackLeftDrive().setPower(Range.clip(backLeftPower, -1 ,1));
-            getBackRightDrive().setPower(Range.clip(backRightPower, -1, 1));
         }
 
         stopRobot();
