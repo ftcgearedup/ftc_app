@@ -65,6 +65,12 @@ android {
         //
         versionCode vCode
         versionName vName
+
+
+        buildConfigField "String", "GIT_COMMIT", "\"" + getGitCommit() + "\""
+        buildConfigFeild "String", "GIT_BRANCH", "\"" + getGitBranch() + "\""
+
+
     }
 
     // Advanced user code might just want to use Vuforia directly, so we set up the libs as needed
@@ -93,7 +99,11 @@ android {
         jni.srcDirs = []
         jniLibs.srcDir rootProject.file('libs')
     }
+
+
 }
+
+
 
 repositories {
     flatDir {
