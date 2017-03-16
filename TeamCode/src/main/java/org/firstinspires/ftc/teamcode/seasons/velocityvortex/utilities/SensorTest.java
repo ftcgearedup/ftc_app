@@ -22,7 +22,7 @@ public class SensorTest extends LinearOpModeBase {
         initializeHardware();
         autonomousInitLoop();
         while (this.opModeIsActive()) {
-            telemetry.addData("Commit: " + BuildConfig.GIT_COMMIT
+            telemetry.addData(">","Commit: " + BuildConfig.GIT_COMMIT
                     + ", branch: " + BuildConfig.GIT_BRANCH);
 
             telemetry.addData("clr", reading(getColorSensor1()));
