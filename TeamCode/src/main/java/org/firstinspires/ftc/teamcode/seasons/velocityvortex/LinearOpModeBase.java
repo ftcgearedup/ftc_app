@@ -6,6 +6,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -36,7 +37,7 @@ public abstract class LinearOpModeBase extends LinearOpMode {
 
     private static final double P_RANGE_DRIVE_COEFF = 0.04;
 
-    protected static final double LAUNCHER_CHAMBER_COLOR_SENSOR_THRESHOLD = 12;
+    protected static final double LAUNCHER_CHAMBER_COLOR_SENSOR_THRESHOLD = 14;
 
     private DcMotor frontLeftDrive;
     private DcMotor frontRightDrive;
@@ -104,6 +105,11 @@ public abstract class LinearOpModeBase extends LinearOpMode {
         backLeftDrive = hardwareMap.dcMotor.get("bl");
         backRightDrive = hardwareMap.dcMotor.get("br");
 
+        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+
         launcherMotor = hardwareMap.dcMotor.get("launcher");
         // keep launcher motor speed consistent
         launcherMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -130,6 +136,8 @@ public abstract class LinearOpModeBase extends LinearOpMode {
         colorSensor1.enableLed(false);
         colorSensor2.enableLed(false);
 
+        opModeIsActive();
+
         frontRange = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "frs");
 //        leftRange = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "lrs");
 
@@ -151,6 +159,10 @@ public abstract class LinearOpModeBase extends LinearOpMode {
         // reverse only one spool motor
         spoolMotor1.setDirection(DcMotor.Direction.REVERSE);
         spoolMotor2.setDirection(DcMotor.Direction.FORWARD);
+
+        // set motor directions to forward after updating SDK
+        intakeMotor.setDirection(DcMotor.Direction.REVERSE);
+        launcherMotor.setDirection(DcMotor.Direction.REVERSE);
 
         robotRuntime.reset();
 
