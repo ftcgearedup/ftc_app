@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
 
@@ -29,17 +30,39 @@ public class RobotTeleOp extends LinearOpMode {
         double speedX;
         double speedY;
         double pivot;
+        double blueAlpha;
+        double redAlpha;
 
         double liftMotorPower;
         double liftRotationMotorPower;
+
+        robot.glyphLift.getBlueColorSensor().alpha();
+        robot.glyphLift.getRedColorSensor().alpha();
+
 
         while (opModeIsActive()) {
             speedX = -gamepad1.right_stick_x;
             speedY = gamepad1.right_stick_y;
             pivot = -gamepad1.left_stick_x;
+            blueAlpha = robot.glyphLift.getBlueColorSensor().alpha();
+            redAlpha = robot.glyphLift.getRedColorSensor().alpha();
 
             liftMotorPower = gamepad2.right_stick_y;
             liftRotationMotorPower = -gamepad2.left_stick_x;
+
+            if (blueAlpha == .5) {
+                telemetry.addData("blueBlock",1);
+            }
+            else {
+                telemetry.addData("blueBlock",0);
+            }
+            if (redAlpha == .5) {
+                telemetry.addData("redBlock",1);
+            }
+            else {
+                telemetry.addData("redBlock",0);
+            }
+            telemetry.update();
 
             // slow down robot with right trigger
             if(gamepad1.right_trigger > 0) {

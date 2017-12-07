@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -37,6 +38,14 @@ public class GlyphLift implements IMechanism {
 
     private RotationMotorPosition currentRotationPosition = UNDEFINED;
 
+    public ColorSensor getRedColorSensor() {
+        return redColorSensor;
+    }
+    public ColorSensor getBlueColorSensor() {
+        return blueColorSensor;
+    }
+
+    private ColorSensor redColorSensor, blueColorSensor;
     /**
      *
      */
@@ -65,6 +74,9 @@ public class GlyphLift implements IMechanism {
         this.blueRightServo = hwMap.servo.get("bgr");
         this.redLeftServo = hwMap.servo.get("rgl");
         this.redRightServo = hwMap.servo.get("rgr");
+
+        this.redColorSensor = hwMap.colorSensor.get("rcs");
+        this.blueColorSensor = hwMap.colorSensor.get("bcs");
 
         // reverse lift motor
         liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -131,6 +143,7 @@ public class GlyphLift implements IMechanism {
         opMode.telemetry.addData("current encoder pos", rotationMotor.getCurrentPosition());
         opMode.telemetry.addData("pos diff", headingDiff);
         opMode.telemetry.addData("current rotation position", currentRotationPosition);
+        opMode.telemetry.addData("current sensor reading", redColorSensor.alpha());
         opMode.telemetry.update();
 
         if(headingDiff > ROTATION_MOTOR_POSITION_THRESHOLD
