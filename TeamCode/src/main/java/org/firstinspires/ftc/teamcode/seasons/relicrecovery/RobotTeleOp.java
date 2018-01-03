@@ -86,6 +86,26 @@ public class RobotTeleOp extends LinearOpMode {
             if(gamepad1.b){
                 robot.getJewelKnocker().retractArm();
             }
+            // TRUE is Main Arm Control, False is Extension Control
+            boolean mode = true;
+            // mode switcher
+            if(gamepad2.right_stick_button){
+                if(mode = true){
+                    mode = false;
+                    telemetry.addData("Right Stick Mode", "Extension");
+                } else {
+                    mode = true;
+                    telemetry.addData("Right Stick Mode", "Main Arm");
+                }
+                telemetry.update();
+            }
+            if(gamepad2.right_stick_x > 0){
+                if(mode) { // Main Arm Control
+                    robot.getRelicArm().setArmMainPower(gamepad2.right_stick_x);
+                } else {    // Extension Control
+                    robot.getRelicArm().setArmExtensionPower(gamepad2.right_stick_x);
+                }
+            }
 
             // close/open red gripper
             if(gamepad2.left_trigger > 0.1) {
