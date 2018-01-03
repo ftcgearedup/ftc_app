@@ -75,8 +75,7 @@ public class BNO055IMUWrapper implements IMechanism {
      */
     public double getHeading() {
         Orientation angles = getAngles();
-        return AngleUnit.normalizeDegrees(
-                AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
+        return AngleUnit.normalizeDegrees(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
     }
 
     /**

@@ -31,7 +31,7 @@ public class RelicRecoveryRobot extends Robot {
         super(opMode);
 
         this.hDriveTrain = new HDriveTrain.Builder(this)
-                .setRightMotorDirection(DcMotor.Direction.REVERSE)
+                .setLeftMotorDirection(DcMotor.Direction.REVERSE)
                 .setWheelDiameterInches(4)
                 .setInsideWheelGearingRatio(1.0)
                 .setOutsideWheelGearingRatio(1.5)

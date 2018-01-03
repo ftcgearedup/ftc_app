@@ -200,8 +200,8 @@ public class HDriveTrain implements IDirectionalDriveTrain {
     }
 
     private void setDirectionalTargetPosition(double angleDegrees, double speed, int targetDistance) {
-        double encoderTargetCountsLateral = lateralCountsPerInch * -targetDistance;
-        double encoderTargetCountsAxial = axialCountsPerInch * -targetDistance;
+        double encoderTargetCountsLateral = lateralCountsPerInch * targetDistance;
+        double encoderTargetCountsAxial = axialCountsPerInch * targetDistance;
 
         double angleRadians = Math.toRadians(angleDegrees);
         int lateralCounts = (int)(encoderTargetCountsLateral * Math.sin(angleRadians));
