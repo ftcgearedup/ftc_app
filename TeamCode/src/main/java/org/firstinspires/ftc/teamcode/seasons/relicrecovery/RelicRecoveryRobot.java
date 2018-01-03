@@ -4,12 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HDriveTrain;
 import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.Intake;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.JewelKnocker;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.RelicArm;
 
 /**
  * This class represents the Relic Recovery robot.
@@ -21,6 +23,7 @@ public class RelicRecoveryRobot extends Robot {
     private final GlyphLift glyphLift;
     private final Intake intake;
     private final JewelKnocker jewelKnocker;
+    private final RelicArm relicArm;
 
     /**
      * Construct a new Relic Recovery robot, with an op-mode that is using this robot.
@@ -41,6 +44,10 @@ public class RelicRecoveryRobot extends Robot {
         this.intake = new Intake(this);
         this.visionHelper = new VisionHelper(this);
         this.jewelKnocker = new JewelKnocker(this);
+        this.relicArm = new RelicArm(this);
+
+        //visionHelper.initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
+        //visionHelper.initializeOpenCV();
     }
 
     public HDriveTrain getHDriveTrain() {
@@ -61,5 +68,8 @@ public class RelicRecoveryRobot extends Robot {
 
     public JewelKnocker getJewelKnocker() {
         return jewelKnocker;
+    }
+    public RelicArm getRelicArm() {
+        return relicArm;
     }
 }

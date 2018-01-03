@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
 public class Intake implements IMechanism {
     private Servo leftArmServo, rightArmServo;
     private CRServo leftWheelServo, rightWheelServo;
+    private DcMotor intakeLinkage;
 
     /**
      * Construct a new {@link Intake} with a reference to the utilizing robot.
@@ -28,6 +30,7 @@ public class Intake implements IMechanism {
 
         this.leftWheelServo = hwMap.crservo.get("wl");
         this.rightWheelServo = hwMap.crservo.get("wr");
+        this.intakeLinkage = hwMap.dcMotor.get("link");
     }
 
     /**
@@ -37,12 +40,22 @@ public class Intake implements IMechanism {
         leftArmServo.setPosition(0.05);
         rightArmServo.setPosition(0.9);
     }
+    public void openLinkage() {     //TODO add code for opening linkage
+
+    }
+    public void closeLinkage(){ //TODO add code for closing linkage
+
+    }
 
     /**
      * Raise the intake servo motors.
      */
     public void raiseIntake() {
+
         leftArmServo.setPosition(0.90);
+
+        leftArmServo.setPosition(0.9);
+
         rightArmServo.setPosition(0.05);
     }
 
@@ -58,4 +71,5 @@ public class Intake implements IMechanism {
         // this servo needs to run in the opposite direction:
         rightWheelServo.setPower(-power);
     }
+
 }
