@@ -40,10 +40,14 @@ public class Intake implements IMechanism {
         leftArmServo.setPosition(0.05);
         rightArmServo.setPosition(0.9);
     }
-    public void openLinkage() {     //TODO add code for opening linkage
+    public void openLinkage() {     //TODO get position for opening linkage
+
+        intakeLinkage.setTargetPosition(0);
 
     }
-    public void closeLinkage(){ //TODO add code for closing linkage
+    public void closeLinkage(){ //TODO get position for closing linkage
+
+        intakeLinkage.setTargetPosition(1);
 
     }
 

@@ -46,4 +46,8 @@ public class RelicArm implements IMechanism {
     public void setArmExtensionPower(double power) {
         armEx.setPower(power);
     }
+
+    public void initializeArm(){
+        // TODO get armMain and armEx to retract
+    }
 }
