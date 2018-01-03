@@ -60,21 +60,23 @@ public class RobotTeleOp extends LinearOpMode {
             } else {
                 robot.getJewelKnocker().retractArm();
             }
+            boolean isRaised = true;
             // intake raise/lower control
-            if(gamepad1.left_bumper) {
-                robot.getIntake().raiseIntake();
-            } else if(gamepad1.left_trigger > 0) {
-                robot.getIntake().lowerIntake();
+            if(gamepad1.left_bumper) {  //toggle if raised or lowered
+                if(isRaised){
+                    isRaised = false;
+                    robot.getIntake().lowerIntake();
+                } else if(!isRaised){
+                    isRaised = true;
+                    robot.getIntake().raiseIntake();
+                }
+            }
+            if(gamepad1.left_trigger > 0.1){
+                robot.getIntake().setIntakePower(1);
+                robot.getIntake().openLinkage();
             }
 
-            // intake control
-            if(gamepad1.dpad_up) {
-                robot.getIntake().setIntakePower(1.0);
-            } else if(gamepad1.dpad_down||gamepad1.left_trigger>0) {
-                robot.getIntake().setIntakePower(-1.0);
-            } else{
-                robot.getIntake().setIntakePower(0);
-            }
+            //if(gamepad1.left_trigger < 0.1 && gamepad1.)
 
             // close/open blue gripper
             if(gamepad2.right_trigger > 0.1) {
@@ -99,6 +101,7 @@ public class RobotTeleOp extends LinearOpMode {
                 }
                 telemetry.update();
             }
+            // control arm
             if(gamepad2.right_stick_x > 0){
                 if(mode) { // Main Arm Control
                     robot.getRelicArm().setArmMainPower(gamepad2.right_stick_x);
@@ -113,9 +116,6 @@ public class RobotTeleOp extends LinearOpMode {
             } else {
                 robot.getGlyphLift().closeRedGripper();
             }
-
-            // operate relic arm
-
 
             // automatic lift rotation motor control
             if(gamepad2.dpad_up) {
