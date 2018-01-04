@@ -38,12 +38,18 @@ public class JewelKnocker implements IMechanism {
     public int getRed(){
         return jewelColorSensor.red();
     }
-
+    /**
+     * Detects if the color detected is more red than blue.
+     */
     public int getBlue(){
         return jewelColorSensor.blue();
     }
-
-    public boolean isJewelRed(RelicRecoveryRobot robot){
+    /**
+     * Detects if the color detected is more red than blue.
+     *
+     * @return true if more red, false if more blue
+     */
+    public boolean isJewelRed(){
         int blueLevel = getBlue();
         int redLevel = getRed();
         boolean isRed = false;
@@ -56,8 +62,12 @@ public class JewelKnocker implements IMechanism {
 
         return isRed;
     }
-
-    public boolean isJewelBlue(RelicRecoveryRobot robot){
+    /**
+     * Detects if the color detected is more blue than red.
+     *
+     * @return true if more blue, false if more red
+     */
+    public boolean isJewelBlue(){
         int blueLevel = getBlue();
         int redLevel = getRed();
         boolean isBlue = false;

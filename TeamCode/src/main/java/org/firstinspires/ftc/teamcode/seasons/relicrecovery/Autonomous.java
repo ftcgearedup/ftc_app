@@ -102,14 +102,14 @@ public class Autonomous extends LinearOpMode {
 
             sleep(500);
 
-            if(robot.getJewelKnocker().isJewelRed(robot)) {
+            if(robot.getJewelKnocker().isJewelRed()) {
                 robot.getHDriveTrain().directionalDrive(0, 0.5, 3, false); //drive 4 inches right
                 robot.getJewelKnocker().retractArm();
 
                 sleep(500);
 
                 robot.getHDriveTrain().directionalDrive(180, 0.5, 7, false);
-            } else if(robot.getJewelKnocker().isJewelBlue(robot)) {
+            } else if(robot.getJewelKnocker().isJewelBlue()) {
                 robot.getHDriveTrain().directionalDrive(180, 0.5, 3, false); // drive 4 inches left
             }
 
@@ -144,14 +144,14 @@ public class Autonomous extends LinearOpMode {
 
             sleep(500);
 
-            if(robot.getJewelKnocker().isJewelRed(robot)) {
+            if(robot.getJewelKnocker().isJewelRed()) {
                 robot.getHDriveTrain().directionalDrive(180, 0.5, 3, false); // drive 4 inches left
                 robot.getJewelKnocker().retractArm();
 
                 sleep(500);
 
                 robot.getHDriveTrain().directionalDrive(0, 0.5, 7, false);
-            } else if(robot.getJewelKnocker().isJewelBlue(robot)) {
+            } else if(robot.getJewelKnocker().isJewelBlue()) {
                 robot.getHDriveTrain().directionalDrive(0, 0.5, 3, false); //drive 4 inches right
             }
 
