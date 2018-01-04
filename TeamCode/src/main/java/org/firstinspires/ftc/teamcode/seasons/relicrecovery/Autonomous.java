@@ -20,7 +20,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
+import org.firstinspires.ftc.teamcode.algorithms.impl.BNO055IMUGyroPivotAlgorithm;
+import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.VuMarkScanAlgorithm;
 
 
 /**
@@ -30,11 +35,19 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 public class Autonomous extends LinearOpMode {
 
     private RelicRecoveryRobot robot;
+    private VuMarkScanAlgorithm vuMarkScanAlgorithm;
+    private IGyroPivotAlgorithm gyroPivotAlgorithm;
+    private BNO055IMUGyroPivotAlgorithm bno055IMUGyroPivotAlgorithm;
+    private BNO055IMUWrapper bno055IMUWrapper;
 
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new RelicRecoveryRobot(this);
-
+        vuMarkScanAlgorithm = new VuMarkScanAlgorithm(robot, robot.getVisionHelper());
+        RelicRecoveryVuMark  scannedVuMark =vuMarkScanAlgorithm.detect();
+        BNO055IMUWrapper bno055IMUWrapper = new BNO055IMUWrapper(robot);
+        bno055IMUWrapper.startIntegration();
+        gyroPivotAlgorithm = new BNO055IMUGyroPivotAlgorithm(robot, robot.getHDriveTrain(), bno055IMUWrapper);
         //detect color of stone
         boolean isStoneRed = true;
         boolean isStoneRight = false;
@@ -117,16 +130,33 @@ public class Autonomous extends LinearOpMode {
 
             robot.getHDriveTrain().directionalDrive(0, 1.0, 36, false);
 
+            if (scannedVuMark == RelicRecoveryVuMark.CENTER){
+                gyroPivotAlgorithm.pivot(0.5, 180, true, false);
+                robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+                robot.getGlyphLift().openRedGripper();
+                robot.getHDriveTrain().directionalDrive(270, 0.5, 12, false);
+
+            }else if (scannedVuMark == RelicRecoveryVuMark.LEFT)
+                gyroPivotAlgorithm.pivot(0.5, 180, true, false);
+            robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+            robot.getGlyphLift().openRedGripper();
+            robot.getHDriveTrain().directionalDrive(270, 0.5, 12, false);
+
+
+
             // drive forward
             if(isStoneRight) {
                 robot.getHDriveTrain().directionalDrive(90, 0.5, 24, false);
+
+
             }
 
             robot.getGlyphLift().setLiftMotorPower(-0.5);
             sleep(250);
             robot.getGlyphLift().setLiftMotorPower(0);
-
             robot.getGlyphLift().openRedGripper();
+
+
 
         } else {
             telemetry.addData(">", "Running Blue Alliance Program.");
