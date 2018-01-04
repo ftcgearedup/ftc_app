@@ -9,60 +9,59 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.Glyph
 
 /**
  * This class is the competition robot tele-op program.
+ *
+ * CONTROLS USED
+
+ CONTROLLER 1:
+
+ Right Stick   - Movement
+ Left Stick (X)- Rotation
+ Right Trigger - Slow Driving
+
+ Left Bumper   - Intake Raise or Lower
+ Left Trigger  - Intake Run Inward
+ Right Bumper  - Intake Run Outward
+
+ Y             - Jewel Arm Extend/Retract (Hold)
+
+ CONTROLLER 2:
+
+ Left Stick (Y)      - Glyph Lift Height
+ Left Stick (X)      - Glyph Lift Rotation
+ Right Trigger       - Glyph Lift Blue Gripper
+ Left_Trigger        - Glyph Lift Red Gripper
+ D-Pad Up and Down   - Glyph Lift Align
+ Y                   - Glyph Lift Recalibrate
+
+ Right Stick (Press) - Relic Arm Control Mode Switch
+ Right Stick (X)     - Relic Arm Move (Main or Extension, depends on mode)
+ A                   - Relic Arm Open Grip
+ B                   - Relic Arm Close Grip
+
+ UNUSED
+
+ CONTROLLER 1:
+
+ D-Pad
+ Left Stick Press and Y
+ Right Stick Press
+ A
+ B
+ X
+
+ CONTROLLER 2:
+ Left Bumper
+ Right Bumper
+ D-Pad Left and Right
+ Left Stick Press
+ Right Stick Up and Down
+ X
  */
 @TeleOp(name = "TELEOP", group = "teleop")
 public class RobotTeleOp extends LinearOpMode {
     private RelicRecoveryRobot robot;
 
     private static final float JOYSTICK_DEADZONE = 0.2f;
-    /**
-            CONTROLS USED
-
-            CONTROLLER 1:
-
-            Right Stick   - Movement
-            Left Stick (X)- Rotation
-            Right Trigger - Slow Driving
-
-            Left Bumper   - Raise or Lower Intake
-            Left Trigger  - Run Intake Inward
-            Right Bumper  - Run Intake Outward
-
-            Y             - Extend/Retract Jewel Arm (Hold)
-
-            CONTROLLER 2:
-
-            Left Stick (Y)      - Glyph Lift Height
-            Left Stick (X)      - Glyph Lift Rotation
-            Right Trigger       - Glyph Lift Blue Gripper
-            Left_Trigger        - Glyph Lift Red Gripper
-            D-Pad Up and Down   - Glyph Lift Align
-            Y                   - Glyph Lift Recalibrate
-
-            Right Stick (Press) - Relic Arm Control Mode
-            Right Stick (X)     - Relic Arm Move (Main or Extension, depends on mode)
-            A                   - Relic Arm Open Grip
-            B                   - Relic Arm Close Grip
-
-            UNUSED
-
-            CONTROLLER 1:
-
-            D-Pad
-            Left Stick Press and Y
-            Right Stick Press
-            A
-            B
-            X
-
-            CONTROLLER 2:
-            Left Bumper
-            Right Bumper
-            D-Pad Left and Right
-            Left Stick Press
-            Right Stick Up and Down
-            X
-     */
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -84,6 +83,10 @@ public class RobotTeleOp extends LinearOpMode {
         double speedX;
         double speedY;
         double pivot;
+
+        ElapsedTime intakeToggleTimer = new ElapsedTime();
+
+        boolean isRaised = true;
 
         double liftMotorPower;
         double liftRotationMotorPower;
@@ -110,32 +113,36 @@ public class RobotTeleOp extends LinearOpMode {
                 robot.getJewelKnocker().retractArm();
             }
 
-            boolean isRaised = true;
+
             // intake raise/lower control                            INTAKE CONTROLS
-            if(gamepad1.left_bumper) {  //toggle if raised or lowered
+            if(gamepad1.left_bumper && intakeToggleTimer.milliseconds() > 500) {  //toggle if raised or lowered
                 if(isRaised){
-                    isRaised = false;
                     robot.getIntake().lowerIntake();
+                    isRaised = false;
+
                 } else if(!isRaised){
-                    isRaised = true;
                     robot.getIntake().raiseIntake();
+                    isRaised = true;
                 }
+                intakeToggleTimer.reset();
             }
+            telemetry.addData("isRaised", isRaised);
+            telemetry.update();
             // run intake in
-            if(gamepad1.left_trigger > 0.1){
-                robot.getIntake().setIntakePower(1);
-            }
-            // run intake out
-            if(gamepad1.right_bumper){
+            if(gamepad1.left_trigger > 0.1) {
                 robot.getIntake().setIntakePower(-1);
+            } else if(gamepad1.right_bumper){  // run intake out
+                robot.getIntake().setIntakePower(1);
+            } else {
+                robot.getIntake().setIntakePower(0);
             }
 
             // intake linkage
-            if(gamepad1.left_trigger < 0.1 || gamepad1.right_bumper){
+            if(gamepad1.left_trigger > 0.1 || gamepad1.right_bumper){
                 robot.getIntake().closeLinkage();
-            } else {
+            }/** else if(robot.getIntake().isLinkClosed()){
                 robot.getIntake().openLinkage();
-            }
+            }*/
 
             // close/open blue gripper                                 GLYPH CONTROLS
             if(gamepad2.right_trigger > 0.1) {
@@ -191,9 +198,9 @@ public class RobotTeleOp extends LinearOpMode {
                 robot.getGlyphLift().rotationMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
 
-            telemetry.addData("Red Level", robot.getJewelKnocker().getRed());
-            telemetry.addData("Blue Level", robot.getJewelKnocker().getBlue());
-            telemetry.update();
+//            telemetry.addData("Red Level", robot.getJewelKnocker().getRed());
+//            telemetry.addData("Blue Level", robot.getJewelKnocker().getBlue());
+//            telemetry.update();
 
             robot.getHDriveTrain().pivot(pivot);
             robot.getHDriveTrain().drive(speedX, speedY);

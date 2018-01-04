@@ -16,6 +16,8 @@ public class Intake implements IMechanism {
     private Servo leftArmServo, rightArmServo;
     private CRServo leftWheelServo, rightWheelServo;
     private DcMotor intakeLinkage;
+    private boolean isLinkageMotorRunning = false;
+    private boolean isLinkageClosed;
 
     /**
      * Construct a new {@link Intake} with a reference to the utilizing robot.
@@ -40,15 +42,34 @@ public class Intake implements IMechanism {
         leftArmServo.setPosition(0.05);
         rightArmServo.setPosition(0.9);
     }
-    public void openLinkage() {     //TODO get position for opening linkage
-
-        intakeLinkage.setTargetPosition(0);
+    /**
+     * Opens the Intake Linkage
+     */
+    public void openLinkage() {
+        if(!isLinkageMotorRunning){
+            intakeLinkage.setTargetPosition((int) -(intakeLinkage.getMotorType().getTicksPerRev() / 2));
+            intakeLinkage.setPower(0.5);
+            isLinkageMotorRunning = true;
+        } else if(!intakeLinkage.isBusy()) {
+            isLinkageClosed = false;
+            isLinkageMotorRunning = false;
+            intakeLinkage.setPower(0);
+        }
 
     }
-    public void closeLinkage(){ //TODO get position for closing linkage
-
-        intakeLinkage.setTargetPosition(1);
-
+    /**
+     * Closes the Intake Linkage
+     */
+    public void closeLinkage(){
+        if(!isLinkageMotorRunning){
+            intakeLinkage.setTargetPosition((int) (intakeLinkage.getMotorType().getTicksPerRev() / 2));
+            intakeLinkage.setPower(0.5);
+            isLinkageMotorRunning = true;
+        } else if(!intakeLinkage.isBusy()) {
+            isLinkageClosed = true;
+            isLinkageMotorRunning = false;
+            intakeLinkage.setPower(0);
+        }
     }
 
     /**
@@ -74,6 +95,12 @@ public class Intake implements IMechanism {
 
         // this servo needs to run in the opposite direction:
         rightWheelServo.setPower(-power);
+    }
+    /**
+     * @return if the Linkage is closed
+     */
+    public boolean isLinkClosed() {
+        return isLinkageClosed;
     }
 
 }
