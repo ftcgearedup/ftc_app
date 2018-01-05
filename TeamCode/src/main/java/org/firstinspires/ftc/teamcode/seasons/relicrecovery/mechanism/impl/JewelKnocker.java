@@ -26,20 +26,26 @@ public class JewelKnocker implements IMechanism {
         this.jewelColorSensor = hwMap.colorSensor.get("jcs");
         jewelColorSensor.enableLed(true);
     }
-
+    /**
+     * Retracts Jewel Arm
+     */
     public void retractArm() {
         arm.setPosition(0.35);
     }
-
+    /**
+     * Extends Jewel Arm
+     */
     public void extendArm() {
         arm.setPosition(1.0);
     }
-
+    /**
+     * @return the red level detected
+     */
     public int getRed(){
         return jewelColorSensor.red();
     }
     /**
-     * Detects if the color detected is more red than blue.
+     * @return the blue level detected
      */
     public int getBlue(){
         return jewelColorSensor.blue();

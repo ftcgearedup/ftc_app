@@ -185,10 +185,12 @@ public class RobotTeleOp extends LinearOpMode {
             robot.getRelicArm().setArmMainPower(Range.clip(gamepad2.right_stick_y, -0.2, 0.2));
 
             // relic gripper controls
-            if(gamepad2.a){
-                robot.getRelicArm().openGrip();
-            } else if (gamepad2.b){
-                robot.getRelicArm().closeGrip();
+            if(gamepad2.a) {
+                if (robot.getRelicArm().isGripClosed()) {
+                    robot.getRelicArm().openGrip();
+                } else {
+                    robot.getRelicArm().closeGrip();
+                }
             }
 
             if(gamepad2.y) {
