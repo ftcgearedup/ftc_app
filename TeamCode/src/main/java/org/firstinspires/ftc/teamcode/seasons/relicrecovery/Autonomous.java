@@ -132,7 +132,7 @@ public class Autonomous extends LinearOpMode {
 
             // drive to cryptobox
             if(isStoneRight) {
-                robot.getHDriveTrain().directionalDrive(90, 0.5, 24, false);
+                //place Gylph in key collum
 
                 if (scannedVuMark == RelicRecoveryVuMark.CENTER) {
                     gyroPivotAlgorithm.pivot(0.5, 180, true, false);
@@ -150,22 +150,36 @@ public class Autonomous extends LinearOpMode {
                 } else if (scannedVuMark == RelicRecoveryVuMark.RIGHT) {
                     gyroPivotAlgorithm.pivot(0.5, 180, true, false);
                     robot.getHDriveTrain().directionalDrive(180, 0.5, 12, false);
-                    robot.getHDriveTrain().directionalDrive(0, 0.5, 12, false);
+                    robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
                     robot.getGlyphLift().openRedGripper();
                     robot.getHDriveTrain().directionalDrive(270, 0.5, 12, false);
 
                 }
             }else {
-                robot.getHDriveTrain().directionalDrive(90, 0.5, 24, false);
+                gyroPivotAlgorithm.pivot(0.5, 270, true, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5,24,false);
 
                 if (scannedVuMark == RelicRecoveryVuMark.CENTER) {
-
+                    robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+                    robot.getGlyphLift().openRedGripper();
+                    robot.getHDriveTrain().directionalDrive(270, 0.5, 12, false);
                 } else if (scannedVuMark == RelicRecoveryVuMark.LEFT) {
-
+                    robot.getHDriveTrain().directionalDrive(0,0.5,12,false);
+                    robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+                    robot.getGlyphLift().openRedGripper();
+                    robot.getHDriveTrain().directionalDrive(270, 0.5, 12, false);
                 } else if (scannedVuMark == RelicRecoveryVuMark.RIGHT) {
-
+                    robot.getHDriveTrain().directionalDrive(0,0.5, 12, false);
+                    robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+                    robot.getGlyphLift().openRedGripper();
+                    robot.getHDriveTrain().directionalDrive(270, 0.5, 12, false);
                 }
             }
+            robot.getGlyphLift().setLiftMotorPower(-0.5);
+            sleep(250);
+            robot.getGlyphLift().setLiftMotorPower(0);
+
+            robot.getGlyphLift().openRedGripper();
         } else {
             telemetry.addData(">", "Running Blue Alliance Program.");
             telemetry.update();
@@ -199,7 +213,46 @@ public class Autonomous extends LinearOpMode {
 
             // drive forward
             if(isStoneRight) {
-                robot.getHDriveTrain().directionalDrive(90, 0.5, 24, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 36, false);
+                gyroPivotAlgorithm.pivot(0.5, 180, true,false);
+
+                if(scannedVuMark == RelicRecoveryVuMark.CENTER){
+                    robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+                    robot.getGlyphLift().openRedGripper();
+                    robot.getHDriveTrain().directionalDrive(270, 0.5, 12, false);
+
+                }else if (scannedVuMark == RelicRecoveryVuMark.RIGHT){
+                    robot.getHDriveTrain().directionalDrive(180,0.5,12,false);
+                    robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+                    robot.getGlyphLift().openRedGripper();
+                    robot.getHDriveTrain().directionalDrive(270, 0.5, 12, false);
+                }else if(scannedVuMark == RelicRecoveryVuMark.LEFT){
+                    robot.getHDriveTrain().directionalDrive(0,0.5, 12, false);
+                    robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+                    robot.getGlyphLift().openRedGripper();
+                    robot.getHDriveTrain().directionalDrive(270, 0.5, 12, false);
+                }
+            }else {
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 36, false);
+                gyroPivotAlgorithm.pivot(0.5, 270, true,false);
+                robot.getHDriveTrain().directionalDrive(0,0.5,24,false);
+
+                if(scannedVuMark == RelicRecoveryVuMark.CENTER){
+                    robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+                    robot.getGlyphLift().openRedGripper();
+                    robot.getHDriveTrain().directionalDrive(270, 0.5, 12, false);
+
+                }else if (scannedVuMark == RelicRecoveryVuMark.RIGHT){
+                    robot.getHDriveTrain().directionalDrive(180,0.5,12,false);
+                    robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+                    robot.getGlyphLift().openRedGripper();
+                    robot.getHDriveTrain().directionalDrive(270, 0.5, 12, false);
+                }else if(scannedVuMark == RelicRecoveryVuMark.LEFT){
+                    robot.getHDriveTrain().directionalDrive(0,0.5, 12, false);
+                    robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+                    robot.getGlyphLift().openRedGripper();
+                    robot.getHDriveTrain().directionalDrive(270, 0.5, 12, false);
+                }
             }
 
             robot.getGlyphLift().setLiftMotorPower(-0.5);
