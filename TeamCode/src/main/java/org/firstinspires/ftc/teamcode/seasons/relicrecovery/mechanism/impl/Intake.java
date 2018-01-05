@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
@@ -18,6 +19,9 @@ public class Intake implements IMechanism {
     private DcMotor intakeLinkage;
     private boolean isLinkageMotorRunning = false;
     private boolean isLinkageClosed;
+    private ElapsedTime linkageTimer;
+
+    private final int LINKAGE_CLOSED_ROTATION_DEGREES;
 
     /**
      * Construct a new {@link Intake} with a reference to the utilizing robot.
@@ -33,6 +37,11 @@ public class Intake implements IMechanism {
         this.leftWheelServo = hwMap.crservo.get("wl");
         this.rightWheelServo = hwMap.crservo.get("wr");
         this.intakeLinkage = hwMap.dcMotor.get("link");
+        this.linkageTimer = new ElapsedTime();
+
+        LINKAGE_CLOSED_ROTATION_DEGREES = (int) (intakeLinkage.getMotorType().getTicksPerRev() / 2.2);
+
+        intakeLinkage.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     /**
@@ -46,29 +55,33 @@ public class Intake implements IMechanism {
      * Opens the Intake Linkage
      */
     public void openLinkage() {
-        if(!isLinkageMotorRunning){
-            intakeLinkage.setTargetPosition((int) -(intakeLinkage.getMotorType().getTicksPerRev() / 2));
-            intakeLinkage.setPower(0.5);
-            isLinkageMotorRunning = true;
-        } else if(!intakeLinkage.isBusy()) {
-            isLinkageClosed = false;
-            isLinkageMotorRunning = false;
-            intakeLinkage.setPower(0);
+        if(isLinkageClosed) {
+            if(!isLinkageMotorRunning) {
+                intakeLinkage.setTargetPosition(0);
+                intakeLinkage.setPower(1);
+                isLinkageMotorRunning = true;
+            } else if (!intakeLinkage.isBusy()) {
+                isLinkageClosed = false;
+                isLinkageMotorRunning = false;
+                intakeLinkage.setPower(0);
+            }
         }
-
     }
+
     /**
      * Closes the Intake Linkage
      */
-    public void closeLinkage(){
-        if(!isLinkageMotorRunning){
-            intakeLinkage.setTargetPosition((int) (intakeLinkage.getMotorType().getTicksPerRev() / 2));
-            intakeLinkage.setPower(0.5);
-            isLinkageMotorRunning = true;
-        } else if(!intakeLinkage.isBusy()) {
-            isLinkageClosed = true;
-            isLinkageMotorRunning = false;
-            intakeLinkage.setPower(0);
+    public void closeLinkage() {
+        if(!isLinkageClosed) {
+            if(!isLinkageMotorRunning) {
+                intakeLinkage.setTargetPosition(LINKAGE_CLOSED_ROTATION_DEGREES);
+                intakeLinkage.setPower(1);
+                isLinkageMotorRunning = true;
+            } else if (!intakeLinkage.isBusy()) {
+                isLinkageClosed = true;
+                isLinkageMotorRunning = false;
+                intakeLinkage.setPower(0);
+            }
         }
     }
 

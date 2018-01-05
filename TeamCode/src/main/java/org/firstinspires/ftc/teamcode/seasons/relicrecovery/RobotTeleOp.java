@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
 
@@ -76,7 +77,7 @@ public class RobotTeleOp extends LinearOpMode {
         robot.getGlyphLift().initializeGrippers();
         robot.getIntake().raiseIntake();
         robot.getJewelKnocker().retractArm();
-        robot.getRelicArm().initializeArm();
+        robot.getRelicArm().initializeRelicArm();
 
         waitForStart();
 
@@ -85,11 +86,13 @@ public class RobotTeleOp extends LinearOpMode {
         double pivot;
 
         ElapsedTime intakeToggleTimer = new ElapsedTime();
+        ElapsedTime relicToggleTimer = new ElapsedTime();
 
         boolean isRaised = true;
 
         double liftMotorPower;
         double liftRotationMotorPower;
+        boolean mode = true;
 
         while (opModeIsActive()) {
             speedX = -gamepad1.right_stick_x;
@@ -115,7 +118,7 @@ public class RobotTeleOp extends LinearOpMode {
 
 
             // intake raise/lower control                            INTAKE CONTROLS
-            if(gamepad1.left_bumper && intakeToggleTimer.milliseconds() > 500) {  //toggle if raised or lowered
+            if(gamepad1.left_bumper && intakeToggleTimer.milliseconds() > 200) {  //toggle if raised or lowered
                 if(isRaised){
                     robot.getIntake().lowerIntake();
                     isRaised = false;
@@ -126,8 +129,6 @@ public class RobotTeleOp extends LinearOpMode {
                 }
                 intakeToggleTimer.reset();
             }
-            telemetry.addData("isRaised", isRaised);
-            telemetry.update();
             // run intake in
             if(gamepad1.left_trigger > 0.1) {
                 robot.getIntake().setIntakePower(-1);
@@ -140,9 +141,9 @@ public class RobotTeleOp extends LinearOpMode {
             // intake linkage
             if(gamepad1.left_trigger > 0.1 || gamepad1.right_bumper){
                 robot.getIntake().closeLinkage();
-            }/** else if(robot.getIntake().isLinkClosed()){
+            } else {
                 robot.getIntake().openLinkage();
-            }*/
+            }
 
             // close/open blue gripper                                 GLYPH CONTROLS
             if(gamepad2.right_trigger > 0.1) {
@@ -166,27 +167,23 @@ public class RobotTeleOp extends LinearOpMode {
                 robot.getGlyphLift().setRotationMotorPower(liftRotationMotorPower);
             }
 
-            // TRUE is Main Arm Control, False is Extension Control     RELIC ARM CONTROLS
-            boolean mode = true;
-            // mode switcher
-            if(gamepad2.right_stick_button){
-                if(mode = true){
-                    mode = false;
-                    telemetry.addData("Right Stick Mode", "Extension");
-                } else {
-                    mode = true;
-                    telemetry.addData("Right Stick Mode", "Main Arm");
-                }
-                telemetry.update();
-            }
+//            // TRUE is Main Arm Control, False is Extension Control     RELIC ARM CONTROLS
+//
+//            // mode switcher
+//            if(gamepad2.right_stick_button && relicToggleTimer.milliseconds() > 200){
+//                mode = !mode;
+//                if(mode){
+//                    telemetry.addData("Right Stick Mode", "Main Arm");
+//                } else {
+//                    telemetry.addData("Right Stick Mode", "Extension");
+//                }
+//                relicToggleTimer.reset();
+//                telemetry.update();
+//            }
             // control arm
-            if(gamepad2.right_stick_x > 0){
-                if(mode) { // Main Arm Control
-                    robot.getRelicArm().setArmMainPower(gamepad2.right_stick_x);
-                } else {    // Extension Control
-                    robot.getRelicArm().setArmExtensionPower(gamepad2.right_stick_x);
-                }
-            }
+            robot.getRelicArm().setArmExtensionPower(Math.copySign(0.3, gamepad2.right_stick_x));
+            robot.getRelicArm().setArmMainPower(Range.clip(gamepad2.right_stick_y, -0.2, 0.2));
+
             // relic gripper controls
             if(gamepad2.a){
                 robot.getRelicArm().openGrip();

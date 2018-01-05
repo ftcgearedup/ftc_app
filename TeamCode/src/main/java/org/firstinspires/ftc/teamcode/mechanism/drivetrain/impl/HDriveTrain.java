@@ -136,7 +136,7 @@ public class HDriveTrain implements IDirectionalDriveTrain {
          * @return this builder object so that method calls can be chained
          */
         public Builder setRightMotorDirection(DcMotor.Direction direction) {
-            hDriveTrain.leftDrive.setDirection(direction);
+            hDriveTrain.rightDrive.setDirection(direction);
             return this;
         }
 

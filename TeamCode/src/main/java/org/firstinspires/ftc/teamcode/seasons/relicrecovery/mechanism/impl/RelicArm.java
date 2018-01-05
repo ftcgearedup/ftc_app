@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -24,9 +25,12 @@ public class RelicArm implements IMechanism {
     public RelicArm(Robot robot) {
         HardwareMap hwMap = robot.getCurrentOpMode().hardwareMap;
         this.armMain = hwMap.dcMotor.get("ram");
+        this.armMain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.armMain.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         this.gripper = hwMap.servo.get("rag");
         this.armEx = hwMap.crservo.get("rae");
+        this.armEx.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     // TODO get positions for gripper
@@ -37,7 +41,7 @@ public class RelicArm implements IMechanism {
     }
 
     public void closeGrip() {
-        gripper.setPosition(0);
+        gripper.setPosition(1);
     }
 
     public void setArmMainPower(double power) {
@@ -47,7 +51,9 @@ public class RelicArm implements IMechanism {
         armEx.setPower(power);
     }
 
-    public void initializeArm(){
-        // TODO get armMain and armEx to retract
+    public void initializeRelicArm(){
+        armEx.setPower(0);
+        armMain.setPower(0);
+        openGrip();
     }
 }
