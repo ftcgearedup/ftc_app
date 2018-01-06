@@ -29,7 +29,6 @@ public class RelicArm implements IMechanism {
         this.armMain = hwMap.dcMotor.get("ram");
         this.armMain.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.armMain.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.armMain.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.gripper = hwMap.servo.get("rag");
         this.armEx = hwMap.crservo.get("rae");
