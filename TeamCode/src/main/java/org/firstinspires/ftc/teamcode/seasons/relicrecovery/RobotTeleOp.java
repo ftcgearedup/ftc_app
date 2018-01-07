@@ -91,8 +91,7 @@ public class RobotTeleOp extends LinearOpMode {
         boolean isRaised = true;
 
         double liftMotorPower;
-        double liftRotationMotorPower;
-        boolean mode = true;
+        double liftRotationMotorPower = 0;
 
         while (opModeIsActive()) {
             speedX = -gamepad1.right_stick_x;
@@ -100,7 +99,6 @@ public class RobotTeleOp extends LinearOpMode {
             pivot = -gamepad1.left_stick_x;
 
             liftMotorPower = -gamepad2.left_stick_y;
-            liftRotationMotorPower = -gamepad2.left_stick_x;
 
             // slow down robot with right trigger                   SLOW DRIVING
             if(gamepad1.right_trigger > 0) {
@@ -132,16 +130,12 @@ public class RobotTeleOp extends LinearOpMode {
             // run intake in
             if(gamepad1.left_trigger > 0.1) {
                 robot.getIntake().setIntakePower(-1);
+                robot.getIntake().closeLinkage();
             } else if(gamepad1.right_bumper){  // run intake out
                 robot.getIntake().setIntakePower(1);
-            } else {
-                robot.getIntake().setIntakePower(0);
-            }
-
-            // intake linkage
-            if(gamepad1.left_trigger > 0.1 || gamepad1.right_bumper){
                 robot.getIntake().closeLinkage();
             } else {
+                robot.getIntake().setIntakePower(0);
                 robot.getIntake().openLinkage();
             }
 
@@ -163,8 +157,12 @@ public class RobotTeleOp extends LinearOpMode {
                 robot.getGlyphLift().setRotationMotorPosition(GlyphLift.RotationMotorPosition.UP);
             } else if(gamepad2.dpad_down) {
                 robot.getGlyphLift().setRotationMotorPosition(GlyphLift.RotationMotorPosition.DOWN);
+            } else if(gamepad2.dpad_left){
+                robot.getGlyphLift().setRotationMotorPower(0.5);
+            } else if(gamepad2.dpad_right){
+                robot.getGlyphLift().setRotationMotorPower(-0.5);
             } else {
-                robot.getGlyphLift().setRotationMotorPower(liftRotationMotorPower);
+                robot.getGlyphLift().setRotationMotorPower(0);
             }
 
 //            // TRUE is Main Arm Control, False is Extension Control     RELIC ARM CONTROLS
@@ -180,15 +178,28 @@ public class RobotTeleOp extends LinearOpMode {
 //                relicToggleTimer.reset();
 //                telemetry.update();
 //            }
-            // control arm
-            robot.getRelicArm().setArmExtensionPower(Math.copySign(0.3, gamepad2.right_stick_x));
+            // control Extension
+          //  robot.getRelicArm().setArmExtensionPower(Math.copySign(0.3, gamepad2.right_stick_x));
+
+            if(gamepad2.right_stick_x > 0.1){
+                robot.getRelicArm().setArmExtensionPower(0.3);
+            } else if (gamepad2.right_stick_x < -0.1){
+                robot.getRelicArm().setArmExtensionPower(-0.3);
+            } else {
+                robot.getRelicArm().setArmExtensionPower(0);
+            }
+            // control Main Arm
             robot.getRelicArm().setArmMainPower(Range.clip(gamepad2.right_stick_y, -0.2, 0.2));
 
             // relic gripper controls
-            if(gamepad2.a){
-                robot.getRelicArm().openGrip();
-            } else if (gamepad2.b){
-                robot.getRelicArm().closeGrip();
+            if(gamepad2.a && relicToggleTimer.milliseconds() > 200) {
+                if (robot.getRelicArm().isGripClosed()) {
+                    robot.getRelicArm().openGrip();
+                    relicToggleTimer.reset();
+                } else {
+                    robot.getRelicArm().closeGrip();
+                    relicToggleTimer.reset();
+                }
             }
 
             if(gamepad2.y) {

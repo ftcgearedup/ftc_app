@@ -150,7 +150,6 @@ public class GlyphLift implements IMechanism {
               }
           }
       }
-
       public boolean setLiftPosition(int targetPosition) {
           if (!isRunningToPositionLiftMotor) {
               liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
