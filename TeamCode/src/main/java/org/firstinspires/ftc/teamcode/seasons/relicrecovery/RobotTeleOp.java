@@ -116,7 +116,7 @@ public class RobotTeleOp extends LinearOpMode {
 
 
             // intake raise/lower control                            INTAKE CONTROLS
-            if(gamepad1.left_bumper && intakeToggleTimer.milliseconds() > 200) {  //toggle if raised or lowered
+            if(gamepad1.right_bumper && intakeToggleTimer.milliseconds() > 200) {  //toggle if raised or lowered
                 if(isRaised){
                     robot.getIntake().lowerIntake();
                     isRaised = false;
@@ -127,11 +127,12 @@ public class RobotTeleOp extends LinearOpMode {
                 }
                 intakeToggleTimer.reset();
             }
+
             // run intake in
             if(gamepad1.left_trigger > 0.1) {
                 robot.getIntake().setIntakePower(-1);
                 robot.getIntake().closeLinkage();
-            } else if(gamepad1.right_bumper){  // run intake out
+            } else if(gamepad1.left_bumper){  // run intake in reverse
                 robot.getIntake().setIntakePower(1);
                 robot.getIntake().closeLinkage();
             } else {
@@ -206,9 +207,9 @@ public class RobotTeleOp extends LinearOpMode {
                 robot.getGlyphLift().rotationMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             }
 
-//            telemetry.addData("Red Level", robot.getJewelKnocker().getRed());
-//            telemetry.addData("Blue Level", robot.getJewelKnocker().getBlue());
-//            telemetry.update();
+            telemetry.addData("Red Level", robot.getJewelKnocker().getRed());
+            telemetry.addData("Blue Level", robot.getJewelKnocker().getBlue());
+            telemetry.update();
 
             robot.getHDriveTrain().pivot(pivot);
             robot.getHDriveTrain().drive(speedX, speedY);

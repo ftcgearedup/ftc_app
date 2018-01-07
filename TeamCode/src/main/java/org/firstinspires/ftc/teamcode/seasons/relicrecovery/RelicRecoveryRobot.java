@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HDriveTrain;
+import org.firstinspires.ftc.teamcode.mechanism.impl.MaxSonarEZ4Sensor;
 import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.Intake;
@@ -24,6 +25,10 @@ public class RelicRecoveryRobot extends Robot {
     private final Intake intake;
     private final JewelKnocker jewelKnocker;
     private final RelicArm relicArm;
+
+    private final MaxSonarEZ4Sensor leftRangeSensor;
+    private final MaxSonarEZ4Sensor rightRangeSensor;
+    private final MaxSonarEZ4Sensor frontRangeSensor;
 
     /**
      * Construct a new Relic Recovery robot, with an op-mode that is using this robot.
@@ -46,7 +51,11 @@ public class RelicRecoveryRobot extends Robot {
         this.jewelKnocker = new JewelKnocker(this);
         this.relicArm = new RelicArm(this);
 
-        //visionHelper.initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
+        this.frontRangeSensor = new MaxSonarEZ4Sensor(this, "frs");
+        this.rightRangeSensor = new MaxSonarEZ4Sensor(this, "rrs");
+        this.leftRangeSensor = new MaxSonarEZ4Sensor(this, "lrs");
+
+        visionHelper.initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
         //visionHelper.initializeOpenCV();
     }
 
@@ -71,5 +80,17 @@ public class RelicRecoveryRobot extends Robot {
     }
     public RelicArm getRelicArm() {
         return relicArm;
+    }
+
+    public MaxSonarEZ4Sensor getLeftRangeSensor() {
+        return leftRangeSensor;
+    }
+
+    public MaxSonarEZ4Sensor getRightRangeSensor() {
+        return rightRangeSensor;
+    }
+
+    public MaxSonarEZ4Sensor getFrontRangeSensor() {
+        return frontRangeSensor;
     }
 }

@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.algorithms.impl.BNO055IMUGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 
-@TeleOp(name = "Gyro Pivot Test", group = "testing")
-public class GyroPivotTest extends LinearOpMode {
+/**
+ * Created by ftc6347 on 12/19/17.
+ */
+@Autonomous(name = "Vision Test")
+public class VisionTest extends LinearOpMode {
     private RelicRecoveryRobot robot;
     private IGyroPivotAlgorithm gyroPivotAlgorithm;
     private BNO055IMUWrapper bno055IMUWrapper;
@@ -17,15 +20,18 @@ public class GyroPivotTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         this.robot = new RelicRecoveryRobot(this);
         this.bno055IMUWrapper = new BNO055IMUWrapper(robot);
-        this.gyroPivotAlgorithm = new BNO055IMUGyroPivotAlgorithm(robot, robot.getHDriveTrain(), bno055IMUWrapper);
 
-        bno055IMUWrapper.startIntegration();
+        this.gyroPivotAlgorithm = new BNO055IMUGyroPivotAlgorithm(
+                robot, robot.getHDriveTrain(), bno055IMUWrapper);
 
-        while(!isStarted() && !opModeIsActive()) {
-            telemetry.addData("heading", bno055IMUWrapper.getHeading());
-            telemetry.update();
-        }
+        waitForStart();
 
-        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
+        gyroPivotAlgorithm.pivot(0.5, 90, false, true);
+
+        //Mat frame = robot.getVisionHelper().readOpenCVFrame();
+        //Highgui.imwrite(AppUtil.ROBOT_DATA_DIR + "capture.jpg", frame);
+
+        //telemetry.addData(">", "Captured frame!");
+        //telemetry.update();
     }
 }

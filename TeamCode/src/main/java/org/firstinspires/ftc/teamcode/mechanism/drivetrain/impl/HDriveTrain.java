@@ -241,6 +241,7 @@ public class HDriveTrain implements IDirectionalDriveTrain {
         } else if(!isDriveTrainBusy()) {
             this.isRunningToPosition = false;
             stopDriveMotors();
+            setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -252,6 +253,7 @@ public class HDriveTrain implements IDirectionalDriveTrain {
             linearOpMode.idle();
         }
         stopDriveMotors();
+        setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     @Override

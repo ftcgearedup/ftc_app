@@ -42,7 +42,7 @@ public class MaxSonarEZ4Sensor implements DistanceSensor {
         double milliVolts = analogInput.getVoltage() * 1000;
 
         // divide by the milli-volt difference per inch and round to the nearest tenth
-        return Math.round(unit.fromInches(milliVolts / MILLIVOLTS_PER_INCH) * 10) / 10;
+        return unit.fromInches(milliVolts / MILLIVOLTS_PER_INCH);
     }
 
     @Override

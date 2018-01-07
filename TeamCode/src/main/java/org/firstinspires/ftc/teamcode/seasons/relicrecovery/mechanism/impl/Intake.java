@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -14,10 +15,10 @@ import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
  */
 
 public class Intake implements IMechanism {
+    private OpMode opMode;
     private Servo leftArmServo, rightArmServo;
     private CRServo leftWheelServo, rightWheelServo;
     private DcMotor intakeLinkage;
-    private boolean isLinkageMotorRunning = false;
     private boolean isLinkageClosed;
     private ElapsedTime linkageTimer;
 
@@ -29,7 +30,8 @@ public class Intake implements IMechanism {
      * @param robot the robot using this intake
      */
     public Intake(Robot robot) {
-        HardwareMap hwMap = robot.getCurrentOpMode().hardwareMap;
+        this.opMode = robot.getCurrentOpMode();
+        HardwareMap hwMap = opMode.hardwareMap;
 
         this.leftArmServo = hwMap.servo.get("al");
         this.rightArmServo = hwMap.servo.get("ar");
@@ -55,16 +57,13 @@ public class Intake implements IMechanism {
      * Opens the Intake Linkage
      */
     public void openLinkage() {
+
         if(isLinkageClosed) {
-            if(!isLinkageMotorRunning) {
-                intakeLinkage.setTargetPosition(0);
-                intakeLinkage.setPower(1);
-                isLinkageMotorRunning = true;
-            } else if (!intakeLinkage.isBusy()) {
-                isLinkageClosed = false;
-                isLinkageMotorRunning = false;
-                intakeLinkage.setPower(0);
-            }
+            intakeLinkage.setTargetPosition(0);
+            intakeLinkage.setPower(1);
+            isLinkageClosed = false;
+        } else if (!intakeLinkage.isBusy()) {
+            intakeLinkage.setPower(0);
         }
     }
 
@@ -72,16 +71,13 @@ public class Intake implements IMechanism {
      * Closes the Intake Linkage
      */
     public void closeLinkage() {
+
         if(!isLinkageClosed) {
-            if(!isLinkageMotorRunning) {
-                intakeLinkage.setTargetPosition(LINKAGE_CLOSED_ROTATION_DEGREES);
-                intakeLinkage.setPower(1);
-                isLinkageMotorRunning = true;
-            } else if (!intakeLinkage.isBusy()) {
-                isLinkageClosed = true;
-                isLinkageMotorRunning = false;
-                intakeLinkage.setPower(0);
-            }
+            intakeLinkage.setTargetPosition(LINKAGE_CLOSED_ROTATION_DEGREES);
+            intakeLinkage.setPower(1);
+            isLinkageClosed = true;
+        } else if (!intakeLinkage.isBusy()) {
+            intakeLinkage.setPower(0);
         }
     }
 
