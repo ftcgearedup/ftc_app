@@ -130,13 +130,13 @@ public class AutonomousRedLeft extends LinearOpMode {
         // Lower Jewel Mechinism
         robot.getJewelKnocker().extendArm();
 
-        sleep(500);
+        sleep(1000);
 
         if (robot.getJewelKnocker().isJewelRed()) {
             telemetry.addData(">", "jewel is red");
             telemetry.update();
 
-            robot.getHDriveTrain().directionalDrive(180, 0.5, 2, false); //drive 4 inches right
+            robot.getHDriveTrain().directionalDrive(180, 0.3, 2, false); //drive 4 inches right
 
             robot.getJewelKnocker().retractArm();
 
@@ -146,19 +146,19 @@ public class AutonomousRedLeft extends LinearOpMode {
             telemetry.addData(">", "jewel is blue");
             telemetry.update();
 
-            robot.getHDriveTrain().directionalDrive(0, 0.5, 2, false); // drive 4 inches left
+            robot.getHDriveTrain().directionalDrive(0, 0.3, 2, false); // drive 4 inches left
 
             robot.getJewelKnocker().retractArm();
 
-            robot.getHDriveTrain().directionalDrive(180, 0.5, 20, false); //drive 4 inches right
+            robot.getHDriveTrain().directionalDrive(180, 0.3, 20, false); //drive 4 inches right
         }
 
         // gyro pivot to zero degree angle
         gyroPivotAlgorithm.pivot(0.5, 0, true, false);
 
-        robot.getHDriveTrain().directionalDrive(0, 0.5, 4, false);
+        robot.getHDriveTrain().directionalDrive(270, 0.3, 4, false); //drive 4 inches right
 
-//
+        robot.getHDriveTrain().directionalDrive(0, 0.5, 4, false);
 //
 ////        // pivot to face cryptobox
 ////        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
@@ -170,7 +170,7 @@ public class AutonomousRedLeft extends LinearOpMode {
         // drive right/left to face key column
         switch (scannedVuMark) {
             case CENTER:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 18, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 12, false);
 //                rightDistanceSensorDrive.driveToDistance(52, 0.5, false);
                 break;
             case LEFT:
@@ -180,9 +180,18 @@ public class AutonomousRedLeft extends LinearOpMode {
         }
 
         //        // pivot to face cryptobox
-        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
+        gyroPivotAlgorithm.pivot(0.3, 180, true, false);
+
+        robot.getGlyphLift().setLiftMotorPower(-0.2);
+        sleep(500);
+        robot.getGlyphLift().setLiftMotorPower(0.2);
 
         // drive into cryptobox
-        frontDistanceSensorDrive.driveToDistance(8, 0.5, false);
+        robot.getHDriveTrain().directionalDrive(270, 0.5, 10, false);
+        robot.getGlyphLift().openRedGripper();
+        robot.getHDriveTrain().directionalDrive(90, 0.5, 4, false);
+        robot.getHDriveTrain().directionalDrive(270, 0.5, 6, false);
+        robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+
     }
 }

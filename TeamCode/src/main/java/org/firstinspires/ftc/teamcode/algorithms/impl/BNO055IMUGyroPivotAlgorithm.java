@@ -27,7 +27,7 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
     private boolean absolute;
 
     private static final double GYRO_DEGREE_THRESHOLD = 0.5;
-    private static final double P_GYRO_TURN_COEFF = 0.01;
+    private static final double P_GYRO_TURN_COEFF = 0.02;
 
     /**
      * Create a new instance of this algorithm implementation that will use the specified robot.
@@ -70,7 +70,6 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
         double steer = Range.clip(relativeAngle * P_GYRO_TURN_COEFF , -1, 1);
         driveTrain.pivot(speed * steer);
 
-        opMode.telemetry.addData("targetAngle to target", relativeAngle);
         opMode.telemetry.addData("Z axis difference from targetAngle", relativeAngle);
         opMode.telemetry.update();
     }

@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * Created by ftc6347 on 1/9/17.
  */
 @Disabled
-@Autonomous(name = "Red Beacons Autonomous", group = "autonomous programs")
+@Autonomous(name = "Red Beacons AutonomousRedLeft", group = "autonomous programs")
 public class OldAutonomousBeaconsRed extends LinearOpModeBase {
 
     @Override
