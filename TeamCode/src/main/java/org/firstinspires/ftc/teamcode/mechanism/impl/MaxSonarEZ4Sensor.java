@@ -24,9 +24,10 @@ public class MaxSonarEZ4Sensor implements DistanceSensor {
     private static double MILLIVOLTS_PER_INCH = 3.1;
 
     /**
-     * Create a new
-     * @param robot
-     * @param hardwareMapName
+     * Creates a new MaxSonarEZ4Sensor instance.
+     *
+     * @param robot the robot
+     * @param hardwareMapName the name of the sensor in the hardware
      */
     public MaxSonarEZ4Sensor(Robot robot, String hardwareMapName) {
         HardwareMap hwMap = robot.getCurrentOpMode().hardwareMap;
@@ -40,7 +41,7 @@ public class MaxSonarEZ4Sensor implements DistanceSensor {
         // multiply by 1000 to convert to milli-volts
         double milliVolts = analogInput.getVoltage() * 1000;
 
-        // divide by the milli-volt difference per inch
+        // divide by the milli-volt difference per inch and round to the nearest tenth
         return unit.fromInches(milliVolts / MILLIVOLTS_PER_INCH);
     }
 

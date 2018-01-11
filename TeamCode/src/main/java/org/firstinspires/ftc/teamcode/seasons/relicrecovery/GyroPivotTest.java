@@ -21,13 +21,11 @@ public class GyroPivotTest extends LinearOpMode {
 
         bno055IMUWrapper.startIntegration();
 
-        while(!isStarted() && opModeIsActive()) {
+        while(!isStarted() && !opModeIsActive()) {
             telemetry.addData("heading", bno055IMUWrapper.getHeading());
             telemetry.update();
         }
 
-        waitForStart();
-
-        gyroPivotAlgorithm.pivot(0.5, 90, true, false);
+        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
     }
 }

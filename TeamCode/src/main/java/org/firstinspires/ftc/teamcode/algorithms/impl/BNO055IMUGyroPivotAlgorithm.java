@@ -26,7 +26,7 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
     private double speed;
     private boolean absolute;
 
-    private static final double GYRO_DEGREE_THRESHOLD = 1.0;
+    private static final double GYRO_DEGREE_THRESHOLD = 0.5;
     private static final double P_GYRO_TURN_COEFF = 0.01;
 
     /**

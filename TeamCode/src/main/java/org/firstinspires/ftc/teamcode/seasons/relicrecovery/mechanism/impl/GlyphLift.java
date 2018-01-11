@@ -22,7 +22,7 @@ public class GlyphLift implements IMechanism {
 
 
     private static final double ROTATION_MOTOR_POWER_AUTOMATIC = 0.8;
-    private static final double ROTATION_MOTOR_POWER_MANUAL = 0.4;
+    private static final double ROTATION_MOTOR_POWER_MANUAL = 0.6;
 
     private static final double ROTATION_MOTOR_GYRO_POWER = 0.8;
 
