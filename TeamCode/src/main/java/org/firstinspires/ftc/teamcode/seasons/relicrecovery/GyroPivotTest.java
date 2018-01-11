@@ -26,6 +26,6 @@ public class GyroPivotTest extends LinearOpMode {
             telemetry.update();
         }
 
-        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
+        gyroPivotAlgorithm.pivot(0.5, 0, true, false);
     }
 }

@@ -180,7 +180,7 @@ public class GlyphLift implements IMechanism {
      * Close the red gripper.
      */
     public void closeRedGripper() {
-        redLeftServo.setPosition(0.35);
+        redLeftServo.setPosition(0.45);
         redRightServo.setPosition(0.65);
     }
 

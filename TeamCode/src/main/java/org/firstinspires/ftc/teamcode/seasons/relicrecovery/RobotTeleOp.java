@@ -154,9 +154,9 @@ public class RobotTeleOp extends LinearOpMode {
             }
 
             // automatic lift rotation motor control
-            if(gamepad2.dpad_up) {
+            if(gamepad2.right_bumper) {
                 robot.getGlyphLift().setRotationMotorPosition(GlyphLift.RotationMotorPosition.UP);
-            } else if(gamepad2.dpad_down) {
+            } else if(gamepad2.left_bumper) {
                 robot.getGlyphLift().setRotationMotorPosition(GlyphLift.RotationMotorPosition.DOWN);
             } else if(gamepad2.dpad_left){
                 robot.getGlyphLift().setRotationMotorPower(0.5);
@@ -182,9 +182,9 @@ public class RobotTeleOp extends LinearOpMode {
             // control Extension
           //  robot.getRelicArm().setArmExtensionPower(Math.copySign(0.3, gamepad2.right_stick_x));
 
-            if(gamepad2.right_stick_x > 0.1){
+            if(gamepad2.b) {
                 robot.getRelicArm().setArmExtensionPower(0.3);
-            } else if (gamepad2.right_stick_x < -0.1){
+            } else if (gamepad2.x) {
                 robot.getRelicArm().setArmExtensionPower(-0.3);
             } else {
                 robot.getRelicArm().setArmExtensionPower(0);

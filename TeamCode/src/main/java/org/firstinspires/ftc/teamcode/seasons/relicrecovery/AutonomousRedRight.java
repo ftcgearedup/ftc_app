@@ -1,39 +1,21 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.Func;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.algorithms.impl.BNO055IMUGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.algorithms.impl.DistanceSensorDriveAlgorithm;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
-import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.VuMarkScanAlgorithm;
 
 
 /**
  * Created by Owner on 12/5/2017.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Red Left", group = "autonomous")
-public class AutonomousRedLeft extends LinearOpMode {
+@Autonomous(name = "Red Right", group = "autonomous")
+public class AutonomousRedRight extends LinearOpMode {
 
     private RelicRecoveryRobot robot;
     private VuMarkScanAlgorithm vuMarkScanAlgorithm;
@@ -80,6 +62,34 @@ public class AutonomousRedLeft extends LinearOpMode {
         robot.getIntake().raiseIntake();
         robot.getJewelKnocker().retractArm();
 
+        while (!isStarted() && !opModeIsActive()) {
+            if (gamepad1.left_trigger > 0) {
+                isStoneRed = true;
+            } else if (gamepad1.right_trigger > 0) {
+                isStoneRed = false;
+            }
+
+            if (gamepad1.right_bumper) {
+                isStoneRight = true;
+            } else if (gamepad1.left_bumper) {
+                isStoneRight = false;
+            }
+
+            if (isStoneRed) {
+                telemetry.addData("team", "Red Alliance Selected.");
+            } else {
+                telemetry.addData("team", "Blue Alliance Selected.");
+            }
+
+            if (isStoneRight) {
+                telemetry.addData("stone", "Right Stone Selected");
+            } else {
+                telemetry.addData("stone", "Left Stone Selected.");
+            }
+
+            telemetry.update();
+        }
+
         waitForStart();
 
         RelicRecoveryVuMark scannedVuMark = RelicRecoveryVuMark.CENTER;
@@ -119,16 +129,14 @@ public class AutonomousRedLeft extends LinearOpMode {
 
             robot.getJewelKnocker().retractArm();
 
-            robot.getHDriveTrain().directionalDrive(180, 0.3, 20, false); //drive 4 inches right
+            robot.getHDriveTrain().directionalDrive(180, 0.3, 22, false); //drive 4 inches right
         }
 
         // gyro pivot to zero degree angle
-        gyroPivotAlgorithm.pivot(0.5, 0, true, false);
+        gyroPivotAlgorithm.pivot(0.5, 270, true, false);
 
-        robot.getHDriveTrain().directionalDrive(270, 0.3, 4, false); //drive 4 inches right
+        robot.getHDriveTrain().directionalDrive(180, 0.5, 18, false); //drive 4 inches right
 
-        robot.getHDriveTrain().directionalDrive(0, 0.5, 4, false);
-//
 ////        // pivot to face cryptobox
 ////        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
 //
@@ -139,19 +147,15 @@ public class AutonomousRedLeft extends LinearOpMode {
         // drive right/left to face key column
         switch (scannedVuMark) {
             case CENTER:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 12, false);
-//                rightDistanceSensorDrive.driveToDistance(52, 0.5, false);
+                robot.getHDriveTrain().directionalDrive(0, 0.5, 30, false);
                 break;
             case LEFT:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 5, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 37, false);
                 break;
             case RIGHT:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 19, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 23, false);
                 break;
         }
-
-        //        // pivot to face cryptobox
-        gyroPivotAlgorithm.pivot(0.3, 180, true, false);
 
         robot.getGlyphLift().setLiftMotorPower(-0.2);
         sleep(500);
