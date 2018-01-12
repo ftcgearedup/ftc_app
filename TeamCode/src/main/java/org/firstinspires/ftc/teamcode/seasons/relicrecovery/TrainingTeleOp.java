@@ -16,6 +16,8 @@ public class TrainingTeleOp extends LinearOpMode {
 
     private DcMotor right;
     private DcMotor left;
+    private DcMotor head;
+
     @Override
     public void runOpMode() throws InterruptedException {
         //set deadzones
@@ -23,12 +25,13 @@ public class TrainingTeleOp extends LinearOpMode {
 
         //initiate motors
 
-      left = hardwareMap.dcMotor.get("l");
-      right = hardwareMap.dcMotor.get("r");
+        left = hardwareMap.dcMotor.get("l");
+        right = hardwareMap.dcMotor.get("r");
 
         waitForStart();
         double speedLeft;
         double speedRight;
+        double speedHead;
 
         while (opModeIsActive()) {
             speedLeft = gamepad1.left_stick_x;
@@ -37,7 +40,17 @@ public class TrainingTeleOp extends LinearOpMode {
             left.setPower(speedLeft);
             right.setPower(speedRight);
 
-        }
+            if (gamepad1.right_trigger > 0) {
+                speedHead = gamepad1.right_trigger;
+                head.setPower(speedHead);
+            } else if (gamepad1.left_trigger > 0) {
+                speedHead = gamepad1.left_trigger;
+                head.setPower(speedHead);
 
+            } else{
+                head.setPower(0.0);
+            }
+        }
     }
 }
+
