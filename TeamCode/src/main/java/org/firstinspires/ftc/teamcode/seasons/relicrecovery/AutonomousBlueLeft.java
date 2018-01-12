@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
@@ -49,24 +50,16 @@ public class AutonomousBlueLeft extends LinearOpMode {
         boolean isStoneRed = true;
         boolean isStoneRight = false;
 
-//        if(robot.balancingStoneSensor.red() > 0){
-//            isStoneRed = true;
-//            telemetry.addData(">", "Red stone detected.");
-//        } else {
-//            isStoneRed = false;
-//            telemetry.addData(">", "Blue stone detected.");
-//        }
-
         robot.getGlyphLift().initializeGrippers();
         robot.getIntake().raiseIntake();
         robot.getJewelKnocker().retractArm();
 
         waitForStart();
 
-        RelicRecoveryVuMark scannedVuMark = RelicRecoveryVuMark.CENTER;
+        RelicRecoveryVuMark scannedVuMark = vuMarkScanAlgorithm.detect();
 
         // decide which program to run
-        telemetry.addData(">", "Running Red Alliance Program.");
+        telemetry.addData("VuMark", scannedVuMark);
         telemetry.update();
 
         robot.getGlyphLift().closeRedGripper();
@@ -118,18 +111,29 @@ public class AutonomousBlueLeft extends LinearOpMode {
 //        robot.getHDriveTrain().directionalDrive(0, 0.5, 4, false);
 
         // drive right/left to face key column
-        switch (scannedVuMark) {
-            case CENTER:
-                robot.getHDriveTrain().directionalDrive(0, 0.5, 12, false);
-//                rightDistanceSensorDrive.driveToDistance(52, 0.5, false);
-                break;
-            case LEFT:
-                robot.getHDriveTrain().directionalDrive(0, 0.5, 5, false);
-                break;
-            case RIGHT:
-                robot.getHDriveTrain().directionalDrive(0, 0.5, 19, false);
-                break;
-        }
+
+        ElapsedTime driveTimer = new ElapsedTime();
+
+        do {
+
+            if(driveTimer.milliseconds() > 1000) {
+                robot.getHDriveTrain().stopDriveMotors();
+            }
+
+            switch (scannedVuMark) {
+                case UNKNOWN:
+                case CENTER:
+                    robot.getHDriveTrain().directionalDrive(0, 0.5, 12, true);
+                    break;
+                case LEFT:
+                    robot.getHDriveTrain().directionalDrive(0, 0.5, 5, true);
+                    break;
+                case RIGHT:
+                    robot.getHDriveTrain().directionalDrive(0, 0.5, 19, true);
+                    break;
+            }
+
+        } while(robot.getHDriveTrain().isDriveTrainBusy());
 
         //        // pivot to face cryptobox
         gyroPivotAlgorithm.pivot(0.3, 180, true, false);

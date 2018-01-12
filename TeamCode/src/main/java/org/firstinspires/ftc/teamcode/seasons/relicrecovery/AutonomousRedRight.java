@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
@@ -92,10 +93,10 @@ public class AutonomousRedRight extends LinearOpMode {
 
         waitForStart();
 
-        RelicRecoveryVuMark scannedVuMark = RelicRecoveryVuMark.CENTER;
+        RelicRecoveryVuMark scannedVuMark = vuMarkScanAlgorithm.detect();
 
         // decide which program to run
-        telemetry.addData(">", "Running Red Alliance Program.");
+        telemetry.addData("VuMark", scannedVuMark);
         telemetry.update();
 
         robot.getGlyphLift().closeRedGripper();
@@ -144,8 +145,11 @@ public class AutonomousRedRight extends LinearOpMode {
 //
 //        robot.getHDriveTrain().directionalDrive(0, 0.5, 4, false);
 
-        // drive right/left to face key column
+            // drive right/left to face key column
+        ElapsedTime driveTimer = new ElapsedTime();
+
         switch (scannedVuMark) {
+            case UNKNOWN:
             case CENTER:
                 robot.getHDriveTrain().directionalDrive(0, 0.5, 30, false);
                 break;
@@ -162,10 +166,20 @@ public class AutonomousRedRight extends LinearOpMode {
         robot.getGlyphLift().setLiftMotorPower(0.2);
 
         // drive into cryptobox
-        robot.getHDriveTrain().directionalDrive(270, 0.5, 10, false);
+        while(driveTimer.milliseconds() < 1000) {
+            robot.getHDriveTrain().drive(0, -0.5);
+        }
+        robot.getHDriveTrain().stopDriveMotors();
+
         robot.getGlyphLift().openRedGripper();
         robot.getHDriveTrain().directionalDrive(90, 0.5, 4, false);
-        robot.getHDriveTrain().directionalDrive(270, 0.5, 6, false);
+
+        // drive into cryptobox
+        while(driveTimer.milliseconds() < 1000) {
+            robot.getHDriveTrain().drive(0, -0.5);
+        }
+        robot.getHDriveTrain().stopDriveMotors();
+
         robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
 
     }

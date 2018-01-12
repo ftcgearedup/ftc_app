@@ -92,10 +92,10 @@ public class AutonomousBlueRight extends LinearOpMode {
 
         waitForStart();
 
-        RelicRecoveryVuMark scannedVuMark = RelicRecoveryVuMark.CENTER;
+        RelicRecoveryVuMark scannedVuMark = vuMarkScanAlgorithm.detect();
 
         // decide which program to run
-        telemetry.addData(">", "Running Red Alliance Program.");
+        telemetry.addData("VuMark", scannedVuMark);
         telemetry.update();
 
         robot.getGlyphLift().closeRedGripper();
@@ -146,6 +146,7 @@ public class AutonomousBlueRight extends LinearOpMode {
 
         // drive right/left to face key column
         switch (scannedVuMark) {
+            case UNKNOWN:
             case CENTER:
                 robot.getHDriveTrain().directionalDrive(180, 0.5, 30, false);
                 break;

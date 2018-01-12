@@ -30,7 +30,12 @@ public class GyroDriveTest extends LinearOpMode {
 
         waitForStart();
 
+        gyroPivotAlgorithm.pivot(0.4, 90, true, false);
+
+        sleep(1000);
+
         gyroPivotAlgorithm.pivot(0.4, 180, true, false);
+
 
 //        do {
 //            robot.getHDriveTrain().directionalDrive(270, 0.5, 24, true);

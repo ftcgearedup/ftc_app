@@ -56,22 +56,23 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
     }
 
     private double getRelativeAngle(double targetAngle, boolean absolute) {
-        double diff = targetAngle - imu.getHeading();
+        double heading = imu.getHeading();
 
-        if(diff < 0) {
-            diff += 360;
+        if(heading < targetAngle) heading += 360;
+        double left = heading - targetAngle;
+
+        if(left < 180) {
+            return -left;
+        } else {
+            return 360 - left;
         }
 
-        if(diff > 180) {
-            diff = -diff;
-        }
-
-        // compensate from robot's targetAngle to the zero degree
-        if(!absolute) {
-            diff -= getRelativeAngle(0, false);
-        }
-
-        return diff;
+//        // compensate from robot's targetAngle to the zero degree
+//        if(!absolute) {
+//            diff -= getRelativeAngle(0, false);
+//        }
+//
+//        return diff;
     }
 
     private void executionLoop() {
