@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.hardware.Gamepad;
  *
  * Created by daniel on 11/12/17.
  */
-@Disabled
-@TeleOp(name = "Teleopp", group = "teleop")
-public class TrainingTeleOp extends LinearOpMode {
+
+@TeleOp(name = "Promote Video TeleOp", group = "Promote")
+public class PromoteVideoTeleOp extends LinearOpMode {
 
     private DcMotor right;
     private DcMotor left;
@@ -26,7 +26,11 @@ public class TrainingTeleOp extends LinearOpMode {
         //initiate motors
 
         left = hardwareMap.dcMotor.get("l");
+        left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right = hardwareMap.dcMotor.get("r");
+        right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        head = hardwareMap.dcMotor.get("h");
+        head.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
         double speedLeft;
@@ -34,19 +38,18 @@ public class TrainingTeleOp extends LinearOpMode {
         double speedHead;
 
         while (opModeIsActive()) {
-            speedLeft = gamepad1.left_stick_x;
-            speedRight = gamepad1.right_stick_x;
+            speedLeft = gamepad1.left_stick_y;
+            speedRight = -gamepad1.right_stick_y;
 
             left.setPower(speedLeft);
             right.setPower(speedRight);
 
-            if (gamepad1.right_trigger > 0) {
-                speedHead = gamepad1.right_trigger;
+            if (gamepad1.right_bumper) {
+                speedHead = 0.3;
                 head.setPower(speedHead);
-            } else if (gamepad1.left_trigger > 0) {
-                speedHead = gamepad1.left_trigger;
+            } else if (gamepad1.left_bumper) {
+                speedHead = -0.3;
                 head.setPower(speedHead);
-
             } else{
                 head.setPower(0.0);
             }
