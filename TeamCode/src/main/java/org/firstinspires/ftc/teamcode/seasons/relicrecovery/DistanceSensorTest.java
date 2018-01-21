@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.algorithms.impl.DistanceSensorDriveAlgorit
  * Created by ftc6347 on 1/7/18.
  */
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Distance Sensor Test")
+@Disabled
 public class DistanceSensorTest extends LinearOpMode {
     private RelicRecoveryRobot robot;
     private DistanceSensorDriveAlgorithm distanceSensorDriveAlgorithm;

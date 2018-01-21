@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
@@ -11,6 +12,7 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
  * Created by ftc6347 on 12/19/17.
  */
 @Autonomous(name = "Vision Test")
+@Disabled
 public class VisionTest extends LinearOpMode {
     private RelicRecoveryRobot robot;
     private IGyroPivotAlgorithm gyroPivotAlgorithm;

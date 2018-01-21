@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.utils;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robot;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.RelicRecoveryRobot;
  */
 
 @Autonomous(name = "Gyro Drive Test")
+@Disabled
 public class GyroDriveTest extends LinearOpMode {
     private RelicRecoveryRobot robot;
     private IGyroPivotAlgorithm gyroPivotAlgorithm;

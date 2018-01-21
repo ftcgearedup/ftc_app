@@ -69,6 +69,9 @@ public class AutonomousRedLeft extends LinearOpMode {
         boolean isStoneRed = true;
         boolean isStoneRight = false;
 
+
+        ElapsedTime driveTimer = new ElapsedTime();
+
 //        if(robot.balancingStoneSensor.red() > 0){
 //            isStoneRed = true;
 //            telemetry.addData(">", "Red stone detected.");
@@ -83,9 +86,21 @@ public class AutonomousRedLeft extends LinearOpMode {
 
         waitForStart();
 
-        RelicRecoveryVuMark scannedVuMark = vuMarkScanAlgorithm.detect();
+        RelicRecoveryVuMark scannedVuMark = RelicRecoveryVuMark.CENTER;
 
-        // decide which program to run
+        vuMarkScanAlgorithm.activate();
+
+        driveTimer.reset();
+        while (driveTimer.milliseconds() < 1000) {
+            scannedVuMark = vuMarkScanAlgorithm.detect();
+        }
+
+        if(scannedVuMark == RelicRecoveryVuMark.UNKNOWN) {
+            scannedVuMark = RelicRecoveryVuMark.CENTER;
+        }
+
+        vuMarkScanAlgorithm.deactivate();
+
         telemetry.addData("VuMark", scannedVuMark);
         telemetry.update();
 
@@ -106,30 +121,37 @@ public class AutonomousRedLeft extends LinearOpMode {
             telemetry.addData(">", "jewel is red");
             telemetry.update();
 
-            robot.getHDriveTrain().directionalDrive(180, 0.3, 2, false); //drive 4 inches right
+            robot.getHDriveTrain().directionalDrive(180, 0.5, 2, false); //drive 4 inches right
 
             robot.getJewelKnocker().retractArm();
 
-            robot.getHDriveTrain().directionalDrive(180, 0.5, 16, false); //drive 4 inches right
+            robot.getHDriveTrain().directionalDrive(180, 1.0, 18, false); //drive 4 inches right
             sleep(500);
         } else if (robot.getJewelKnocker().isJewelBlue()) {
             telemetry.addData(">", "jewel is blue");
             telemetry.update();
 
-            robot.getHDriveTrain().directionalDrive(0, 0.3, 2, false); // drive 4 inches left
+            robot.getHDriveTrain().directionalDrive(0, 0.5, 2, false); // drive 4 inches left
 
             robot.getJewelKnocker().retractArm();
 
-            robot.getHDriveTrain().directionalDrive(180, 0.3, 20, false); //drive 4 inches right
+            robot.getHDriveTrain().directionalDrive(180, 1.0, 22, false); //drive 4 inches right
         }
 
         // gyro pivot to zero degree angle
         gyroPivotAlgorithm.pivot(0.5, 0, true, false);
 
+        // drive forward before driving into balancing stone
         robot.getHDriveTrain().directionalDrive(270, 0.3, 4, false); //drive 4 inches right
 
-        robot.getHDriveTrain().directionalDrive(0, 0.5, 4, false);
-//
+        driveTimer.reset();
+
+        // drive of balancing stone
+        while(driveTimer.milliseconds() < 1000) {
+            robot.getHDriveTrain().drive(0.5, 0.0);
+        }
+        robot.getHDriveTrain().stopDriveMotors();
+
 ////        // pivot to face cryptobox
 ////        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
 //
@@ -141,25 +163,25 @@ public class AutonomousRedLeft extends LinearOpMode {
         switch (scannedVuMark) {
             case UNKNOWN:
             case CENTER:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 12, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 16, false);
 //                rightDistanceSensorDrive.driveToDistance(52, 0.5, false);
                 break;
             case LEFT:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 5, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 23, false);
                 break;
             case RIGHT:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 19, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 9, false);
                 break;
         }
 
-        //        // pivot to face cryptobox
+        // pivot to face cryptobox
         gyroPivotAlgorithm.pivot(0.3, 180, true, false);
 
         robot.getGlyphLift().setLiftMotorPower(-0.2);
-        sleep(500);
+        sleep(750);
         robot.getGlyphLift().setLiftMotorPower(0.2);
 
-        ElapsedTime driveTimer = new ElapsedTime();
+        driveTimer.reset();
 
         // drive into cryptobox
         while(driveTimer.milliseconds() < 1000) {
@@ -169,6 +191,8 @@ public class AutonomousRedLeft extends LinearOpMode {
 
         robot.getGlyphLift().openRedGripper();
         robot.getHDriveTrain().directionalDrive(90, 0.5, 4, false);
+
+        driveTimer.reset();
 
         // drive into cryptobox
         while(driveTimer.milliseconds() < 1000) {
