@@ -40,7 +40,6 @@ public class HDriveTrain implements IDirectionalDriveTrain {
      * {@link HDriveTrain} objects with differing gearing ratios and motor directions.
      */
     public static class Builder {
-        private Robot robot;
         private HDriveTrain hDriveTrain;
 
         /**
@@ -50,16 +49,7 @@ public class HDriveTrain implements IDirectionalDriveTrain {
          *              instance returned by calling {@link #build()}.
          */
         public Builder(Robot robot) {
-            this.robot = robot;
             this.hDriveTrain = new HDriveTrain(robot);
-        }
-
-        private void updateCountsPerInch() {
-            hDriveTrain.lateralCountsPerInch = (hDriveTrain.leftDrive.getMotorType().getTicksPerRev() /
-                    (hDriveTrain.wheelDiameterInches * Math.PI)) / hDriveTrain.outsideWheelGearing;
-
-            hDriveTrain.axialCountsPerInch = hDriveTrain.middleDrive.getMotorType().getTicksPerRev() /
-                    (hDriveTrain.wheelDiameterInches * Math.PI) / hDriveTrain.insideWheelGearing;
         }
 
         /**
@@ -81,7 +71,6 @@ public class HDriveTrain implements IDirectionalDriveTrain {
          */
         public Builder setInsideWheelGearingRatio(double insideWheelGearing) {
             hDriveTrain.insideWheelGearing = insideWheelGearing;
-            updateCountsPerInch();
             return this;
         }
 
@@ -95,7 +84,6 @@ public class HDriveTrain implements IDirectionalDriveTrain {
          */
         public Builder setOutsideWheelGearingRatio(double outSideWheelGearing) {
             hDriveTrain.outsideWheelGearing = outSideWheelGearing;
-            updateCountsPerInch();
             return this;
         }
 
@@ -108,7 +96,6 @@ public class HDriveTrain implements IDirectionalDriveTrain {
          */
         public Builder setWheelDiameterInches(double wheelDiameterInches) {
             hDriveTrain.wheelDiameterInches = wheelDiameterInches;
-            updateCountsPerInch();
             return this;
         }
 
@@ -178,10 +165,10 @@ public class HDriveTrain implements IDirectionalDriveTrain {
 
     @Override
     public void pivot(double pivotSpeed) {
-        this.currentPivot = pivotSpeed;
+        this.currentPivot = -pivotSpeed;
 
-        leftDrive.setPower(this.currentSpeedY + pivotSpeed);
-        rightDrive.setPower(this.currentSpeedY - pivotSpeed);
+        leftDrive.setPower(this.currentSpeedY - pivotSpeed);
+        rightDrive.setPower(this.currentSpeedY + pivotSpeed);
     }
 
     @Override
@@ -199,25 +186,28 @@ public class HDriveTrain implements IDirectionalDriveTrain {
         this.mode = runMode;
     }
 
+    private double getCountsPerInch(DcMotor motor, double gearing) {
+        return (motor.getMotorType().getTicksPerRev() / (wheelDiameterInches * Math.PI)) / gearing;
+    }
+
     private void setDirectionalTargetPosition(double angleDegrees, double speed, int targetDistance) {
-        double encoderTargetCountsLateral = lateralCountsPerInch * targetDistance;
-        double encoderTargetCountsAxial = axialCountsPerInch * targetDistance;
-
         double angleRadians = Math.toRadians(angleDegrees);
-        int lateralCounts = (int)(encoderTargetCountsLateral * Math.sin(angleRadians));
-        int axialCounts = (int)(encoderTargetCountsAxial * Math.cos(angleRadians));
 
-        opMode.telemetry.addData("lateral counts", lateralCounts);
-        opMode.telemetry.addData("axial counts", axialCounts);
-        opMode.telemetry.update();
+        double lateralDistance = targetDistance * Math.sin(angleRadians);
+        double axialDistance = targetDistance * Math.cos(angleRadians);
 
         setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftDrive.setTargetPosition(lateralCounts);
-        rightDrive.setTargetPosition(lateralCounts);
+        leftDrive.setTargetPosition((int)(lateralDistance * getCountsPerInch(leftDrive, outsideWheelGearing)));
+        rightDrive.setTargetPosition((int)(lateralDistance * getCountsPerInch(rightDrive, outsideWheelGearing)));
 
-        middleDrive.setTargetPosition(axialCounts);
+        middleDrive.setTargetPosition((int)(axialDistance * getCountsPerInch(middleDrive, insideWheelGearing)));
+
+        opMode.telemetry.addData("left drive target", leftDrive.getTargetPosition());
+        opMode.telemetry.addData("right drive target", rightDrive.getTargetPosition());
+        opMode.telemetry.addData("middle drive target", middleDrive.getTargetPosition());
+        opMode.telemetry.update();
 
         // set motor powers
         leftDrive.setPower(Range.clip(speed * insideWheelGearing, -1, 1));
@@ -263,11 +253,11 @@ public class HDriveTrain implements IDirectionalDriveTrain {
 
     @Override
     public void drive(double speedX, double speedY) {
-        this.currentSpeedY = speedY;
+        this.currentSpeedY = -speedY;
 
-        leftDrive.setPower(this.currentPivot + speedY);
-        rightDrive.setPower(-this.currentPivot + speedY);
+        leftDrive.setPower(this.currentPivot - speedY);
+        rightDrive.setPower(-this.currentPivot - speedY);
 
-        middleDrive.setPower(speedX);
+        middleDrive.setPower(-speedX);
     }
 }
