@@ -94,9 +94,9 @@ public class RobotTeleOp extends LinearOpMode {
         double liftRotationMotorPower = 0;
 
         while (opModeIsActive()) {
-            speedX = -gamepad1.right_stick_x;
-            speedY = gamepad1.right_stick_y;
-            pivot = -gamepad1.left_stick_x;
+            speedX = gamepad1.right_stick_x;
+            speedY = -gamepad1.right_stick_y;
+            pivot = gamepad1.left_stick_x;
 
             liftMotorPower = -gamepad2.left_stick_y;
 

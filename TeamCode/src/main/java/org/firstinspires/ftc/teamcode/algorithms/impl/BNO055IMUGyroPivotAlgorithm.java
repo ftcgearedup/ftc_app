@@ -22,12 +22,16 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
     private OpMode opMode;
 
     private double targetAngle;
-    private double relativeAngle;
-    private double speed;
+    private double error;
+    private double desiredSpeed;
+    private double actualSpeed;
     private boolean absolute;
 
     private static final double GYRO_DEGREE_THRESHOLD = 0.5;
-    private static final double P_GYRO_TURN_COEFF = 0.02;
+
+    private static final double P_COEFF = 0.02;
+    private static final double I_COEFF = 1.0;
+    private static final double D_COEFF = 0;
 
     /**
      * Create a new instance of this algorithm implementation that will use the specified robot.
@@ -44,7 +48,7 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
 
     @Override
     public void pivot(double speed, double angle, boolean absolute, boolean nonBlocking) {
-        this.speed = speed;
+        this.desiredSpeed = speed;
         this.targetAngle = angle;
         this.absolute = absolute;
 
@@ -55,7 +59,7 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
         }
     }
 
-    private double getRelativeAngle(double targetAngle, boolean absolute) {
+    private double getError(double targetAngle, boolean absolute) {
         double heading = imu.getHeading();
 
         if(heading < targetAngle) heading += 360;
@@ -67,36 +71,50 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
             return 360 - left;
         }
 
-//        // compensate from robot's targetAngle to the zero degree
-//        if(!absolute) {
-//            diff -= getRelativeAngle(0, false);
-//        }
-//
-//        return diff;
+        // compensate from robot's targetAngle to the zero degree
+        // if(!absolute) {
+        //    diff -= getError(0, false);
+        // }
     }
 
     private void executionLoop() {
-        double steer = Range.clip(relativeAngle * P_GYRO_TURN_COEFF , -1, 1);
-        driveTrain.pivot(speed * steer);
+        double integral = 0;
+        double derivative;
+        double timeDelta;
 
-        opMode.telemetry.addData("Z axis difference from targetAngle", relativeAngle);
+        double previousTime = 0;
+        double previousError = 0;
+
+        timeDelta = System.nanoTime() - previousTime;
+        integral += error * timeDelta;
+        derivative = (error - previousError) / timeDelta;
+
+        double steer = Range.clip(actualSpeed, -1, 1);
+
+        actualSpeed = (error * P_COEFF) + (integral * I_COEFF) + (derivative * D_COEFF);
+
+        driveTrain.pivot(desiredSpeed * steer);
+
+        opMode.telemetry.addData("Z axis difference from targetAngle", error);
         opMode.telemetry.update();
     }
 
     private void pivotBlocking() {
         LinearOpMode linearOpMode = (LinearOpMode)opMode;
+
         do {
-            relativeAngle = getRelativeAngle(targetAngle, absolute);
+            error = getError(targetAngle, absolute);
+
             executionLoop();
-        } while(linearOpMode.opModeIsActive() && Math.abs(relativeAngle) > GYRO_DEGREE_THRESHOLD);
+        } while(linearOpMode.opModeIsActive() && Math.abs(error) > GYRO_DEGREE_THRESHOLD);
 
         // when we're on target, stop the robot
         driveTrain.stopDriveMotors();
     }
 
     private void pivotNonBlocking() {
-        relativeAngle = getRelativeAngle(targetAngle, absolute);
-        if(Math.abs(relativeAngle) > GYRO_DEGREE_THRESHOLD) {
+        error = getError(targetAngle, absolute);
+        if(Math.abs(error) > GYRO_DEGREE_THRESHOLD) {
             executionLoop();
         }
     }
