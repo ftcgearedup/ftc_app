@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.Intak
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.JewelKnocker;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,8 +27,7 @@ public class RelicRecoveryRobot extends Robot {
     private final Intake intake;
     private final JewelKnocker jewelKnocker;
 
-    private final JSONParser parser;
-    private final Map<String, JsonPrimitive> optionsMap;
+    private final JSONConfigOptions optionsMap;
 
     /**
      * Construct a new Relic Recovery robot, with an op-mode that is using this robot.
@@ -39,15 +37,15 @@ public class RelicRecoveryRobot extends Robot {
     public RelicRecoveryRobot(OpMode opMode) {
         super(opMode);
 
-        this.parser = new JSONParser();
+        this.optionsMap = new JSONConfigOptions();
 
-        this.optionsMap = parser.parseFile(new File(AppUtil.FIRST_FOLDER + "/options.json"));
+        optionsMap.parseFile(new File(AppUtil.FIRST_FOLDER + "/options.json"));
 
         this.hDriveTrain = new HDriveTrain.Builder(this)
                 .setRightMotorDirection(DcMotorSimple.Direction.REVERSE)
-                .setWheelDiameterInches( ( (JsonPrimitive) getOptionsMap().get("wheelDiam") ).getAsDouble() )
-                .setInsideWheelGearingRatio( ( (JsonPrimitive) getOptionsMap().get("wheelRatIn") ).getAsDouble())
-                .setOutsideWheelGearingRatio( ( (JsonPrimitive) getOptionsMap().get("wheelRatOut") ).getAsDouble())
+                .setWheelDiameterInches(optionsMap.retrieveData("wheelDiameter").getAsDouble())
+                .setInsideWheelGearingRatio((optionsMap.retrieveData("wheelGearRatioIn")).getAsDouble())
+                .setOutsideWheelGearingRatio((optionsMap.retrieveData("wheelGearRatioOut")).getAsDouble())
                 .build();
 
         this.glyphLift = new GlyphLift(this);
@@ -79,7 +77,7 @@ public class RelicRecoveryRobot extends Robot {
         return jewelKnocker;
     }
 
-    public Map<String, JsonPrimitive> getOptionsMap() {
+    public JSONConfigOptions getOptionsMap() {
         return optionsMap;
     }
 

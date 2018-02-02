@@ -1,16 +1,13 @@
 {
-  "wheelDiam" : 4,
+  "wheelDiameter" : 4,
 
-  "wheelRatIn" : 1.0,
-  "wheelRatOut" : 1.5,
+  "wheelGearRatioIn" : 1.0,
+  "wheelGearRatioOut" : 1.5,
 
-  "jewelKnockerRetract" : 0.2,
-  "jewelKnockerExtend" : 1.0,
+  "jewelKnockerRetractPosition" : 0.2,
+  "jewelKnockerExtendPosition" : 1.0,
 
-  "relicGripOpen" : 0,
-  "relicGripClose" : 1,
-
-  "hDrivePowerMin" : -1,
-  "hDrivePowerMax" : 1
+  "relicGripOpenPosition" : 0,
+  "relicGripClosePosition" : 1
 
 }

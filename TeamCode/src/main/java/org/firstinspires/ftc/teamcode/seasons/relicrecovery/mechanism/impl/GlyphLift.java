@@ -1,21 +1,12 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 
-import com.google.gson.JsonPrimitive;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
-import org.firstinspires.ftc.teamcode.seasons.relicrecovery.JSONParser;
-import org.firstinspires.ftc.teamcode.seasons.relicrecovery.RelicRecoveryRobot;
-
-import java.io.File;
-import java.util.Map;
 
 /**
  * The glyph lift mechanism collects glyphs with two grippers and is able to place them in the cryptobox.
