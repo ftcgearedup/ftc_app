@@ -24,8 +24,11 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
     private double targetAngle;
     private double error;
     private double desiredSpeed;
-    private double actualSpeed;
     private boolean absolute;
+
+    double previousTime = 0;
+    double previousError = 0;
+    double integral = 0;
 
     private static final double GYRO_DEGREE_THRESHOLD = 0.5;
 
@@ -78,22 +81,19 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
     }
 
     private void executionLoop() {
-        double integral = 0;
         double derivative;
         double timeDelta;
-
-        double previousTime = 0;
-        double previousError = 0;
+        double actualSpeed;
 
         timeDelta = System.nanoTime() - previousTime;
+        previousTime = System.nanoTime();
+
         integral += error * timeDelta;
         derivative = (error - previousError) / timeDelta;
 
-        double steer = Range.clip(actualSpeed, -1, 1);
+        actualSpeed = (P_COEFF * error) + (I_COEFF * integral) + (D_COEFF * derivative);
 
-        actualSpeed = (error * P_COEFF) + (integral * I_COEFF) + (derivative * D_COEFF);
-
-        driveTrain.pivot(desiredSpeed * steer);
+        driveTrain.pivot(desiredSpeed * Range.clip(actualSpeed, -1, 1));
 
         opMode.telemetry.addData("Z axis difference from targetAngle", error);
         opMode.telemetry.update();
