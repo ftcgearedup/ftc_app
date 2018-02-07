@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.utils.TeamLog;
 public class TeamLogTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        TeamLog addToLog = new TeamLog();
-        addToLog.appendLog("Hello World!");
+        TeamLog addToLog = new TeamLog("sdcard/log.file");
+        addToLog.appendLog("Hello World!", "EXTRA" );
     }
 }

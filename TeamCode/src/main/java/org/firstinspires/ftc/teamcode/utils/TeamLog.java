@@ -18,15 +18,18 @@ import java.util.Date;
  */
 
 public class TeamLog {
-    File logFile = new File("sdcard/log.file");
-    public void appendLog(String text, String fileName, String tag) {
-        File logFile = new File(fileName);
-        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-        if (!logFile.exists())
+    private File file;
+    public TeamLog(String fileName){
+        this.file = new File(fileName);
+    }
+
+    public void appendLog(String text, String tag) {
+        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SS").format(new Date());
+        if (!file.exists())
         {
             try
             {
-                logFile.createNewFile();
+                file.createNewFile();
             }
             catch (IOException e)
             {
@@ -37,7 +40,7 @@ public class TeamLog {
         try
         {
             //BufferedWriter for performance, true to set append to file flag
-            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+            BufferedWriter buf = new BufferedWriter(new FileWriter(file, true));
             buf.append(timeStamp);
             buf.append(": ");
             buf.append(tag);
@@ -58,7 +61,7 @@ public class TeamLog {
     public void clearLog(){
         PrintWriter writer = null;
         try {
-            writer = new PrintWriter(logFile);
+            writer = new PrintWriter(file);
             writer.print("");
             writer.close();
         } catch (FileNotFoundException e) {
