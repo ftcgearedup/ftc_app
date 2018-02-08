@@ -21,6 +21,7 @@ import java.util.Date;
 
 public class TeamLog {
     private File file;
+
     public TeamLog(String fileName){
         this.file = new File(fileName);
     }
@@ -61,9 +62,10 @@ public class TeamLog {
         }
 
     }
+
     /**
      *  clear the file
-       **/
+     **/
     public void clearLog(){
         PrintWriter writer = null;
         try {
