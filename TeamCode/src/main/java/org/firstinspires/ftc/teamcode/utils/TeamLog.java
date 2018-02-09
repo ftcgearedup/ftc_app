@@ -21,30 +21,28 @@ import java.util.Date;
 
 public class TeamLog {
     private File file;
+    private static final String LOG_TAG = "TEAMLOG";
 
-    public TeamLog(String fileName){
+    public TeamLog(String fileName) {
         this.file = new File(fileName);
     }
 
     /**
+     * This method appends the log. It adds the date, and time, ass well as the log tag and message.
+     *
      * @param text the text that you want the log message displays.
-     * @param tag the tag is attacjhed to the log message and is used to filter log messages by type.
+     * @param tag  the tag is attacjhed to the log message and is used to filter log messages by type.
      */
-    public void appendLog(String text, String tag) {
-        String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SS").format(new Date());
-        if (!file.exists())
-        {
-            try
-            {
+    public void appendLog(String text, String tag, String dateFormat) {
+        String timeStamp = new SimpleDateFormat(dateFormat).format(new Date());
+        if (!file.exists()) {
+            try {
                 file.createNewFile();
-            }
-            catch (IOException e)
-            {
-                Log.e( "TEAMLOG", Log.getStackTraceString(e));
+            } catch (IOException e) {
+                Log.e(LOG_TAG, Log.getStackTraceString(e));
             }
         }
-        try
-        {
+        try {
             //BufferedWriter for performance, true to set append to file flag
             BufferedWriter buf = new BufferedWriter(new FileWriter(file, true));
             buf.append(timeStamp);
@@ -55,18 +53,16 @@ public class TeamLog {
             buf.newLine();
             buf.flush();
             buf.close();
-        }
-        catch (IOException e)
-        {
-            Log.e("TEAMLOG", Log.getStackTraceString(e));
+        } catch (IOException e) {
+            Log.e(LOG_TAG, Log.getStackTraceString(e));
         }
 
     }
 
     /**
-     *  clear the file
+     * clear the file
      **/
-    public void clearLog(){
+    public void clearLog() {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(file);
