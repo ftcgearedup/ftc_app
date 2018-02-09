@@ -22,19 +22,36 @@ import java.util.Date;
 public class TeamLog {
     private File file;
     private static final String LOG_TAG = "TEAMLOG";
+    private static final String FORMAT = "yyyy.MM.dd.HH.mm.ss.SS";
 
     public TeamLog(String fileName) {
         this.file = new File(fileName);
     }
 
+    public TeamLog(File file) {
+        this.file = file;
+    }
+
     /**
-     * This method appends the log. It adds the date, and time, ass well as the log tag and message.
+     * This method appends the log. It adds the date, and time, aus well as the log tag and message.
      *
      * @param text the text that you want the log message displays.
-     * @param tag  the tag is attacjhed to the log message and is used to filter log messages by type.
+     * @param tag  the tag is attached to the log message and is used to filter log messages by type.
      */
-    public void appendLog(String text, String tag, String dateFormat) {
-        String timeStamp = new SimpleDateFormat(dateFormat).format(new Date());
+    public void appendLog(String text, String tag) {
+      appendLog(text,tag,new SimpleDateFormat(FORMAT));
+
+    }
+
+    /**
+     * This method appends the log. It adds the date, and time, aus well as the log tag and message.
+     *
+     * @param text the text that you want the log message displays.
+     * @param tag the tag is attached to the log message and is used to filter log messages by type.
+     * @param format this allows you to chose the format for the date that you wish to call display.
+     */
+    public void appendLog(String text, String tag, SimpleDateFormat format) {
+        String timeStamp = format.format(new Date());
         if (!file.exists()) {
             try {
                 file.createNewFile();
