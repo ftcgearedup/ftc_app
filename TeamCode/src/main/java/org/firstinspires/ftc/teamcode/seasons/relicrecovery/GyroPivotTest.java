@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -9,7 +8,6 @@ import org.firstinspires.ftc.teamcode.algorithms.impl.BNO055IMUGyroPivotAlgorith
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 
 @TeleOp(name = "Gyro Pivot Test", group = "testing")
-@Disabled
 public class GyroPivotTest extends LinearOpMode {
     private RelicRecoveryRobot robot;
     private IGyroPivotAlgorithm gyroPivotAlgorithm;
@@ -28,6 +26,6 @@ public class GyroPivotTest extends LinearOpMode {
             telemetry.update();
         }
 
-        gyroPivotAlgorithm.pivot(0.5, 0, true, false);
+        gyroPivotAlgorithm.pivot(0.5, 90, true, false);
     }
 }

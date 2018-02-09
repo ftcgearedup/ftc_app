@@ -30,10 +30,10 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
     double previousError = 0;
     double integral = 0;
 
-    private static final double GYRO_DEGREE_THRESHOLD = 0.5;
+    private static final double GYRO_DEGREE_THRESHOLD = 2.0;
 
-    private static final double P_COEFF = 0.02;
-    private static final double I_COEFF = 1.0;
+    private static final double P_COEFF = 0.001;
+    private static final double I_COEFF = 0.000000000001;
     private static final double D_COEFF = 0;
 
     /**
@@ -54,6 +54,11 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
         this.desiredSpeed = speed;
         this.targetAngle = angle;
         this.absolute = absolute;
+
+        // reset instance variables
+        this.previousTime = 0;
+        this.previousError = 0;
+        this.integral = 0;
 
         if(nonBlocking || !(opMode instanceof LinearOpMode)) {
             pivotNonBlocking();
@@ -84,11 +89,14 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
         double derivative;
         double timeDelta;
         double actualSpeed;
+        double currentTime;
 
-        timeDelta = System.nanoTime() - previousTime;
-        previousTime = System.nanoTime();
+        currentTime = Math.abs(System.nanoTime());
 
-        integral += error * timeDelta;
+        timeDelta = currentTime - previousTime;
+        previousTime = currentTime;
+
+        integral += (error * timeDelta);
         derivative = (error - previousError) / timeDelta;
 
         actualSpeed = (P_COEFF * error) + (I_COEFF * integral) + (D_COEFF * derivative);
@@ -96,6 +104,7 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
         driveTrain.pivot(desiredSpeed * Range.clip(actualSpeed, -1, 1));
 
         opMode.telemetry.addData("Z axis difference from targetAngle", error);
+        opMode.telemetry.addData("integral term", I_COEFF * integral);
         opMode.telemetry.update();
     }
 
