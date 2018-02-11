@@ -33,7 +33,7 @@ public class TestOp extends LinearOpMode {
             telemetry.addData("Jewel Arm Retract Pos", optionsMap.retrieveData("jewelKnockerRetractPosition"));
             telemetry.addData("Jewel Arm Extend Pos", optionsMap.retrieveData("jewelKnockerExtendPosition"));
             telemetry.addData("Relic Grip Open Pos", optionsMap.retrieveData("relicGripOpenPosition"));
-            telemetry.addData("Relic Grip Close Pos", optionsMap.retrieveData("relicGripClosePosition").getAsJsonNull());
+            telemetry.addData("Relic Grip Close Pos", optionsMap.retrieveData("relicGripClosePosition"));
             telemetry.addData("Is Right Wheel Reversed?", optionsMap.retrieveData("isRightWheelReversed").toString());
             telemetry.update();
         }
