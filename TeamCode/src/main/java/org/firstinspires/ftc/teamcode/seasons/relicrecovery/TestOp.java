@@ -30,10 +30,11 @@ public class TestOp extends LinearOpMode {
             telemetry.addData("Wheel Diameter", optionsMap.retrieveData("wheelDiameter"));
             telemetry.addData("Inside Wheel Gearing Ratio", optionsMap.retrieveData("wheelGearRatioIn"));
             telemetry.addData("Outside Wheel Gearing Ratio", optionsMap.retrieveData("wheelGearRatioOut"));
-            telemetry.addData("Jewel Arm Retract Pos", optionsMap.retrieveData("jewelKnockerRetract"));
-            telemetry.addData("Jewel Arm Extend Pos", optionsMap.retrieveData("jewelKnockerExtend"));
-            telemetry.addData("Relic Grip Open Pos", optionsMap.retrieveData("relicGripOpen"));
-            telemetry.addData("Relic Grip Close Pos", optionsMap.retrieveData("relicGripClose"));
+            telemetry.addData("Jewel Arm Retract Pos", optionsMap.retrieveData("jewelKnockerRetractPosition"));
+            telemetry.addData("Jewel Arm Extend Pos", optionsMap.retrieveData("jewelKnockerExtendPosition"));
+            telemetry.addData("Relic Grip Open Pos", optionsMap.retrieveData("relicGripOpenPosition"));
+            telemetry.addData("Relic Grip Close Pos", optionsMap.retrieveData("relicGripClosePosition").getAsJsonNull());
+            telemetry.addData("Is Right Wheel Reversed?", optionsMap.retrieveData("isRightWheelReversed").toString());
             telemetry.update();
         }
     }

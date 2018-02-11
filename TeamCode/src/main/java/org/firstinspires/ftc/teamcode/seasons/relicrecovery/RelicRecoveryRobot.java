@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.Intake;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.JewelKnocker;
+import org.firstinspires.ftc.teamcode.seasons.resq.DriveFunctions;
 
 import java.io.File;
 import java.util.Map;
@@ -41,11 +42,24 @@ public class RelicRecoveryRobot extends Robot {
 
         optionsMap.parseFile(new File(AppUtil.FIRST_FOLDER + "/options.json"));
 
+        boolean isRightMotorReversed = optionsMap.retrieveData("isRightMotorReversed").getAsBoolean();
+        DcMotor.Direction rightMotorDirection;
+        if(isRightMotorReversed){
+            rightMotorDirection = DcMotorSimple.Direction.REVERSE;
+        } else {
+            rightMotorDirection = DcMotorSimple.Direction.FORWARD;
+        }
+
+        double wheelDiameter = optionsMap.retrieveData("wheelDiameter").getAsDouble();
+        double wheelGearRatioIn = optionsMap.retrieveData("wheelGearRatioIn").getAsDouble();
+        double wheelGearRatioOut = optionsMap.retrieveData("wheelGearRatioOut").getAsDouble();
+
+
         this.hDriveTrain = new HDriveTrain.Builder(this)
-                .setRightMotorDirection(DcMotorSimple.Direction.REVERSE)
-                .setWheelDiameterInches(optionsMap.retrieveData("wheelDiameter").getAsDouble())
-                .setInsideWheelGearingRatio((optionsMap.retrieveData("wheelGearRatioIn")).getAsDouble())
-                .setOutsideWheelGearingRatio((optionsMap.retrieveData("wheelGearRatioOut")).getAsDouble())
+                .setRightMotorDirection(rightMotorDirection)
+                .setWheelDiameterInches(wheelDiameter)
+                .setInsideWheelGearingRatio(wheelGearRatioIn)
+                .setOutsideWheelGearingRatio(wheelGearRatioOut)
                 .build();
 
         this.glyphLift = new GlyphLift(this);

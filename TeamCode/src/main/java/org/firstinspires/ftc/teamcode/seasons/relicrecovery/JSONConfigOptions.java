@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class JSONConfigOptions {
 
-    Map<String, JsonPrimitive> result = new HashMap<>();
+    private Map<String, JsonPrimitive> result = new HashMap<>();
 
     /**
      * This method parses the data of a JSON File to a internally stored Map<>String, Object>
@@ -40,15 +40,21 @@ public class JSONConfigOptions {
     }
     /**
      * This method returns a value from the internally stored Map<>String, Object> and returns it as a JsonPrimitive value
-     *     To convert the data to standard data types, place this method in parenthesis and add .getAs___ after it (Replace blank with Data Type)
+     *     To convert the data to standard data types, place this method in parenthesis and add {@link JsonPrimitive#getAsDouble()} after it (Other data types work too. Just replace "Double" with the type you want.)
+     *
      *
      *     @param key The Key of the value you want to retrieve
      *
-     * @return the requested data value. Use a .getAs___ method to convert to any data type
+     * @return the requested data value. Use the {@link JsonPrimitive#getAsDouble()} method to convert to any data type. Just replace "Double" with the data type of choice.
      */
 
-    public JsonPrimitive retrieveData(String key){
-        JsonPrimitive data = this.result.get(key).getAsJsonPrimitive();
+    public JsonPrimitive retrieveData(String key) {
+        JsonPrimitive data = null;
+        if(result.containsKey(key)){
+            data = this.result.get(key).getAsJsonPrimitive();
+        } else {
+            throw new IllegalArgumentException("Key not found: \"" + key + "\"");
+        }
         return data;
     }
 
