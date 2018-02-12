@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
-import com.google.gson.JsonPrimitive;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -12,10 +11,8 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.Intake;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.JewelKnocker;
-import org.firstinspires.ftc.teamcode.seasons.resq.DriveFunctions;
 
 import java.io.File;
-import java.util.Map;
 
 /**
  * This class represents the Relic Recovery robot.

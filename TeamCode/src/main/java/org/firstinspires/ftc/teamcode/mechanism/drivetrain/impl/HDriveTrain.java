@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl;
 
-import com.google.gson.JsonPrimitive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.IDirectionalDriveTrain;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.JSONConfigOptions;
 
-import java.io.File;
-import java.util.Map;
 
 /**
  * This class implements control of an H-drive train, which has four wheels parallel to the
@@ -39,9 +35,6 @@ public class HDriveTrain implements IDirectionalDriveTrain {
     private double insideWheelGearing;
     private double outsideWheelGearing;
     private double wheelDiameterInches;
-
-    private JSONConfigOptions parser = new JSONConfigOptions();
-
 
     /**
      * A nested class used to construct {@link HDriveTrain} instances.

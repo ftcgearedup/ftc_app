@@ -14,11 +14,10 @@ import java.util.Map;
  */
 @TeleOp(name = "Test Op", group = "test")
 public class TestOp extends LinearOpMode {
-    private JSONConfigOptions optionsMap;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        this.optionsMap = new JSONConfigOptions();
+        JSONConfigOptions optionsMap = new JSONConfigOptions();
 
         optionsMap.parseFile(new File(AppUtil.FIRST_FOLDER + "/options.json"));
 
