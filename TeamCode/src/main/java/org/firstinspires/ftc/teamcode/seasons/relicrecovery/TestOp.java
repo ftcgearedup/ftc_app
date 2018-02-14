@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
-import com.google.gson.JsonPrimitive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
-import java.util.Map;
 
 /**
  * This class is a simple testing program to test any code on.

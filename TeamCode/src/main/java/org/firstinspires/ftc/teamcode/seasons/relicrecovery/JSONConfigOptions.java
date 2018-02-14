@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
+import com.vuforia.ViewerParameters;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,7 +15,7 @@ import java.util.Map;
 
 public class JSONConfigOptions {
 
-    private Map<String, JsonPrimitive> result = new HashMap<>();
+    private Map<String, JsonElement> result = new HashMap<>();
 
     /**
      * This method parses the data of a JSON File to a internally stored Map<>String, Object>
@@ -34,7 +37,7 @@ public class JSONConfigOptions {
         }
         for(Map.Entry<String, JsonElement> e: obj.entrySet()){
 
-            result.put(e.getKey(), e.getValue().getAsJsonPrimitive());
+            result.put(e.getKey(), e.getValue());
 
         }
     }
@@ -48,10 +51,10 @@ public class JSONConfigOptions {
      * @return the requested data value. Use the {@link JsonPrimitive#getAsDouble()} method to convert to any data type. Just replace "Double" with the data type of choice.
      */
 
-    public JsonPrimitive retrieveData(String key) {
-        JsonPrimitive data = null;
-        if(result.containsKey(key)){
-            data = this.result.get(key).getAsJsonPrimitive();
+    public JsonElement retrieveData(String key) {
+        JsonElement data;
+        if (result.containsKey(key)) {
+            data = this.result.get(key);
         } else {
             throw new IllegalArgumentException("Key not found: \"" + key + "\"");
         }
