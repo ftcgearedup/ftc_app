@@ -1,89 +1,123 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
-import org.firstinspires.ftc.teamcode.seasons.relicrecovery.RelicRecoveryRobot;
 
 /**
  *
  */
 
 public class JewelKnocker implements IMechanism {
-    private Servo arm;
+    private Servo knockerServo;
+    private Servo armServo;
 
     private ColorSensor jewelColorSensor;
 
+    private OpMode opMode;
+
+    private static final int JEWEL_ARM_DELAY_MS = 500;
+
 
     public JewelKnocker(Robot robot) {
-        HardwareMap hwMap = robot.getCurrentOpMode().hardwareMap;
+        this.opMode = robot.getCurrentOpMode();
+        HardwareMap hwMap = opMode.hardwareMap;
 
-        this.arm = hwMap.servo.get("jks");
+        this.armServo = hwMap.servo.get("js");
+        this.knockerServo = hwMap.servo.get("rs");
 
         this.jewelColorSensor = hwMap.colorSensor.get("jcs");
         jewelColorSensor.enableLed(true);
+
+        // retract arm and set center rotation position in initialization
+        retractArm();
+        leftRotation();
     }
+
+    /**
+     * @param isRedAlliance
+     */
+    public void knockJewel(boolean isRedAlliance) {
+        ElapsedTime timer = new ElapsedTime();
+
+        LinearOpMode linearOpMode;
+        if(opMode instanceof LinearOpMode) {
+            linearOpMode = (LinearOpMode)opMode;
+
+            centerRotation();
+
+            while(linearOpMode.opModeIsActive() && timer.milliseconds() < JEWEL_ARM_DELAY_MS) {
+                extendArm();
+            }
+
+            if(isRedAlliance && isJewelBlue()) {
+                leftRotation();
+            } else {
+                rightRotation();
+            }
+        }
+    }
+
     /**
      * Retracts Jewel Arm
      */
     public void retractArm() {
-        arm.setPosition(0.2);
+        armServo.setPosition(0.3);
     }
+
     /**
      * Extends Jewel Arm
      */
     public void extendArm() {
-        arm.setPosition(1.0);
+        armServo.setPosition(0.85);
     }
+
+    /**
+     *
+     */
+    public void leftRotation() {
+        knockerServo.setPosition(0);
+    }
+
+    /**
+     *
+     */
+    public void centerRotation() {
+        knockerServo.setPosition(0.5);
+    }
+
+    /**
+     *
+     */
+    public void rightRotation() {
+        knockerServo.setPosition(1);
+    }
+
     /**
      * @return the red level detected
      */
     public int getRed(){
         return jewelColorSensor.red();
     }
+
     /**
      * @return the blue level detected
      */
     public int getBlue(){
         return jewelColorSensor.blue();
     }
-    /**
-     * Detects if the color detected is more red than blue.
-     *
-     * @return true if more red, false if more blue
-     */
-    public boolean isJewelRed(){
-        int blueLevel = getBlue();
-        int redLevel = getRed();
-        boolean isRed = false;
 
-        if(redLevel > blueLevel){
-            isRed= true;
-        } else {
-            isRed= false;
-        }
-
-        return isRed;
+    private boolean isJewelRed(){
+        return getRed() > getBlue();
     }
-    /**
-     * Detects if the color detected is more blue than red.
-     *
-     * @return true if more blue, false if more red
-     */
-    public boolean isJewelBlue(){
-        int blueLevel = getBlue();
-        int redLevel = getRed();
-        boolean isBlue = false;
 
-        if(blueLevel > redLevel){
-            isBlue= true;
-        } else {
-            isBlue= false;
-        }
-
-        return isBlue;
+    private boolean isJewelBlue(){
+        return getBlue() > getRed();
     }
 }

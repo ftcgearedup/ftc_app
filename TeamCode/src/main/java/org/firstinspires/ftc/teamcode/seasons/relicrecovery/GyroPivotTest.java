@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 @TeleOp(name = "Gyro Pivot Test", group = "testing")
 public class GyroPivotTest extends LinearOpMode {
     private RelicRecoveryRobot robot;
-    private IGyroPivotAlgorithm gyroPivotAlgorithm;
+    private BNO055IMUGyroPivotAlgorithm gyroPivotAlgorithm;
     private BNO055IMUWrapper bno055IMUWrapper;
 
     @Override
@@ -23,6 +23,7 @@ public class GyroPivotTest extends LinearOpMode {
 
         while(!isStarted() && !opModeIsActive()) {
             telemetry.addData("heading", bno055IMUWrapper.getHeading());
+            telemetry.addData("error", gyroPivotAlgorithm.getError(90, true));
             telemetry.update();
         }
 

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Robot;
@@ -10,7 +9,6 @@ import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HDriveTrain;
 import org.firstinspires.ftc.teamcode.mechanism.impl.MaxSonarEZ4Sensor;
 import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
-import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.Intake;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.JewelKnocker;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.RelicArm;
 
@@ -22,13 +20,12 @@ public class RelicRecoveryRobot extends Robot {
     private final VisionHelper visionHelper;
 
     private final GlyphLift glyphLift;
-    private final Intake intake;
     private final JewelKnocker jewelKnocker;
-    private final RelicArm relicArm;
+    private RelicArm relicArm;
 
-    private final MaxSonarEZ4Sensor leftRangeSensor;
-    private final MaxSonarEZ4Sensor rightRangeSensor;
-    private final MaxSonarEZ4Sensor frontRangeSensor;
+    private MaxSonarEZ4Sensor leftRangeSensor;
+    private MaxSonarEZ4Sensor rightRangeSensor;
+    private MaxSonarEZ4Sensor frontRangeSensor;
 
     /**
      * Construct a new Relic Recovery robot, with an op-mode that is using this robot.
@@ -46,14 +43,13 @@ public class RelicRecoveryRobot extends Robot {
                 .build();
 
         this.glyphLift = new GlyphLift(this);
-        this.intake = new Intake(this);
         this.visionHelper = new VisionHelper(this);
         this.jewelKnocker = new JewelKnocker(this);
-        this.relicArm = new RelicArm(this);
+//        this.relicArm = new RelicArm(this);
 
-        this.frontRangeSensor = new MaxSonarEZ4Sensor(this, "frs");
-        this.rightRangeSensor = new MaxSonarEZ4Sensor(this, "rrs");
-        this.leftRangeSensor = new MaxSonarEZ4Sensor(this, "lrs");
+//        this.frontRangeSensor = new MaxSonarEZ4Sensor(this, "frs");
+//        this.rightRangeSensor = new MaxSonarEZ4Sensor(this, "rrs");
+//        this.leftRangeSensor = new MaxSonarEZ4Sensor(this, "lrs");
 
         visionHelper.initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
         //visionHelper.initializeOpenCV();
@@ -65,10 +61,6 @@ public class RelicRecoveryRobot extends Robot {
 
     public GlyphLift getGlyphLift() {
         return glyphLift;
-    }
-
-    public Intake getIntake() {
-        return intake;
     }
 
     public VisionHelper getVisionHelper() {

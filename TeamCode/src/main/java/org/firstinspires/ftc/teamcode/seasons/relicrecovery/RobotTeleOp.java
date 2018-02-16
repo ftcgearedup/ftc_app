@@ -71,13 +71,13 @@ public class RobotTeleOp extends LinearOpMode {
         gamepad1.setJoystickDeadzone(JOYSTICK_DEADZONE);
         gamepad2.setJoystickDeadzone(JOYSTICK_DEADZONE);
 
-        robot.getGlyphLift().initializeGrippers();
-        robot.getIntake().raiseIntake();
+//        robot.getIntake().raiseIntake();
 
-        robot.getGlyphLift().initializeGrippers();
-        robot.getIntake().raiseIntake();
-        robot.getJewelKnocker().retractArm();
-        robot.getRelicArm().initializeRelicArm();
+//        robot.getGlyphLift().initializeGrippers();
+//        robot.getIntake().raiseIntake();
+//        robot.getJewelKnocker().retractArm();
+
+//        robot.getRelicArm().initializeRelicArm();
 
         waitForStart();
 
@@ -110,61 +110,65 @@ public class RobotTeleOp extends LinearOpMode {
             // Jewel arm control                                    JEWEL CONTROLS
             if (gamepad1.y){
                 robot.getJewelKnocker().extendArm();
+                robot.getJewelKnocker().centerRotation();
             } else {
                 robot.getJewelKnocker().retractArm();
+                robot.getJewelKnocker().leftRotation();
             }
 
+            // glyph lift intake power control
+            robot.getGlyphLift().setGlyphIntakeMotorPower(gamepad2.right_stick_y);
 
             // intake raise/lower control                            INTAKE CONTROLS
-            if(gamepad1.right_bumper && intakeToggleTimer.milliseconds() > 200) {  //toggle if raised or lowered
-                if(isRaised){
-                    robot.getIntake().lowerIntake();
-                    isRaised = false;
-
-                } else if(!isRaised){
-                    robot.getIntake().raiseIntake();
-                    isRaised = true;
-                }
-                intakeToggleTimer.reset();
-            }
+//            if(gamepad1.right_bumper && intakeToggleTimer.milliseconds() > 200) {  //toggle if raised or lowered
+//                if(isRaised){
+//                    robot.getIntake().lowerIntake();
+//                    isRaised = false;
+//
+//                } else if(!isRaised){
+//                    robot.getIntake().raiseIntake();
+//                    isRaised = true;
+//                }
+//                intakeToggleTimer.reset();
+//            }
 
             // run intake in
-            if(gamepad1.left_trigger > 0.1) {
-                robot.getIntake().setIntakePower(-1);
-                robot.getIntake().closeLinkage();
-            } else if(gamepad1.left_bumper){  // run intake in reverse
-                robot.getIntake().setIntakePower(1);
-                robot.getIntake().closeLinkage();
-            } else {
-                robot.getIntake().setIntakePower(0);
-                robot.getIntake().openLinkage();
-            }
+//            if(gamepad1.left_trigger > 0.1) {
+//                robot.getIntake().setIntakePower(-1);
+//                robot.getIntake().closeLinkage();
+//            } else if(gamepad1.left_bumper){  // run intake in reverse
+//                robot.getIntake().setIntakePower(1);
+//                robot.getIntake().closeLinkage();
+//            } else {
+//                robot.getIntake().setIntakePower(0);
+//                robot.getIntake().openLinkage();
+//            }
 
             // close/open blue gripper                                 GLYPH CONTROLS
-            if(gamepad2.right_trigger > 0.1) {
-                robot.getGlyphLift().openBlueGripper();
-            } else {
-                robot.getGlyphLift().closeBlueGripper();
-            }
-            // close/open red gripper
-            if(gamepad2.left_trigger > 0.1) {
-                robot.getGlyphLift().openRedGripper();
-            } else {
-                robot.getGlyphLift().closeRedGripper();
-            }
+//            if(gamepad2.right_trigger > 0.1) {
+//                robot.getGlyphLift().openBlueGripper();
+//            } else {
+//                robot.getGlyphLift().closeBlueGripper();
+//            }
+//            // close/open red gripper
+//            if(gamepad2.left_trigger > 0.1) {
+//                robot.getGlyphLift().openRedGripper();
+//            } else {
+//                robot.getGlyphLift().closeRedGripper();
+//            }
 
             // automatic lift rotation motor control
-            if(gamepad2.right_bumper) {
-                robot.getGlyphLift().setRotationMotorPosition(GlyphLift.RotationMotorPosition.UP);
-            } else if(gamepad2.left_bumper) {
-                robot.getGlyphLift().setRotationMotorPosition(GlyphLift.RotationMotorPosition.DOWN);
-            } else if(gamepad2.dpad_left){
-                robot.getGlyphLift().setRotationMotorPower(0.5);
-            } else if(gamepad2.dpad_right){
-                robot.getGlyphLift().setRotationMotorPower(-0.5);
-            } else {
-                robot.getGlyphLift().setRotationMotorPower(0);
-            }
+//            if(gamepad2.right_bumper) {
+//                robot.getGlyphLift().setRotationMotorPosition(GlyphLift.RotationMotorPosition.UP);
+//            } else if(gamepad2.left_bumper) {
+//                robot.getGlyphLift().setRotationMotorPosition(GlyphLift.RotationMotorPosition.DOWN);
+//            } else if(gamepad2.dpad_left){
+//                robot.getGlyphLift().setRotationMotorPower(0.5);
+//            } else if(gamepad2.dpad_right){
+//                robot.getGlyphLift().setRotationMotorPower(-0.5);
+//            } else {
+//                robot.getGlyphLift().setRotationMotorPower(0);
+//            }
 
 //            // TRUE is Main Arm Control, False is Extension Control     RELIC ARM CONTROLS
 //
@@ -182,33 +186,40 @@ public class RobotTeleOp extends LinearOpMode {
             // control Extension
           //  robot.getRelicArm().setArmExtensionPower(Math.copySign(0.3, gamepad2.right_stick_x));
 
-            if(gamepad2.b) {
-                robot.getRelicArm().setArmExtensionPower(0.3);
-            } else if (gamepad2.x) {
-                robot.getRelicArm().setArmExtensionPower(-0.3);
-            } else {
-                robot.getRelicArm().setArmExtensionPower(0);
-            }
+//            if(gamepad2.b) {
+//                robot.getRelicArm().setArmExtensionPower(0.3);
+//            } else if (gamepad2.x) {
+//                robot.getRelicArm().setArmExtensionPower(-0.3);
+//            } else {
+//                robot.getRelicArm().setArmExtensionPower(0);
+//            }
+
             // control Main Arm
-            robot.getRelicArm().setArmMainPower(Range.clip(gamepad2.right_stick_y, -0.2, 0.2));
+//            robot.getRelicArm().setArmMainPower(Range.clip(gamepad2.right_stick_y, -0.2, 0.2));
 
             // relic gripper controls
-            if(gamepad2.a && relicToggleTimer.milliseconds() > 200) {
-                if (robot.getRelicArm().isGripClosed()) {
-                    robot.getRelicArm().openGrip();
-                    relicToggleTimer.reset();
-                } else {
-                    robot.getRelicArm().closeGrip();
-                    relicToggleTimer.reset();
-                }
-            }
+//            if(gamepad2.a && relicToggleTimer.milliseconds() > 200) {
+//                if (robot.getRelicArm().isGripClosed()) {
+//                    robot.getRelicArm().openGrip();
+//                    relicToggleTimer.reset();
+//                } else {
+//                    robot.getRelicArm().closeGrip();
+//                    relicToggleTimer.reset();
+//                }
+//            }
 
-            if(gamepad2.y) {
-                robot.getGlyphLift().rotationMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
+//            if(gamepad2.y) {
+//                robot.getGlyphLift().rotationMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            }
 
             telemetry.addData("Red Level", robot.getJewelKnocker().getRed());
             telemetry.addData("Blue Level", robot.getJewelKnocker().getBlue());
+
+            telemetry.addData("GCS Red Level", robot.getJewelKnocker().getRed());
+            telemetry.addData("GCS Blue Level", robot.getJewelKnocker().getBlue());
+
+            telemetry.addData("Glyph Touch Sensor", robot.getGlyphLift().getTouchSensor().isPressed());
+
             telemetry.update();
 
             robot.getHDriveTrain().pivot(pivot);

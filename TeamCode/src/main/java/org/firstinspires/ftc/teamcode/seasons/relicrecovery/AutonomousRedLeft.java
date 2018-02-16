@@ -80,8 +80,8 @@ public class AutonomousRedLeft extends LinearOpMode {
 //            telemetry.addData(">", "Blue stone detected.");
 //        }
 
-        robot.getGlyphLift().initializeGrippers();
-        robot.getIntake().raiseIntake();
+//        robot.getGlyphLift().initializeGrippers();
+//        robot.getIntake().raiseIntake();
         robot.getJewelKnocker().retractArm();
 
         waitForStart();
@@ -104,7 +104,7 @@ public class AutonomousRedLeft extends LinearOpMode {
         telemetry.addData("VuMark", scannedVuMark);
         telemetry.update();
 
-        robot.getGlyphLift().closeRedGripper();
+//        robot.getGlyphLift().closeRedGripper();
 
         sleep(500);
 
@@ -117,26 +117,26 @@ public class AutonomousRedLeft extends LinearOpMode {
 
         sleep(1000);
 
-        if (robot.getJewelKnocker().isJewelRed()) {
-            telemetry.addData(">", "jewel is red");
-            telemetry.update();
-
-            robot.getHDriveTrain().directionalDrive(180, 0.5, 2, false); //drive 4 inches right
-
-            robot.getJewelKnocker().retractArm();
-
-            robot.getHDriveTrain().directionalDrive(180, 1.0, 18, false); //drive 4 inches right
-            sleep(500);
-        } else if (robot.getJewelKnocker().isJewelBlue()) {
-            telemetry.addData(">", "jewel is blue");
-            telemetry.update();
-
-            robot.getHDriveTrain().directionalDrive(0, 0.5, 2, false); // drive 4 inches left
-
-            robot.getJewelKnocker().retractArm();
-
-            robot.getHDriveTrain().directionalDrive(180, 1.0, 22, false); //drive 4 inches right
-        }
+//        if (robot.getJewelKnocker().isJewelRed()) {
+//            telemetry.addData(">", "jewel is red");
+//            telemetry.update();
+//
+//            robot.getHDriveTrain().directionalDrive(180, 0.5, 2, false); //drive 4 inches right
+//
+//            robot.getJewelKnocker().retractArm();
+//
+//            robot.getHDriveTrain().directionalDrive(180, 1.0, 18, false); //drive 4 inches right
+//            sleep(500);
+//        } else if (robot.getJewelKnocker().isJewelBlue()) {
+//            telemetry.addData(">", "jewel is blue");
+//            telemetry.update();
+//
+//            robot.getHDriveTrain().directionalDrive(0, 0.5, 2, false); // drive 4 inches left
+//
+//            robot.getJewelKnocker().retractArm();
+//
+//            robot.getHDriveTrain().directionalDrive(180, 1.0, 22, false); //drive 4 inches right
+//        }
 
         // gyro pivot to zero degree angle
         gyroPivotAlgorithm.pivot(0.5, 0, true, false);
@@ -189,7 +189,7 @@ public class AutonomousRedLeft extends LinearOpMode {
         }
         robot.getHDriveTrain().stopDriveMotors();
 
-        robot.getGlyphLift().openRedGripper();
+//        robot.getGlyphLift().openRedGripper();
         robot.getHDriveTrain().directionalDrive(90, 0.5, 4, false);
 
         driveTimer.reset();
