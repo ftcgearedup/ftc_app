@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
+package org.firstinspires.ftc.teamcode.utils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -19,8 +19,6 @@ public class JSONConfigOptions {
      * This method parses the data of a JSON File to a internally stored Map<>String, Object>
      *
      * @param file the file to parse the JSON data from
-     *
-
      */
 
     public void parseFile(File file){
