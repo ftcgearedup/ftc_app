@@ -215,8 +215,8 @@ public class RobotTeleOp extends LinearOpMode {
             telemetry.addData("Red Level", robot.getJewelKnocker().getRed());
             telemetry.addData("Blue Level", robot.getJewelKnocker().getBlue());
 
-            telemetry.addData("GCS Red Level", robot.getJewelKnocker().getRed());
-            telemetry.addData("GCS Blue Level", robot.getJewelKnocker().getBlue());
+            telemetry.addData("GCS Red Level", robot.getGlyphLift().getColorSensor().red());
+            telemetry.addData("GCS Blue Level", robot.getGlyphLift().getColorSensor().blue());
 
             telemetry.addData("Glyph Touch Sensor", robot.getGlyphLift().getTouchSensor().isPressed());
 

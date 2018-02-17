@@ -47,7 +47,7 @@ public class RelicRecoveryRobot extends Robot {
         this.jewelKnocker = new JewelKnocker(this);
 //        this.relicArm = new RelicArm(this);
 
-//        this.frontRangeSensor = new MaxSonarEZ4Sensor(this, "frs");
+        this.frontRangeSensor = new MaxSonarEZ4Sensor(this, "frs");
 //        this.rightRangeSensor = new MaxSonarEZ4Sensor(this, "rrs");
 //        this.leftRangeSensor = new MaxSonarEZ4Sensor(this, "lrs");
 
