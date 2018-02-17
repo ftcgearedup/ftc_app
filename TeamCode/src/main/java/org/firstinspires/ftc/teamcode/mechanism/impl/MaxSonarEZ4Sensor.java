@@ -21,7 +21,9 @@ public class MaxSonarEZ4Sensor implements DistanceSensor {
 
     private AnalogInput analogInput;
 
-    private static double MILLIVOLTS_PER_INCH = 3.1;
+    private static final double SENSOR_VOLTAGE = 3.3;
+    private static final double CONVERSION_FACTOR = SENSOR_VOLTAGE / 1024;
+    private static final double MILLIVOLTS_PER_INCH = CONVERSION_FACTOR * 1000;
 
     /**
      * Creates a new MaxSonarEZ4Sensor instance.
