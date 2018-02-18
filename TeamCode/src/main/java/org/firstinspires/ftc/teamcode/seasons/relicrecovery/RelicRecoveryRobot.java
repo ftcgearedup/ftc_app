@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HDriveTrain;
@@ -48,9 +49,9 @@ public class RelicRecoveryRobot extends Robot {
         boolean isRightMotorReversed = optionsMap.retrieveData("isRightMotorReversed").getAsBoolean();
         DcMotor.Direction rightMotorDirection;
         if(isRightMotorReversed){
-            rightMotorDirection = DcMotorSimple.Direction.REVERSE;
+            rightMotorDirection = DcMotor.Direction.REVERSE;
         } else {
-            rightMotorDirection = DcMotorSimple.Direction.FORWARD;
+            rightMotorDirection = DcMotor.Direction.FORWARD;
         }
 
         double wheelDiameter = optionsMap.retrieveData("wheelDiameter").getAsDouble();
