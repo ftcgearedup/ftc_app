@@ -4,6 +4,7 @@
 
 # Java class files
 *.class
+*.iml
 
 # generated files
 bin/

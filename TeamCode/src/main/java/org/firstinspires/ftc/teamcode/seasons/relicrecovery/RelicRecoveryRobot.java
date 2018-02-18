@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HDriveTrain;
 import org.firstinspires.ftc.teamcode.mechanism.impl.MaxSonarEZ4Sensor;
@@ -11,6 +11,10 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.JewelKnocker;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.RelicArm;
+
+import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
+
+import java.io.File;
 
 /**
  * This class represents the Relic Recovery robot.
@@ -27,6 +31,8 @@ public class RelicRecoveryRobot extends Robot {
     private MaxSonarEZ4Sensor rightRangeSensor;
     private MaxSonarEZ4Sensor frontRangeSensor;
 
+    private final JSONConfigOptions optionsMap;
+
     /**
      * Construct a new Relic Recovery robot, with an op-mode that is using this robot.
      *
@@ -35,11 +41,28 @@ public class RelicRecoveryRobot extends Robot {
     public RelicRecoveryRobot(OpMode opMode) {
         super(opMode);
 
+        this.optionsMap = new JSONConfigOptions();
+
+        optionsMap.parseFile(new File(AppUtil.FIRST_FOLDER + "/options.json"));
+
+        boolean isRightMotorReversed = optionsMap.retrieveData("isRightMotorReversed").getAsBoolean();
+        DcMotor.Direction rightMotorDirection;
+        if(isRightMotorReversed){
+            rightMotorDirection = DcMotorSimple.Direction.REVERSE;
+        } else {
+            rightMotorDirection = DcMotorSimple.Direction.FORWARD;
+        }
+
+        double wheelDiameter = optionsMap.retrieveData("wheelDiameter").getAsDouble();
+        double wheelGearRatioIn = optionsMap.retrieveData("wheelGearRatioIn").getAsDouble();
+        double wheelGearRatioOut = optionsMap.retrieveData("wheelGearRatioOut").getAsDouble();
+
+
         this.hDriveTrain = new HDriveTrain.Builder(this)
-                .setRightMotorDirection(DcMotor.Direction.REVERSE)
-                .setWheelDiameterInches(4)
-                .setInsideWheelGearingRatio(1.0)
-                .setOutsideWheelGearingRatio(1.5)
+                .setRightMotorDirection(rightMotorDirection)
+                .setWheelDiameterInches(wheelDiameter)
+                .setInsideWheelGearingRatio(wheelGearRatioIn)
+                .setOutsideWheelGearingRatio(wheelGearRatioOut)
                 .build();
 
         this.glyphLift = new GlyphLift(this);
@@ -70,6 +93,10 @@ public class RelicRecoveryRobot extends Robot {
     public JewelKnocker getJewelKnocker() {
         return jewelKnocker;
     }
+
+    public JSONConfigOptions getOptionsMap() {
+        return optionsMap;
+    }
     public RelicArm getRelicArm() {
         return relicArm;
     }
@@ -86,3 +113,4 @@ public class RelicRecoveryRobot extends Robot {
         return frontRangeSensor;
     }
 }
+

@@ -1,0 +1,15 @@
+{
+  "wheelDiameter" : 4,
+
+  "isRightWheelReversed" : true,
+
+  "wheelGearRatioIn" : 1.0,
+  "wheelGearRatioOut" : 1.5,
+
+  "jewelKnockerRetractPosition" : 0.2,
+  "jewelKnockerExtendPosition" : 1.0,
+
+  "relicGripOpenPosition" : 0,
+  "relicGripClosePosition" : 1
+
+}
