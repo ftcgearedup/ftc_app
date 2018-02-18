@@ -7,7 +7,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HDriveTrain;
-import org.firstinspires.ftc.teamcode.mechanism.impl.MaxSonarEZ4Sensor;
+import org.firstinspires.ftc.teamcode.mechanism.impl.MaxSonarEZ4AbstractSensor;
+import org.firstinspires.ftc.teamcode.mechanism.impl.MaxSonarEZ4MB1043;
 import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.JewelKnocker;
@@ -28,9 +29,9 @@ public class RelicRecoveryRobot extends Robot {
     private final JewelKnocker jewelKnocker;
     private RelicArm relicArm;
 
-    private MaxSonarEZ4Sensor leftRangeSensor;
-    private MaxSonarEZ4Sensor rightRangeSensor;
-    private MaxSonarEZ4Sensor frontRangeSensor;
+    private MaxSonarEZ4AbstractSensor leftRangeSensor;
+    private MaxSonarEZ4AbstractSensor rightRangeSensor;
+    private MaxSonarEZ4AbstractSensor frontRangeSensor;
 
     private final JSONConfigOptions optionsMap;
 
@@ -71,9 +72,9 @@ public class RelicRecoveryRobot extends Robot {
         this.jewelKnocker = new JewelKnocker(this);
 //        this.relicArm = new RelicArm(this);
 
-        this.frontRangeSensor = new MaxSonarEZ4Sensor(this, "frs");
-//        this.rightRangeSensor = new MaxSonarEZ4Sensor(this, "rrs");
-//        this.leftRangeSensor = new MaxSonarEZ4Sensor(this, "lrs");
+        this.frontRangeSensor = new MaxSonarEZ4MB1043(this, "frs");
+//        this.rightRangeSensor = new MaxSonarEZ4AbstractSensor(this, "rrs");
+//        this.leftRangeSensor = new MaxSonarEZ4AbstractSensor(this, "lrs");
 
         visionHelper.initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
         //visionHelper.initializeOpenCV();
@@ -102,15 +103,15 @@ public class RelicRecoveryRobot extends Robot {
         return relicArm;
     }
 
-    public MaxSonarEZ4Sensor getLeftRangeSensor() {
+    public MaxSonarEZ4AbstractSensor getLeftRangeSensor() {
         return leftRangeSensor;
     }
 
-    public MaxSonarEZ4Sensor getRightRangeSensor() {
+    public MaxSonarEZ4AbstractSensor getRightRangeSensor() {
         return rightRangeSensor;
     }
 
-    public MaxSonarEZ4Sensor getFrontRangeSensor() {
+    public MaxSonarEZ4AbstractSensor getFrontRangeSensor() {
         return frontRangeSensor;
     }
 }
