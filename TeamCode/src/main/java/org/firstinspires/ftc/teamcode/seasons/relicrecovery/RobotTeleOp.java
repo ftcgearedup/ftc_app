@@ -9,54 +9,23 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
 
 /**
- * This class is the competition robot tele-op program.
- *
- * CONTROLS USED
+ This class is the competition robot tele-op program.
 
- CONTROLLER 1:
+ CONTROLS USED
+
+ DRIVER 1:
 
  Right Stick   - Movement
  Left Stick (X)- Rotation
  Right Trigger - Slow Driving
 
- Left Bumper   - Intake Raise or Lower
- Left Trigger  - Intake Run Inward
- Right Bumper  - Intake Run Outward
+ Y             - Jewel Arm Lower and Center Rotator (Hold)
 
- Y             - Jewel Arm Extend/Retract (Hold)
+ DRIVER 2:
 
- CONTROLLER 2:
+ Left Stick (Y)      - Glyph Intake Height
+ Right Stick (Y)     - Glyph Intake Run (Up for Inward, Down for Outward)
 
- Left Stick (Y)      - Glyph Lift Height
- Left Stick (X)      - Glyph Lift Rotation
- Right Trigger       - Glyph Lift Blue Gripper
- Left_Trigger        - Glyph Lift Red Gripper
- D-Pad Up and Down   - Glyph Lift Align
- Y                   - Glyph Lift Recalibrate
-
- Right Stick (Press) - Relic Arm Control Mode Switch
- Right Stick (X)     - Relic Arm Move (Main or Extension, depends on mode)
- A                   - Relic Arm Open Grip
- B                   - Relic Arm Close Grip
-
- UNUSED
-
- CONTROLLER 1:
-
- D-Pad
- Left Stick Press and Y
- Right Stick Press
- A
- B
- X
-
- CONTROLLER 2:
- Left Bumper
- Right Bumper
- D-Pad Left and Right
- Left Stick Press
- Right Stick Up and Down
- X
  */
 @TeleOp(name = "TELEOP", group = "teleop")
 public class RobotTeleOp extends LinearOpMode {

@@ -46,12 +46,17 @@ public class RelicRecoveryRobot extends Robot {
 
         optionsMap.parseFile(new File(AppUtil.FIRST_FOLDER + "/options.json"));
 
-        boolean isRightMotorReversed = optionsMap.retrieveData("isRightMotorReversed").getAsBoolean();
         DcMotor.Direction rightMotorDirection;
-        if(isRightMotorReversed){
+        DcMotor.Direction leftMotorDirection;
+        if(optionsMap.retrieveData("isRightMotorReversed").getAsBoolean()){
             rightMotorDirection = DcMotor.Direction.REVERSE;
         } else {
             rightMotorDirection = DcMotor.Direction.FORWARD;
+        }
+        if(optionsMap.retrieveData("isLeftMotorReversed").getAsBoolean()){
+            leftMotorDirection = DcMotor.Direction.REVERSE;
+        } else {
+            leftMotorDirection = DcMotor.Direction.FORWARD;
         }
 
         double wheelDiameter = optionsMap.retrieveData("wheelDiameter").getAsDouble();
@@ -60,6 +65,7 @@ public class RelicRecoveryRobot extends Robot {
 
 
         this.hDriveTrain = new HDriveTrain.Builder(this)
+                .setLeftMotorDirection(leftMotorDirection)
                 .setRightMotorDirection(rightMotorDirection)
                 .setWheelDiameterInches(wheelDiameter)
                 .setInsideWheelGearingRatio(wheelGearRatioIn)

@@ -11,14 +11,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
+import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
+
+import java.io.File;
 
 /**
  * The glyph lift mechanism collects glyphs with two grippers and is able to place them in the cryptobox.
  */
 
 public class GlyphLift implements IMechanism {
+
+    private JSONConfigOptions optionsMap = new JSONConfigOptions();
 
     private static final double MAX_LIFT_MOTOR_POWER_UP = 0.4;
     private static final double MAX_LIFT_MOTOR_POWER_DOWN = 0.9;
@@ -36,6 +42,24 @@ public class GlyphLift implements IMechanism {
      * @param robot the robot using this glyph lift
      */
     public GlyphLift(Robot robot) {
+
+        DcMotorSimple.Direction liftMotorDir = DcMotorSimple.Direction.REVERSE;
+        DcMotorSimple.Direction intakeMotorDir = DcMotorSimple.Direction.REVERSE;
+
+        if(optionsMap.retrieveData("glyphLiftIsLiftReversed").getAsBoolean()){
+            liftMotorDir = DcMotorSimple.Direction.REVERSE;
+        } else {
+            liftMotorDir = DcMotorSimple.Direction.FORWARD;
+        }
+
+        if(optionsMap.retrieveData("glyphLiftIsIntakeReversed").getAsBoolean()){
+            intakeMotorDir = DcMotorSimple.Direction.REVERSE;
+        } else {
+            intakeMotorDir = DcMotorSimple.Direction.FORWARD;
+        }
+
+
+
         this.opMode = robot.getCurrentOpMode();
         HardwareMap hwMap = opMode.hardwareMap;
 
@@ -45,10 +69,10 @@ public class GlyphLift implements IMechanism {
         this.colorSensor = hwMap.colorSensor.get("gcs");
 
         // reverse lift motor
-        liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftMotor.setDirection(liftMotorDir);
 
         // reverse glyph intake motor
-        glyphIntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        glyphIntakeMotor.setDirection(intakeMotorDir);
 
         // brake both motors
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -62,6 +86,13 @@ public class GlyphLift implements IMechanism {
         return touchSensor;
     }
 
+    /**
+     * This method sets the power of the intake motor.
+     * The intake motor controls if the intake runs inward or outward.
+     *
+     *@param power the power to run the intake motor in a range of 1.0 to -1.0
+     *             Negative values run the intake inward, positive
+     */
     public void setGlyphIntakeMotorPower(double power) {
         glyphIntakeMotor.setPower(power);
     }

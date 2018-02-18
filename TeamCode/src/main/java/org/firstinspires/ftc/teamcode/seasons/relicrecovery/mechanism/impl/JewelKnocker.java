@@ -7,14 +7,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
+import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
+
+import java.io.File;
 
 /**
  *
  */
 
 public class JewelKnocker implements IMechanism {
+    private final JSONConfigOptions optionsMap = new JSONConfigOptions();
+
     private Servo knockerServo;
     private Servo armServo;
 
@@ -28,6 +34,10 @@ public class JewelKnocker implements IMechanism {
     public JewelKnocker(Robot robot) {
         this.opMode = robot.getCurrentOpMode();
         HardwareMap hwMap = opMode.hardwareMap;
+
+        optionsMap.parseFile(new File(AppUtil.FIRST_FOLDER + "/options.json"));
+
+
 
         this.armServo = hwMap.servo.get("js");
         this.knockerServo = hwMap.servo.get("rs");
