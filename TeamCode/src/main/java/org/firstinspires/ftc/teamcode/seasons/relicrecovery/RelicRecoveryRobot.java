@@ -44,11 +44,13 @@ public class RelicRecoveryRobot extends Robot {
         super(opMode);
 
         this.optionsMap = new JSONConfigOptions();
-
         optionsMap.parseFile(new File(AppUtil.FIRST_FOLDER + "/options.json"));
 
-        boolean isRightMotorReversed = optionsMap.retrieveData("isRightMotorReversed").getAsBoolean();
+        boolean isRightMotorReversed =
+                optionsMap.retrieveData("isRightMotorReversed").getAsBoolean();
+
         DcMotor.Direction rightMotorDirection;
+
         if(isRightMotorReversed){
             rightMotorDirection = DcMotor.Direction.REVERSE;
         } else {
@@ -75,9 +77,6 @@ public class RelicRecoveryRobot extends Robot {
         this.frontRangeSensor = new MaxSonarEZ4MB1043(this, "frs");
 //        this.rightRangeSensor = new MaxSonarEZ4AbstractSensor(this, "rrs");
 //        this.leftRangeSensor = new MaxSonarEZ4AbstractSensor(this, "lrs");
-
-        visionHelper.initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
-        //visionHelper.initializeOpenCV();
     }
 
     public HDriveTrain getHDriveTrain() {
@@ -99,6 +98,7 @@ public class RelicRecoveryRobot extends Robot {
     public JSONConfigOptions getOptionsMap() {
         return optionsMap;
     }
+
     public RelicArm getRelicArm() {
         return relicArm;
     }
