@@ -2,15 +2,16 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HDriveTrain;
+import org.firstinspires.ftc.teamcode.mechanism.impl.MaxSonarEZ4Sensor;
 import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
-import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.Intake;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.JewelKnocker;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.RelicArm;
+
 import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 import java.io.File;
@@ -23,8 +24,12 @@ public class RelicRecoveryRobot extends Robot {
     private final VisionHelper visionHelper;
 
     private final GlyphLift glyphLift;
-    private final Intake intake;
     private final JewelKnocker jewelKnocker;
+    private RelicArm relicArm;
+
+    private MaxSonarEZ4Sensor leftRangeSensor;
+    private MaxSonarEZ4Sensor rightRangeSensor;
+    private MaxSonarEZ4Sensor frontRangeSensor;
 
     private final JSONConfigOptions optionsMap;
 
@@ -61,11 +66,15 @@ public class RelicRecoveryRobot extends Robot {
                 .build();
 
         this.glyphLift = new GlyphLift(this);
-        this.intake = new Intake(this);
         this.visionHelper = new VisionHelper(this);
         this.jewelKnocker = new JewelKnocker(this);
+//        this.relicArm = new RelicArm(this);
 
-        //visionHelper.initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
+        this.frontRangeSensor = new MaxSonarEZ4Sensor(this, "frs");
+//        this.rightRangeSensor = new MaxSonarEZ4Sensor(this, "rrs");
+//        this.leftRangeSensor = new MaxSonarEZ4Sensor(this, "lrs");
+
+        visionHelper.initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
         //visionHelper.initializeOpenCV();
     }
 
@@ -75,10 +84,6 @@ public class RelicRecoveryRobot extends Robot {
 
     public GlyphLift getGlyphLift() {
         return glyphLift;
-    }
-
-    public Intake getIntake() {
-        return intake;
     }
 
     public VisionHelper getVisionHelper() {
@@ -92,6 +97,20 @@ public class RelicRecoveryRobot extends Robot {
     public JSONConfigOptions getOptionsMap() {
         return optionsMap;
     }
+    public RelicArm getRelicArm() {
+        return relicArm;
+    }
 
+    public MaxSonarEZ4Sensor getLeftRangeSensor() {
+        return leftRangeSensor;
+    }
+
+    public MaxSonarEZ4Sensor getRightRangeSensor() {
+        return rightRangeSensor;
+    }
+
+    public MaxSonarEZ4Sensor getFrontRangeSensor() {
+        return frontRangeSensor;
+    }
 }
 

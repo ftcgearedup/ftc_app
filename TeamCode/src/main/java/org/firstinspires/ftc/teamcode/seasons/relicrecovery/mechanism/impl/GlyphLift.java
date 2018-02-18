@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 
+import android.text.method.Touch;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
@@ -19,39 +23,12 @@ public class GlyphLift implements IMechanism {
     private static final double MAX_LIFT_MOTOR_POWER_UP = 0.4;
     private static final double MAX_LIFT_MOTOR_POWER_DOWN = 0.9;
 
-
-    private static final double ROTATION_MOTOR_POWER_AUTOMATIC = 0.8;
-    private static final double ROTATION_MOTOR_POWER_AUTOMATIC_P_COEFF = 0.002;
-    private static final double ROTATION_MOTOR_POWER_MANUAL = 0.6;
-
     private OpMode opMode;
 
     private DcMotor liftMotor;
-    public DcMotor rotationMotor;
-
-    private Servo redLeftServo, redRightServo, blueLeftServo, blueRightServo;
-
-//    private RotationMotorPosition currentRotationPosition = UNDEFINED;
-
-    /**
-     * This enumeration type represents the rotation position of the rotation motor,
-     * which can be one of four values:
-     * <ul>
-     * <li>UP (with the blue gripper on the top)</li>
-     * <li>DOWN (with the blue gripper on the bottom)</li>
-     * <li>LEFT (with the red gripper to the right)</li>
-     * <li>RIGHT (with the red gripper to the left)</li>
-     * </ul>
-     */
-    public enum RotationMotorPosition {
-        UP(0), DOWN(1700), LEFT(850), RIGHT(-850);
-
-        private int encoderPosition;
-
-        RotationMotorPosition(int pos) {
-            this.encoderPosition = pos;
-        }
-    }
+    private DcMotor glyphIntakeMotor;
+    private TouchSensor touchSensor;
+    private ColorSensor colorSensor;
 
     /**
      * Construct a new {@link GlyphLift} with a reference to the utilizing robot.
@@ -63,23 +40,30 @@ public class GlyphLift implements IMechanism {
         HardwareMap hwMap = opMode.hardwareMap;
 
         this.liftMotor = hwMap.dcMotor.get("lift");
-        this.rotationMotor = hwMap.dcMotor.get("rot");
-
-        this.blueLeftServo = hwMap.servo.get("bgl");
-        this.blueRightServo = hwMap.servo.get("bgr");
-        this.redLeftServo = hwMap.servo.get("rgl");
-        this.redRightServo = hwMap.servo.get("rgr");
+        this.glyphIntakeMotor = hwMap.dcMotor.get("gm");
+        this.touchSensor = hwMap.touchSensor.get("gts");
+        this.colorSensor = hwMap.colorSensor.get("gcs");
 
         // reverse lift motor
         liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        // reverse glyph intake motor
+        glyphIntakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         // brake both motors
         liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rotationMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
 
-        // run using encoders
-        rotationMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rotationMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public ColorSensor getColorSensor() {
+        return colorSensor;
+    }
+
+    public TouchSensor getTouchSensor() {
+        return touchSensor;
+    }
+
+    public void setGlyphIntakeMotorPower(double power) {
+        glyphIntakeMotor.setPower(power);
     }
 
     /**
@@ -91,84 +75,5 @@ public class GlyphLift implements IMechanism {
      */
     public void setLiftMotorPower(double power) {
         liftMotor.setPower(-power * (power < 0 ? MAX_LIFT_MOTOR_POWER_UP : MAX_LIFT_MOTOR_POWER_DOWN));
-    }
-
-    /**
-     * Set the power of the rotation motor. The rotation motor is the motor that rotates the glyph grippers.
-     *
-     * @param power the power to run the rotation motor in a range of 1.0 to -1.0.
-     *              Negative values run the rotation motor in the counterclockwise direction, and
-     *              likewise, positive values run the rotation motor clockwise.
-     */
-    public void setRotationMotorPower(double power) {
-        //opMode.telemetry.addData("current position", rotationMotor.getCurrentPosition());
-        // opMode.telemetry.update();
-
-        rotationMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rotationMotor.setPower(power * ROTATION_MOTOR_POWER_MANUAL);
-    }
-
-    /**
-     * Rotate the rotation motor to the requested rotation position.
-     * This method is implemented so as not to tangle or over-wrap the I2c cable around the motor shaft.
-     *
-     * @param requestedPosition the desired rotation position
-     * @see RotationMotorPosition
-     */
-    public void setRotationMotorPosition(RotationMotorPosition requestedPosition) {
-        double positionDiff = rotationMotor.getCurrentPosition() - requestedPosition.encoderPosition;
-
-        opMode.telemetry.addData("rotation motor current position",
-                rotationMotor.getCurrentPosition());
-
-        rotationMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rotationMotor.setTargetPosition(requestedPosition.encoderPosition);
-
-        rotationMotor.setPower(positionDiff *
-                ROTATION_MOTOR_POWER_AUTOMATIC *
-                ROTATION_MOTOR_POWER_AUTOMATIC_P_COEFF);
-    }
-
-    /**
-     * Set the grippers to their initialized positions.
-     * This method should be called during initialization.
-     */
-    public void initializeGrippers() {
-        blueLeftServo.setPosition(1.0);
-        blueRightServo.setPosition(0);
-        redRightServo.setPosition(1.0);
-        redLeftServo.setPosition(0);
-    }
-
-    /**
-     * Close the red gripper.
-     */
-    public void closeRedGripper() {
-        redLeftServo.setPosition(0.45);
-        redRightServo.setPosition(0.65);
-    }
-
-    /**
-     * Close the blue gripper.
-     */
-    public void closeBlueGripper() {
-        blueLeftServo.setPosition(0.65);
-        blueRightServo.setPosition(0.4);
-    }
-
-    /**
-     * Open the red gripper.
-     */
-    public void openRedGripper() {
-        redRightServo.setPosition(0.9);
-        redLeftServo.setPosition(0.1);
-    }
-
-    /**
-     * Open the blue gripper.
-     */
-    public void openBlueGripper() {
-        blueLeftServo.setPosition(0.9);
-        blueRightServo.setPosition(0.1);
     }
 }

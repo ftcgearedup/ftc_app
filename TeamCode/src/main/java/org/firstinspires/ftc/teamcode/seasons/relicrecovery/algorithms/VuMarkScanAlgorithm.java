@@ -42,6 +42,8 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 public class VuMarkScanAlgorithm {
 
     private VuforiaLocalizer vuforia;
+    private VuforiaTrackables relicTrackables;
+    private VuforiaTrackable relicTemplate;
 
     /**
      *
@@ -50,6 +52,18 @@ public class VuMarkScanAlgorithm {
      */
     public VuMarkScanAlgorithm(Robot robot, VisionHelper visionHelper) {
         this.vuforia = visionHelper.getVuforia();
+
+        this.relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        this.relicTemplate = relicTrackables.get(0);
+        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
+    }
+
+    public void activate() {
+        relicTrackables.activate();
+    }
+
+    public void deactivate() {
+        relicTrackables.deactivate();
     }
 
     /**
@@ -57,16 +71,6 @@ public class VuMarkScanAlgorithm {
      * @return
      */
     public RelicRecoveryVuMark detect() {
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
-
-        relicTrackables.activate();
-
-        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-
-        relicTrackables.deactivate();
-
-        return vuMark;
+        return RelicRecoveryVuMark.from(relicTemplate);
     }
 }

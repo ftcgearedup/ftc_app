@@ -30,6 +30,8 @@ public class DistanceSensorDriveAlgorithm {
     private double speedX;
     private double speedY;
 
+    private static final double P_DRIVE_SPEED_COEFF = 0.04;
+
     /**
      * An enumeration type that represents the side of the robot the distance sensor is located.
      */
@@ -76,39 +78,53 @@ public class DistanceSensorDriveAlgorithm {
      *                    of the value for this parameter, due to the nature of non-{@link LinearOpMode}.
      */
     public void driveToDistance(int targetDistance, double speed, boolean nonBlocking) {
-        this.speedX = sensorRobotSide.x * speed;
-        this.speedY = sensorRobotSide.y * speed;
-
         this.targetDistance = targetDistance;
 
         if(nonBlocking || !(opMode instanceof LinearOpMode)) {
-            driveToDistanceNonBlocking();
+            driveToDistanceNonBlocking(speed);
         } else {
-            driveToDistanceBlocking();
+            driveToDistanceBlocking(speed);
         }
     }
 
-    private void executionLoop(double distance) {
+    private void executionLoop(double distance, double speed) {
+        speed *= Math.abs(targetDistance - distance) * P_DRIVE_SPEED_COEFF;
+
+        this.speedX = sensorRobotSide.x * speed;
+        this.speedY = sensorRobotSide.y * speed;
+
         if(distance > targetDistance) {
-            driveTrain.drive(speedX, speedY);
+            driveTrain.drive(-speedX, -speedY);
         } else {
             // change both to negative for opposite direction
-            driveTrain.drive(-speedX, -speedY);
+            driveTrain.drive(speedX, speedY);
         }
     }
 
-    private void driveToDistanceBlocking() {
+    private void driveToDistanceBlocking(double speed) {
+        LinearOpMode linearOpMode = (LinearOpMode)opMode;
+
         double distance;
 
-        LinearOpMode linearOpMode = (LinearOpMode)opMode;
         do {
             distance = distanceSensor.getDistance(DistanceUnit.INCH);
-            executionLoop(distance);
-        } while(linearOpMode.opModeIsActive() && !(distance == targetDistance));
+            executionLoop(distance, speed);
+
+            opMode.telemetry.addData("distance", distance);
+            opMode.telemetry.update();
+        } while(linearOpMode.opModeIsActive() && distance > targetDistance);
+
+        driveTrain.stopDriveMotors();
     }
 
-    private void driveToDistanceNonBlocking() {
-        double distance = distanceSensor.getDistance(DistanceUnit.INCH);
-        executionLoop(distance);
+    private void driveToDistanceNonBlocking(double speed) {
+
+        double distance = Math.abs(targetDistance - distanceSensor.getDistance(DistanceUnit.INCH)) * P_DRIVE_SPEED_COEFF;
+
+        if(distance == targetDistance) {
+            driveTrain.stopDriveMotors();
+        } else {
+            executionLoop(distance, speed);
+        }
     }
 }
