@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HDriveTrain;
 import org.firstinspires.ftc.teamcode.mechanism.impl.MaxSonarEZ4AbstractSensor;
+import org.firstinspires.ftc.teamcode.mechanism.impl.MaxSonarEZ4MB1040;
 import org.firstinspires.ftc.teamcode.mechanism.impl.MaxSonarEZ4MB1043;
 import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
@@ -47,7 +48,7 @@ public class RelicRecoveryRobot extends Robot {
         optionsMap.parseFile(new File(AppUtil.FIRST_FOLDER + "/options.json"));
 
         boolean isRightMotorReversed =
-                optionsMap.retrieveData("isRightMotorReversed").getAsBoolean();
+                optionsMap.retrieveData("isRightWheelReversed").getAsBoolean();
 
         DcMotor.Direction rightMotorDirection;
 
@@ -61,7 +62,6 @@ public class RelicRecoveryRobot extends Robot {
         double wheelGearRatioIn = optionsMap.retrieveData("wheelGearRatioIn").getAsDouble();
         double wheelGearRatioOut = optionsMap.retrieveData("wheelGearRatioOut").getAsDouble();
 
-
         this.hDriveTrain = new HDriveTrain.Builder(this)
                 .setRightMotorDirection(rightMotorDirection)
                 .setWheelDiameterInches(wheelDiameter)
@@ -74,9 +74,10 @@ public class RelicRecoveryRobot extends Robot {
         this.jewelKnocker = new JewelKnocker(this);
 //        this.relicArm = new RelicArm(this);
 
-        this.frontRangeSensor = new MaxSonarEZ4MB1043(this, "frs");
-//        this.rightRangeSensor = new MaxSonarEZ4AbstractSensor(this, "rrs");
-//        this.leftRangeSensor = new MaxSonarEZ4AbstractSensor(this, "lrs");
+        this.frontRangeSensor = new MaxSonarEZ4MB1040(this, "frs");
+
+        this.rightRangeSensor = new MaxSonarEZ4MB1043(this, "rrs");
+        this.leftRangeSensor = new MaxSonarEZ4MB1043(this, "lrs");
     }
 
     public HDriveTrain getHDriveTrain() {
