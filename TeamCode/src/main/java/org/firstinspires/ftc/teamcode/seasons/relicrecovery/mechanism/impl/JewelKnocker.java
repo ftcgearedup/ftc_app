@@ -47,7 +47,7 @@ public class JewelKnocker implements IMechanism {
 
         // retract arm and set center rotation position in initialization
         retractArm();
-        leftRotation();
+        rightRotation();
     }
 
     /**

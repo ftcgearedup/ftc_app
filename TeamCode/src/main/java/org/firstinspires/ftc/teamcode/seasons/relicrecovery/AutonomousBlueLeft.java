@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.algorithms.impl.BNO055IMUGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.algorithms.impl.DistanceSensorDriveAlgorithm;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
-import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.VuMarkScanAlgorithm;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMarkScanAlgorithm;
 
 
 /**
