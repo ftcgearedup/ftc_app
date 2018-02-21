@@ -75,18 +75,4 @@ public class DataGramLog {
         }
 
     }
-
-    /**
-     * clear the file
-     **/
-    /*public void clearLog() {
-    StringWriter writer = null;
-        try {
-            writer = new StringWriter();
-            writer.print("");
-            writer.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }*/
 }
