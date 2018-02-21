@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HDriveTrain;
 import org.firstinspires.ftc.teamcode.mechanism.impl.MaxSonarEZ4AbstractSensor;
@@ -13,10 +12,7 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.JewelKnocker;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.RelicArm;
-
 import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
-
-import java.io.File;
 
 /**
  * This class represents the Relic Recovery robot.
@@ -39,12 +35,12 @@ public class RelicRecoveryRobot extends Robot {
      * Construct a new Relic Recovery robot, with an op-mode that is using this robot.
      *
      * @param opMode the op-mode that this robot is using.
+     * @param configOptions the {@link JSONConfigOptions} instance to use with this robot object
      */
-    public RelicRecoveryRobot(OpMode opMode) {
+    public RelicRecoveryRobot(OpMode opMode, JSONConfigOptions configOptions) {
         super(opMode);
 
-        this.optionsMap = new JSONConfigOptions();
-        optionsMap.parseFile(new File(AppUtil.FIRST_FOLDER + "/options.json"));
+        this.optionsMap = configOptions;
 
         DcMotor.Direction rightMotorDirection;
         DcMotor.Direction leftMotorDirection;
