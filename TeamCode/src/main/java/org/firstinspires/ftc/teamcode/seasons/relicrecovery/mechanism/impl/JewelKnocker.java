@@ -19,7 +19,7 @@ import java.io.File;
  */
 
 public class JewelKnocker implements IMechanism {
-    private final JSONConfigOptions optionsMap = new JSONConfigOptions();
+    private final JSONConfigOptions optionsMap = new JSONConfigOptions("options.json");
 
     private Servo knockerServo;
     private Servo armServo;
@@ -28,16 +28,27 @@ public class JewelKnocker implements IMechanism {
 
     private OpMode opMode;
 
-    private static final int JEWEL_ARM_DELAY_MS = 500;
+    private final int JEWEL_ARM_DELAY_MS;
+
+    private int retractPos;
+    private int extendPos;
+    private int leftRotationPos;
+    private int centerRotationPos;
+    private int rightRotationPos;
+
 
 
     public JewelKnocker(Robot robot) {
         this.opMode = robot.getCurrentOpMode();
         HardwareMap hwMap = opMode.hardwareMap;
 
-        optionsMap.parseFile(new File(AppUtil.FIRST_FOLDER + "/options.json"));
+        JEWEL_ARM_DELAY_MS = optionsMap.retrieveAsInt("jewelKnockerDelayMS");
 
-
+        retractPos = optionsMap.retrieveAsInt("jewelKnockerRetractPosition");
+        extendPos = optionsMap.retrieveAsInt("jewelKnockerExtendPosition");
+        leftRotationPos = optionsMap.retrieveAsInt("jewelKnockerLeftRotation");
+        centerRotationPos = optionsMap.retrieveAsInt("jewelKnockerCenterRotation");
+        rightRotationPos = optionsMap.retrieveAsInt("jewelKnockerRightRotation");
 
         this.armServo = hwMap.servo.get("js");
         this.knockerServo = hwMap.servo.get("rs");
@@ -78,35 +89,35 @@ public class JewelKnocker implements IMechanism {
      * Retracts Jewel Arm
      */
     public void retractArm() {
-        armServo.setPosition(0.3);
+        armServo.setPosition(retractPos);
     }
 
     /**
      * Extends Jewel Arm
      */
     public void extendArm() {
-        armServo.setPosition(0.85);
+        armServo.setPosition(extendPos);
     }
 
     /**
      *
      */
     public void leftRotation() {
-        knockerServo.setPosition(0);
+        knockerServo.setPosition(leftRotationPos);
     }
 
     /**
      *
      */
     public void centerRotation() {
-        knockerServo.setPosition(0.5);
+        knockerServo.setPosition(centerRotationPos);
     }
 
     /**
      *
      */
     public void rightRotation() {
-        knockerServo.setPosition(1);
+        knockerServo.setPosition(rightRotationPos);
     }
 
     /**

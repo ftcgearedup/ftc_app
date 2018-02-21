@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 
-import android.text.method.Touch;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
@@ -24,10 +20,10 @@ import java.io.File;
 
 public class GlyphLift implements IMechanism {
 
-    private JSONConfigOptions optionsMap = new JSONConfigOptions();
+    private JSONConfigOptions optionsMap = new JSONConfigOptions("options.json");
 
-    private static final double MAX_LIFT_MOTOR_POWER_UP = 0.4;
-    private static final double MAX_LIFT_MOTOR_POWER_DOWN = 0.9;
+    private final double MAX_LIFT_MOTOR_POWER_UP;
+    private final double MAX_LIFT_MOTOR_POWER_DOWN;
 
     private OpMode opMode;
 
@@ -42,23 +38,23 @@ public class GlyphLift implements IMechanism {
      * @param robot the robot using this glyph lift
      */
     public GlyphLift(Robot robot) {
+        MAX_LIFT_MOTOR_POWER_UP = optionsMap.retrieveAsDouble("glyphLiftMotorPowerUp");
+        MAX_LIFT_MOTOR_POWER_DOWN = optionsMap.retrieveAsDouble("glyphLiftMotorPowerDown");
 
-        DcMotorSimple.Direction liftMotorDir = DcMotorSimple.Direction.REVERSE;
-        DcMotorSimple.Direction intakeMotorDir = DcMotorSimple.Direction.REVERSE;
+        DcMotorSimple.Direction liftMotorDir;
+        DcMotorSimple.Direction intakeMotorDir;
 
-        if(optionsMap.retrieveData("glyphLiftIsLiftReversed").getAsBoolean()){
+        if(optionsMap.retrieveAsBoolean("glyphLiftIsLiftReversed")){
             liftMotorDir = DcMotorSimple.Direction.REVERSE;
         } else {
             liftMotorDir = DcMotorSimple.Direction.FORWARD;
         }
 
-        if(optionsMap.retrieveData("glyphLiftIsIntakeReversed").getAsBoolean()){
+        if(optionsMap.retrieveAsBoolean("glyphLiftIsIntakeReversed")){
             intakeMotorDir = DcMotorSimple.Direction.REVERSE;
         } else {
             intakeMotorDir = DcMotorSimple.Direction.FORWARD;
         }
-
-
 
         this.opMode = robot.getCurrentOpMode();
         HardwareMap hwMap = opMode.hardwareMap;

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HDriveTrain;
 import org.firstinspires.ftc.teamcode.mechanism.impl.MaxSonarEZ4AbstractSensor;
@@ -13,10 +12,7 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.JewelKnocker;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.RelicArm;
-
 import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
-
-import java.io.File;
 
 /**
  * This class represents the Relic Recovery robot.
@@ -43,26 +39,25 @@ public class RelicRecoveryRobot extends Robot {
     public RelicRecoveryRobot(OpMode opMode) {
         super(opMode);
 
-        this.optionsMap = new JSONConfigOptions();
-        optionsMap.parseFile(new File(AppUtil.FIRST_FOLDER + "/options.json"));
+        this.optionsMap = new JSONConfigOptions("options.json");
 
         DcMotor.Direction rightMotorDirection;
         DcMotor.Direction leftMotorDirection;
 
-        if(optionsMap.retrieveData("isRightMotorReversed").getAsBoolean()){
+        if(optionsMap.retrieveAsBoolean("isRightMotorReversed")){
             rightMotorDirection = DcMotor.Direction.REVERSE;
         } else {
             rightMotorDirection = DcMotor.Direction.FORWARD;
         }
-        if(optionsMap.retrieveData("isLeftMotorReversed").getAsBoolean()){
+        if(optionsMap.retrieveAsBoolean("isLeftMotorReversed")){
             leftMotorDirection = DcMotor.Direction.REVERSE;
         } else {
             leftMotorDirection = DcMotor.Direction.FORWARD;
         }
 
-        double wheelDiameter = optionsMap.retrieveData("wheelDiameter").getAsDouble();
-        double wheelGearRatioIn = optionsMap.retrieveData("wheelGearRatioIn").getAsDouble();
-        double wheelGearRatioOut = optionsMap.retrieveData("wheelGearRatioOut").getAsDouble();
+        double wheelDiameter = optionsMap.retrieveAsDouble("wheelDiameter");
+        double wheelGearRatioIn = optionsMap.retrieveAsDouble("wheelGearRatioIn");
+        double wheelGearRatioOut = optionsMap.retrieveAsDouble("wheelGearRatioOut");
 
         this.hDriveTrain = new HDriveTrain.Builder(this)
                 .setLeftMotorDirection(leftMotorDirection)
