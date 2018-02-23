@@ -69,8 +69,14 @@ public class GlyphLift implements IMechanism {
         // reverse glyph intake motor
         glyphIntakeMotor.setDirection(intakeMotorDir);
 
+        // run using encoder
+        glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         // brake both motors
         liftMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public ColorSensor getColorSensor() {
