@@ -1,0 +1,25 @@
+{
+  "wheelDiameter" : 4,
+
+  "isLeftWheelReversed" : true,
+  "isRightWheelReversed" : true,
+
+  "wheelGearRatioIn" : 1.0,
+  "wheelGearRatioOut" : 1.5,
+
+  "jewelKnockerRetractPosition" : 0.3,
+  "jewelKnockerExtendPosition" : 0.85,
+  "jewelKnockerLeftRotation" : 0,
+  "jewelKnockerCenterRotation" : 0.5,
+  "jewelKnockerRightRotation" : 1,
+  "jewelKnockerDelayMS" : 500,
+
+  "glyphLiftMotorPowerUp" : 0.4,
+  "glyphLiftMotorPowerDown" : 0.9,
+  "glyphLiftIsLiftReversed" : true,
+  "glyphLiftIsIntakeReversed" : true,
+
+  "relicArmGripperOpenPosition" : 0,
+  "relicArmGripperClosePosition" : 1
+
+}

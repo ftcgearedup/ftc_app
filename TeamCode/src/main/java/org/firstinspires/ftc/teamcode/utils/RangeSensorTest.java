@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
  * Created by daniel on 12/29/17.
  */
 @TeleOp(name = "Range Sensor Test", group = "tests")
+@Disabled
 public class RangeSensorTest extends LinearOpMode {
 
     private AnalogInput sensorAnalogInput;

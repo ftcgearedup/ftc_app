@@ -26,7 +26,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.teamcode.utils;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -66,9 +66,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  * is explained in {@link ConceptVuforiaNavigation}.
  */
 
-@Autonomous(name="Concept: VuMark Id", group ="Concept")
+@Autonomous(name="VuMark Test")
 @Disabled
-public class ConceptVuMarkIdentification extends LinearOpMode {
+public class VuMarkIdentificationTest extends LinearOpMode {
 
     public static final String TAG = "Vuforia VuMark Sample";
 
@@ -104,7 +104,7 @@ public class ConceptVuMarkIdentification extends LinearOpMode {
          * Once you've obtained a license key, copy the string from the Vuforia web site
          * and paste it in to your code onthe next line, between the double quotes.
          */
-        parameters.vuforiaLicenseKey = MagicNumbers.vuforiaLicenseKey;
+        parameters.vuforiaLicenseKey = "ATI4rJn/////AAAAGaU649WKjUPNjEAS8RHKRjFL+3htvDbOq/i5kIheS36mg04zehxVYIKQacMQbsHteW8MaFqibM5CTPJkObcAnnIe+Yt8uA2E288cN1g2LRuu6OmJWUgUNrfH9Oep/MDDh8/mOWD2osAziNUsh7xYdb2FH6VmGFomR8Whb1i+3t5ilAGd0mIOd6OFFSA8IcRxcw9EfE0SIFmgSXwi05SMU5CkUtnidIBpC+w6wfNp2BLL863XgaZjfpsNz57TaKqgxuy/HBjec0uvS2JQ/vBVeKV72FGVvSLJlPh/nQZ964O/5VpNbHUmZYhyKYQgTvP2HuUZ+azjY/WGUDTOCB2ZxZj9wSmX5iCY7k9rI0cMNIri";
 
         /*
          * We also indicate which camera on the RC that we wish to use.

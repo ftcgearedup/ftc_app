@@ -26,7 +26,7 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms;
+package org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -36,37 +36,52 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 
 /**
- *
+ * This algorithm is used to scan the VuMark in autonomous.
  */
 
 public class VuMarkScanAlgorithm {
 
     private VuforiaLocalizer vuforia;
+    private VuforiaTrackables relicTrackables;
+    private VuforiaTrackable relicTemplate;
 
     /**
+     * Create a new VuMarkScanAlgorithm.
      *
-     * @param robot
-     * @param visionHelper
+     * @param robot the robot using this algorithm
+     * @param visionHelper the vision helper instance required to access vision
      */
     public VuMarkScanAlgorithm(Robot robot, VisionHelper visionHelper) {
         this.vuforia = visionHelper.getVuforia();
+
+        this.relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
+        this.relicTemplate = relicTrackables.get(0);
+        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
     }
 
     /**
+     * Activate active detection of VuMarks.
+     * After calling this method, the Vuforia will continually search for the VuMark.
+     */
+    public void activate() {
+        relicTrackables.activate();
+    }
+
+    /**
+     * Deactivate active detection of VuMarks.
+     * After calling this method, the Vuforia will stop continually search for the VuMark.
+     */
+    public void deactivate() {
+        relicTrackables.deactivate();
+    }
+
+    /**
+     * Return the currently detected VuMark.
      *
-     * @return
+     * @see RelicRecoveryVuMark the enumeration type for the three VuMark types
+     * @return the VuMark enumeration type
      */
     public RelicRecoveryVuMark detect() {
-        VuforiaTrackables relicTrackables = this.vuforia.loadTrackablesFromAsset("RelicVuMark");
-        VuforiaTrackable relicTemplate = relicTrackables.get(0);
-        relicTemplate.setName("relicVuMarkTemplate"); // can help in debugging; otherwise not necessary
-
-        relicTrackables.activate();
-
-        RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-
-        relicTrackables.deactivate();
-
-        return vuMark;
+        return RelicRecoveryVuMark.from(relicTemplate);
     }
 }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -14,8 +15,8 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMa
 /**
  * Created by Owner on 12/5/2017.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Red Left", group = "autonomous")
-public class AutonomousRedLeft extends LinearOpMode {
+@Autonomous(name = "Red Right", group = "autonomous")
+public class AutonomousRedRight extends LinearOpMode {
 
     private RelicRecoveryRobot robot;
     private VuMarkScanAlgorithm vuMarkScanAlgorithm;
@@ -49,7 +50,6 @@ public class AutonomousRedLeft extends LinearOpMode {
         //detect color of stone
         boolean isStoneRed = true;
         boolean isStoneRight = false;
-
 
         ElapsedTime driveTimer = new ElapsedTime();
 
@@ -120,18 +120,18 @@ public class AutonomousRedLeft extends LinearOpMode {
 //        }
 
         // gyro pivot to zero degree angle
-        gyroPivotAlgorithm.pivot(0.5, 0, true, false);
+        gyroPivotAlgorithm.pivot(0.5, 270, true, false);
 
-        // drive forward before driving into balancing stone
-        robot.getHDriveTrain().directionalDrive(270, 0.3, 4, false); //drive 4 inches right
-
+        // drives into all
         driveTimer.reset();
 
-        // drive of balancing stone
-        while(driveTimer.milliseconds() < 1000) {
-            robot.getHDriveTrain().drive(0.5, 0.0);
+        // drive into wall
+        while(driveTimer.milliseconds() < 1500) {
+            robot.getHDriveTrain().drive(-0.5, 0.0);
         }
         robot.getHDriveTrain().stopDriveMotors();
+
+        gyroPivotAlgorithm.pivot(0.5, 270, true, false);
 
 ////        // pivot to face cryptobox
 ////        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
@@ -140,28 +140,26 @@ public class AutonomousRedLeft extends LinearOpMode {
 //
 //        robot.getHDriveTrain().directionalDrive(0, 0.5, 4, false);
 
-        // drive right/left to face key column
         switch (scannedVuMark) {
             case UNKNOWN:
             case CENTER:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 16, false);
-//                rightDistanceSensorDrive.driveToDistance(52, 0.5, false);
+                robot.getHDriveTrain().directionalDrive(0, 0.5, 28, false);
                 break;
             case LEFT:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 23, false);
+                robot.getHDriveTrain().directionalDrive(0, 0.5, 21, false);
                 break;
             case RIGHT:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 9, false);
+                robot.getHDriveTrain().directionalDrive(0, 0.5, 35, false);
                 break;
         }
-
-        // pivot to face cryptobox
-        gyroPivotAlgorithm.pivot(0.3, 180, true, false);
 
         robot.getGlyphLift().setLiftMotorPower(-0.2);
         sleep(750);
         robot.getGlyphLift().setLiftMotorPower(0.2);
 
+        gyroPivotAlgorithm.pivot(0.5, 270, true, false);
+
+        // drive right/left to face key column
         driveTimer.reset();
 
         // drive into cryptobox
@@ -182,5 +180,6 @@ public class AutonomousRedLeft extends LinearOpMode {
         robot.getHDriveTrain().stopDriveMotors();
 
         robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+
     }
 }
