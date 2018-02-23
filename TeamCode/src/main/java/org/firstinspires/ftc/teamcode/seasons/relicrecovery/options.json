@@ -17,6 +17,9 @@
   "glyphLiftMotorPowerUp" : 0.4,
   "glyphLiftMotorPowerDown" : 0.9,
   "glyphLiftIsLiftReversed" : true,
-  "glyphLiftIsIntakeReversed" : true
+  "glyphLiftIsIntakeReversed" : true,
+
+  "relicArmGripperOpenPosition" : 0,
+  "relicArmGripperClosePosition" : 1
 
 }

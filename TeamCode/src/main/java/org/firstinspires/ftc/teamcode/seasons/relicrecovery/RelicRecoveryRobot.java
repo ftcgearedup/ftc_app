@@ -14,8 +14,6 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.Jewel
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.RelicArm;
 import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
-import java.io.File;
-
 /**
  * This class represents the Relic Recovery robot.
  */
@@ -42,26 +40,26 @@ public class RelicRecoveryRobot extends Robot {
     public RelicRecoveryRobot(OpMode opMode) {
         super(opMode);
 
-        this.optionsMap = new JSONConfigOptions();
-        optionsMap.parseFile(new File("/sdcard/FIRST/options.json"));
+        this.optionsMap = new JSONConfigOptions("options.json");
 
         DcMotor.Direction rightMotorDirection;
         DcMotor.Direction leftMotorDirection;
 
-        if(optionsMap.retrieveData("isRightWheelReversed").getAsBoolean()){
+        if(optionsMap.retrieveAsBoolean("isRightMotorReversed")){
             rightMotorDirection = DcMotor.Direction.REVERSE;
         } else {
             rightMotorDirection = DcMotor.Direction.FORWARD;
         }
-        if(optionsMap.retrieveData("isLeftWheelReversed").getAsBoolean()){
+
+        if(optionsMap.retrieveAsBoolean("isLeftMotorReversed")){
             leftMotorDirection = DcMotor.Direction.REVERSE;
         } else {
             leftMotorDirection = DcMotor.Direction.FORWARD;
         }
 
-        double wheelDiameter = optionsMap.retrieveData("wheelDiameter").getAsDouble();
-        double wheelGearRatioIn = optionsMap.retrieveData("wheelGearRatioIn").getAsDouble();
-        double wheelGearRatioOut = optionsMap.retrieveData("wheelGearRatioOut").getAsDouble();
+        double wheelDiameter = optionsMap.retrieveAsDouble("wheelDiameter");
+        double wheelGearRatioIn = optionsMap.retrieveAsDouble("wheelGearRatioIn");
+        double wheelGearRatioOut = optionsMap.retrieveAsDouble("wheelGearRatioOut");
 
         this.hDriveTrain = new HDriveTrain.Builder(this)
                 .setLeftMotorDirection(leftMotorDirection)

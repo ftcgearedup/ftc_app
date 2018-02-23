@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.utils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
+
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,6 +14,10 @@ import java.util.Map;
 
 public class JSONConfigOptions {
 
+    public JSONConfigOptions(String fileName){
+        parseFile(new File(AppUtil.FIRST_FOLDER + "/" + fileName));
+    }
+
     private Map<String, JsonElement> result = new HashMap<>();
 
     /**
@@ -21,7 +26,7 @@ public class JSONConfigOptions {
      * @param file the file to parse the JSON data from
      */
 
-    public void parseFile(File file){
+    private void parseFile(File file){
 
         JsonObject obj = null;
         JsonParser parser = new JsonParser();
@@ -37,24 +42,63 @@ public class JSONConfigOptions {
 
         }
     }
-    /**
-     * This method returns a value from the internally stored Map<>String, JsonElement> and returns it as a JsonElement value
-     *     To convert the data to standard data types, place this method in parenthesis and add {@link JsonPrimitive#getAsDouble()} after it (Other data types work too. Just replace "Double" with the type you want.)
-     *
-     *     @param key The key of the value you want to retrieve
-     *
-     * @return the requested data value. Use the {@link JsonPrimitive#getAsDouble()} method to convert to any data type. Just replace "Double" with the data type of choice.
-     */
 
-    public JsonElement retrieveData(String key) {
-        JsonElement data;
+    /**
+     * This method returns a value from the internally stored Map<>String, JsonElement> and returns it as an int.
+     * @param key the name of the key
+     * @return the requested data type as an int
+     */
+    public int retrieveAsInt(String key){
+        return (int) retrieveData(key, Integer.class);
+    }
+
+    /**
+     * This method returns a value from the internally stored Map<>String, JsonElement> and returns it as a double.
+     * @param key the name of the key
+     * @return the requested data type as a double
+     */
+    public double retrieveAsDouble(String key){
+        return (double) retrieveData(key, Double.class);
+    }
+
+    /**
+     * This method returns a value from the internally stored Map<>String, JsonElement> and returns it as a boolean.
+     * @param key the name of the key
+     * @return the requested data type as a boolean
+     */
+    public boolean retrieveAsBoolean(String key){
+        return (boolean) retrieveData(key, Boolean.class);
+    }
+
+    /**
+     * This method returns a value from the internally stored Map<>String, JsonElement> and returns it as a String.
+     * @param key the name of the key
+     * @return the requested data type as a String
+     */
+    public String retrieveAsString(String key){
+        return (String) retrieveData(key, String.class);
+    }
+
+    private Object retrieveData(String key, Class<?> type) {
+        JsonElement value;
+        Object obj = null;
         if (result.containsKey(key)) {
-            data = this.result.get(key);
+            value = result.get(key);
+            if (type.equals(Double.class)) {
+                obj = value.getAsDouble();
+            } else if (type.equals(Integer.class)) {
+                obj = value.getAsInt();
+            } else if (type.equals(Boolean.class)) {
+                obj = value.getAsBoolean();
+            } else if (type.equals(String.class)) {
+                obj = value.getAsString();
+            }
         } else {
             throw new IllegalArgumentException("Key not found: \"" + key + "\"");
         }
-        return data;
+        if(obj == null){
+            throw new IllegalStateException("Type is not a JSON Primitive: \"" + type.toString() + "\"");
+        }
+        return obj;
     }
-
-
 }
