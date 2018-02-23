@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.Jewel
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.RelicArm;
 import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
+import java.io.File;
+
 /**
  * This class represents the Relic Recovery robot.
  */
@@ -37,20 +39,21 @@ public class RelicRecoveryRobot extends Robot {
      * @param opMode the op-mode that this robot is using.
      * @param configOptions the {@link JSONConfigOptions} instance to use with this robot object
      */
-    public RelicRecoveryRobot(OpMode opMode, JSONConfigOptions configOptions) {
+    public RelicRecoveryRobot(OpMode opMode) {
         super(opMode);
 
-        this.optionsMap = configOptions;
+        this.optionsMap = new JSONConfigOptions();
+        optionsMap.parseFile(new File("/sdcard/FIRST/options.json"));
 
         DcMotor.Direction rightMotorDirection;
         DcMotor.Direction leftMotorDirection;
 
-        if(optionsMap.retrieveData("isRightMotorReversed").getAsBoolean()){
+        if(optionsMap.retrieveData("isRightWheelReversed").getAsBoolean()){
             rightMotorDirection = DcMotor.Direction.REVERSE;
         } else {
             rightMotorDirection = DcMotor.Direction.FORWARD;
         }
-        if(optionsMap.retrieveData("isLeftMotorReversed").getAsBoolean()){
+        if(optionsMap.retrieveData("isLeftWheelReversed").getAsBoolean()){
             leftMotorDirection = DcMotor.Direction.REVERSE;
         } else {
             leftMotorDirection = DcMotor.Direction.FORWARD;
