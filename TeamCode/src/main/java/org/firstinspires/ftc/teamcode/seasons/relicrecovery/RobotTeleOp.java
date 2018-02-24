@@ -2,14 +2,6 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl.GlyphLift;
-import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
-
-import java.io.File;
 
 /**
  This class is the competition robot tele-op program.
@@ -87,9 +79,9 @@ public class RobotTeleOp extends LinearOpMode {
             // Relic gripper toggle
             if(gamepad2.a && relicTogglePressed) {
                 if(relicGripperOpen) {
-                    robot.getRelicArm().closeGrip();
+                    robot.getRelicArm().closeGripper();
                 } else {
-                    robot.getRelicArm().openGrip();
+                    robot.getRelicArm().openGripper();
                 }
 
                 relicGripperOpen = !relicGripperOpen;

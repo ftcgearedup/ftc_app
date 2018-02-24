@@ -35,7 +35,7 @@ public class RelicArm implements IMechanism {
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // initially set the gripper servo position to 0.5
-        initializeGripperPosition();
+        closeGripper();
         initializeArmRotationPosition();
     }
 
@@ -67,17 +67,13 @@ public class RelicArm implements IMechanism {
     }
 
     private void initializeArmRotationPosition() {
-        armRotationServo.setPosition(0);
-    }
-
-    private void initializeGripperPosition() {
-        gripperServo.setPosition(0.5);
+        armRotationServo.setPosition(0.02);
     }
 
     /**
      * Opens the relic arm gripper
      */
-    public void openGrip() {
+    public void openGripper() {
         gripperServo.setPosition(0.5);
         isClosed = false;
     }
@@ -85,7 +81,7 @@ public class RelicArm implements IMechanism {
     /**
      * Closes the relic arm gripper
      */
-    public void closeGrip() {
+    public void closeGripper() {
         gripperServo.setPosition(1.0);
         isClosed = true;
     }

@@ -9,12 +9,12 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.IDirectionalDriveTrain;
 
 /**
- * An algorithm that drives to a specified target distance in inches
- * (driving in reverse if necessary) using a distance sensor.
+ * An algorithm that drives to a specified target currentDistance in inches
+ * (driving in reverse if necessary) using a currentDistance sensor.
  * This algorithm supports driving forward and backward or left and right to
- * or from the target distance using an {@link IDirectionalDriveTrain}
+ * or from the target currentDistance using an {@link IDirectionalDriveTrain}
  *
- * @see DistanceSensor the interface for all distance sensors
+ * @see DistanceSensor the interface for all currentDistance sensors
  */
 
 public class DistanceSensorDriveAlgorithm {
@@ -26,14 +26,16 @@ public class DistanceSensorDriveAlgorithm {
     private RobotSide sensorRobotSide;
 
     private double targetDistance;
+    private double currentDistance;
 
     private double speedX;
     private double speedY;
 
-    private static final double P_DRIVE_SPEED_COEFF = 0.04;
+    private static final double P_DRIVE_SPEED_COEFF = 0.03;
+    private static final double DISTANCE_THRESHOLD = 0.5;
 
     /**
-     * An enumeration type that represents the side of the robot the distance sensor is located.
+     * An enumeration type that represents the side of the robot the currentDistance sensor is located.
      */
     public enum RobotSide {
         FRONT(0, 1), BACK(0, -1), LEFT(-1, 0), RIGHT(1, 0);
@@ -49,12 +51,12 @@ public class DistanceSensorDriveAlgorithm {
 
     /**
      * Create a new instance of this algorithm with a reference to the robot,
-     * a directional drive train, the distance sensor, and the side of the robot
-     * the distance sensor is positioned.
+     * a directional drive train, the currentDistance sensor, and the side of the robot
+     * the currentDistance sensor is positioned.
      *
      * @param robot the robot utilizing this algorithm
-     * @param distanceSensor the distance sensor that detects the distance to drive to
-     * @param sensorRobotSide the side of the robot the distance sensor is located
+     * @param distanceSensor the currentDistance sensor that detects the currentDistance to drive to
+     * @param sensorRobotSide the side of the robot the currentDistance sensor is located
      */
     public DistanceSensorDriveAlgorithm(Robot robot, IDirectionalDriveTrain driveTrain,
                                         DistanceSensor distanceSensor,
@@ -67,11 +69,19 @@ public class DistanceSensorDriveAlgorithm {
     }
 
     /**
-     * Execute the algorithm to drive to {@code targetDistance} inches
-     * at the specified speed using the distance sensor. The algorithm will drive the
-     * robot in reverse if {@code targetDistance} is greater than the detected robot distance.
      *
-     * @param targetDistance the distance the distance sensor should be from the target
+     * @return
+     */
+    public boolean isAlgorithmBusy() {
+        return Math.abs(targetDistance - currentDistance) > DISTANCE_THRESHOLD;
+    }
+
+    /**
+     * Execute the algorithm to drive to {@code targetDistance} inches
+     * at the specified speed using the currentDistance sensor. The algorithm will drive the
+     * robot in reverse if {@code targetDistance} is greater than the detected robot currentDistance.
+     *
+     * @param targetDistance the currentDistance the currentDistance sensor should be from the target
      * @param speed the speed at which to drive
      * @param nonBlocking whether this method should block. If this method is called by a
      *                    non-{@link LinearOpMode}, this method will always be non-blocking, regardless
@@ -87,44 +97,49 @@ public class DistanceSensorDriveAlgorithm {
         }
     }
 
-    private void executionLoop(double distance, double speed) {
-        speed *= Math.abs(targetDistance - distance) * P_DRIVE_SPEED_COEFF;
+    private void executionLoop(double speed) {
+        speed *= Math.abs(targetDistance - currentDistance) * P_DRIVE_SPEED_COEFF;
 
         this.speedX = sensorRobotSide.x * speed;
         this.speedY = sensorRobotSide.y * speed;
 
-        if(distance > targetDistance) {
-            driveTrain.drive(-speedX, -speedY);
+        if(currentDistance > targetDistance) {
+            driveTrain.drive(speedX, speedY);
         } else {
             // change both to negative for opposite direction
-            driveTrain.drive(speedX, speedY);
+            driveTrain.drive(-speedX, -speedY);
         }
     }
 
     private void driveToDistanceBlocking(double speed) {
         LinearOpMode linearOpMode = (LinearOpMode)opMode;
 
-        double distance;
-
         do {
-            distance = distanceSensor.getDistance(DistanceUnit.INCH);
-            executionLoop(distance, speed);
+            this.currentDistance = distanceSensor.getDistance(DistanceUnit.INCH);
+            executionLoop(speed);
 
-            opMode.telemetry.addData("distance", distance);
+            opMode.telemetry.addData("currentDistance", currentDistance);
+            opMode.telemetry.addData("speed X", speedX);
+            opMode.telemetry.addData("speed Y", speedY);
             opMode.telemetry.update();
-        } while(linearOpMode.opModeIsActive() && distance > targetDistance);
+
+        } while(linearOpMode.opModeIsActive() && isAlgorithmBusy());
 
         driveTrain.stopDriveMotors();
     }
 
     private void driveToDistanceNonBlocking(double speed) {
+        this.currentDistance = distanceSensor.getDistance(DistanceUnit.INCH);
 
-        double distance = Math.abs(targetDistance - distanceSensor.getDistance(DistanceUnit.INCH)) * P_DRIVE_SPEED_COEFF;
+        opMode.telemetry.addData("currentDistance", currentDistance);
+        opMode.telemetry.addData("speed X", speedX);
+        opMode.telemetry.addData("speed Y", speedY);
+        opMode.telemetry.update();
 
-        if(distance == targetDistance) {
-            driveTrain.stopDriveMotors();
+        if(isAlgorithmBusy()) {
+            executionLoop(speed);
         } else {
-            executionLoop(distance, speed);
+            driveTrain.stopDriveMotors();
         }
     }
 }

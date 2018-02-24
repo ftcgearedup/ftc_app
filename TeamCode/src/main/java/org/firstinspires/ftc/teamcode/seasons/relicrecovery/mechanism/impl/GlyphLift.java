@@ -22,6 +22,9 @@ public class GlyphLift implements IMechanism {
     private final double MAX_LIFT_MOTOR_POWER_UP;
     private final double MAX_LIFT_MOTOR_POWER_DOWN;
 
+    private final int LIFT_RAISED_POSITION = 850;
+    private final int GLYPH_EJECT_POSITON = 3000;
+
     private OpMode opMode;
 
     private DcMotor liftMotorLeft;
@@ -88,6 +91,43 @@ public class GlyphLift implements IMechanism {
 
     public TouchSensor getTouchSensor() {
         return touchSensor;
+    }
+
+    private void setLiftMotorsPosition(int targetPosition, double speed) {
+        // run to position for both motors
+        liftMotorLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotorRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // set lift motors target positions
+        liftMotorLeft.setTargetPosition(targetPosition);
+        liftMotorRight.setTargetPosition(targetPosition);
+
+        // set lift motors power
+        liftMotorLeft.setPower(speed);
+        liftMotorRight.setPower(speed);
+    }
+
+    /**
+     *
+     */
+    public void ejectGlyph() {
+        glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        glyphIntakeMotor.setTargetPosition(GLYPH_EJECT_POSITON);
+        glyphIntakeMotor.setPower(1.0);
+    }
+
+    /**
+     *
+     */
+    public void raiseGlyphLift() {
+        setLiftMotorsPosition(LIFT_RAISED_POSITION, MAX_LIFT_MOTOR_POWER_UP);
+    }
+
+    /**
+     *
+     */
+    public void lowerGlyphLift() {
+        setLiftMotorsPosition(-LIFT_RAISED_POSITION, MAX_LIFT_MOTOR_POWER_DOWN);
     }
 
     /**

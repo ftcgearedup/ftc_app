@@ -21,4 +21,10 @@ public interface IGyroPivotAlgorithm {
      *                    of the value for this parameter, due to the nature of non-{@link LinearOpMode}.
      */
     void pivot(double speed, double angle, boolean absolute, boolean nonBlocking);
+
+    /**
+     *
+     * @return
+     */
+    boolean isAlgorithmBusy();
 }

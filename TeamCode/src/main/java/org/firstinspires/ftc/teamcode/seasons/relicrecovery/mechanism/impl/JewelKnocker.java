@@ -56,15 +56,21 @@ public class JewelKnocker implements IMechanism {
 
             centerRotation();
 
+            timer.reset();
             while(linearOpMode.opModeIsActive() && timer.milliseconds() < JEWEL_ARM_DELAY_MS) {
                 extendArm();
             }
 
-            if(isRedAlliance && isJewelBlue()) {
-                leftRotation();
-            } else {
-                rightRotation();
+            timer.reset();
+            while(linearOpMode.opModeIsActive() && timer.milliseconds() < JEWEL_ARM_DELAY_MS) {
+                if (isRedAlliance && isJewelBlue()) {
+                    leftRotation();
+                } else {
+                    rightRotation();
+                }
             }
+
+            retractArm();
         }
     }
 
@@ -100,7 +106,7 @@ public class JewelKnocker implements IMechanism {
      *
      */
     public void rightRotation() {
-        knockerServo.setPosition(1);
+        knockerServo.setPosition(1.0);
     }
 
     /**
