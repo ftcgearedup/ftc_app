@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -19,8 +20,11 @@ public class RelicArm implements IMechanism {
 
     private boolean isClosed = false;
 
+    private OpMode opMode;
+
     public RelicArm(Robot robot) {
-        HardwareMap hwMap = robot.getCurrentOpMode().hardwareMap;
+        this.opMode = robot.getCurrentOpMode();
+        HardwareMap hwMap = opMode.hardwareMap;
 
         armMotor = hwMap.dcMotor.get("ram");
         gripperServo = hwMap.servo.get("rag");
@@ -30,33 +34,51 @@ public class RelicArm implements IMechanism {
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // initially set the gripper servo position to open
-        openGrip();
+        // initially set the gripper servo position to 0.5
+        initializeGripperPosition();
+        initializeArmRotationPosition();
+    }
+
+    private void stepServoPosition(double position, double amount) {
+        double currentPosition = armRotationServo.getPosition();
+
+        opMode.telemetry.addData("arm rotation servo", currentPosition);
+        opMode.telemetry.update();
+
+        if(currentPosition < position) {
+            armRotationServo.setPosition(currentPosition + amount);
+        } else if(currentPosition > position) {
+            armRotationServo.setPosition(currentPosition - amount);
+        }
     }
 
     /**
      * Raises the relic arm rotation servo
      */
     public void raiseArmRotation() {
-        armRotationServo.setPosition(1.0);
+        stepServoPosition(0.2, 0.02);
     }
 
     /**
      * Lowers the relic arm rotation servo
      */
     public void lowerArmRotation() {
-        armRotationServo.setPosition(0.3);
+        stepServoPosition(1.0, 0.02);
     }
 
-    public void initializeArmRotationPosition() {
+    private void initializeArmRotationPosition() {
         armRotationServo.setPosition(0);
+    }
+
+    private void initializeGripperPosition() {
+        gripperServo.setPosition(0.5);
     }
 
     /**
      * Opens the relic arm gripper
      */
     public void openGrip() {
-        gripperServo.setPosition(0);
+        gripperServo.setPosition(0.5);
         isClosed = false;
     }
 

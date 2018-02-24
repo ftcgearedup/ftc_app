@@ -1,8 +1,8 @@
 {
   "wheelDiameter" : 4,
 
-  "isLeftWheelReversed" : true,
-  "isRightWheelReversed" : true,
+  "isLeftMotorReversed" : true,
+  "isRightMotorReversed" : true,
 
   "wheelGearRatioIn" : 1.0,
   "wheelGearRatioOut" : 1.5,
@@ -21,5 +21,4 @@
 
   "relicArmGripperOpenPosition" : 0,
   "relicArmGripperClosePosition" : 1
-
 }

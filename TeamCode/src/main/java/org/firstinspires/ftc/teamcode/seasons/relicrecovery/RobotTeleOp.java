@@ -51,10 +51,10 @@ public class RobotTeleOp extends LinearOpMode {
         double speedY;
         double pivot;
 
-        ElapsedTime intakeToggleTimer = new ElapsedTime();
-        ElapsedTime relicToggleTimer = new ElapsedTime();
-
         double liftMotorPower;
+
+        boolean relicTogglePressed = true;
+        boolean relicGripperOpen = false;
 
         while (opModeIsActive()) {
             speedX = gamepad1.right_stick_x;
@@ -85,9 +85,17 @@ public class RobotTeleOp extends LinearOpMode {
             }
 
             // Relic gripper toggle
-            if(gamepad2.a) {
+            if(gamepad2.a && relicTogglePressed) {
+                if(relicGripperOpen) {
+                    robot.getRelicArm().closeGrip();
+                } else {
+                    robot.getRelicArm().openGrip();
+                }
 
+                relicGripperOpen = !relicGripperOpen;
             }
+
+            relicTogglePressed = !gamepad2.a;
 
             // Jewel arm control                                    JEWEL CONTROLS
             if (gamepad1.y){

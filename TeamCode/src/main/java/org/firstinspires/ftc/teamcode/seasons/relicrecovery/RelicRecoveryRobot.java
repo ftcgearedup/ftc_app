@@ -72,7 +72,7 @@ public class RelicRecoveryRobot extends Robot {
         this.glyphLift = new GlyphLift(this);
         this.visionHelper = new VisionHelper(this);
         this.jewelKnocker = new JewelKnocker(this);
-//        this.relicArm = new RelicArm(this);
+        this.relicArm = new RelicArm(this);
 
         this.frontRangeSensor = new MaxSonarEZ4MB1040(this, "frs");
 

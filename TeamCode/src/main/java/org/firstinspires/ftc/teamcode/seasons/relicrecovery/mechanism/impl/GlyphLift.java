@@ -71,12 +71,15 @@ public class GlyphLift implements IMechanism {
 
         // run using encoder
         glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // brake both motors
         liftMotorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // reverse left and right lift motor
+        liftMotorRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public ColorSensor getColorSensor() {
@@ -108,9 +111,9 @@ public class GlyphLift implements IMechanism {
      *              Negative values lower the lift and, likewise, positive values raise the lift.
      */
     public void setLiftMotorPower(double power) {
-        double powerCoefficient = (power < 0 ? MAX_LIFT_MOTOR_POWER_UP : MAX_LIFT_MOTOR_POWER_DOWN);
+        double powerCoefficient = (power < 0 ? MAX_LIFT_MOTOR_POWER_DOWN : MAX_LIFT_MOTOR_POWER_UP);
 
-        liftMotorLeft.setPower(-power * powerCoefficient);
+        liftMotorLeft.setPower(power * powerCoefficient);
         liftMotorRight.setPower(power * powerCoefficient);
     }
 }
