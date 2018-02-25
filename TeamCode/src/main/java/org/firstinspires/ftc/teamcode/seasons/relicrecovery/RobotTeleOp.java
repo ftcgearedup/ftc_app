@@ -95,7 +95,7 @@ public class RobotTeleOp extends LinearOpMode {
                 robot.getJewelKnocker().centerRotation();
             } else {
                 robot.getJewelKnocker().retractArm();
-                robot.getJewelKnocker().leftRotation();
+                robot.getJewelKnocker().rightRotation();
             }
 
             // glyph lift intake power control
@@ -107,7 +107,8 @@ public class RobotTeleOp extends LinearOpMode {
             telemetry.addData("GCS Red Level", robot.getGlyphLift().getColorSensor().red());
             telemetry.addData("GCS Blue Level", robot.getGlyphLift().getColorSensor().blue());
 
-            telemetry.addData("Glyph Touch Sensor", robot.getGlyphLift().getTouchSensor().isPressed());
+            telemetry.addData("Glyph Touch Sensor", robot.getGlyphLift().getGlyphTouchSensor().isPressed());
+            telemetry.addData("Glyph Lift Touch Sensor", !robot.getGlyphLift().getLiftTouchSensor().getState());
 
             telemetry.update();
 
