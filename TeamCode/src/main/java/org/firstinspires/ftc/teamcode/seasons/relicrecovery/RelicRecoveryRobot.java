@@ -25,9 +25,7 @@ public class RelicRecoveryRobot extends Robot {
     private final JewelKnocker jewelKnocker;
     private RelicArm relicArm;
 
-    private MaxSonarEZ4AbstractSensor leftRangeSensor;
-    private MaxSonarEZ4AbstractSensor rightRangeSensor;
-    private MaxSonarEZ4AbstractSensor frontRangeSensor;
+    private MaxSonarEZ4AbstractSensor leftRangeSensor, rightRangeSensor;
 
     private final JSONConfigOptions optionsMap;
 
@@ -74,8 +72,6 @@ public class RelicRecoveryRobot extends Robot {
         this.jewelKnocker = new JewelKnocker(this);
         this.relicArm = new RelicArm(this);
 
-        this.frontRangeSensor = new MaxSonarEZ4MB1040(this, "frs");
-
         this.rightRangeSensor = new MaxSonarEZ4MB1043(this, "rrs");
         this.leftRangeSensor = new MaxSonarEZ4MB1043(this, "lrs");
     }
@@ -110,10 +106,6 @@ public class RelicRecoveryRobot extends Robot {
 
     public MaxSonarEZ4AbstractSensor getRightRangeSensor() {
         return rightRangeSensor;
-    }
-
-    public MaxSonarEZ4AbstractSensor getFrontRangeSensor() {
-        return frontRangeSensor;
     }
 }
 
