@@ -169,10 +169,6 @@ public class HDriveTrain implements IDirectionalDriveTrain {
 
         leftDrive.setPower(currentSpeedY + pivotSpeed);
         rightDrive.setPower(currentSpeedY - pivotSpeed);
-
-        opMode.telemetry.addData("left power", leftDrive.getPower());
-        opMode.telemetry.addData("right power", rightDrive.getPower());
-        opMode.telemetry.update();
     }
 
     @Override
