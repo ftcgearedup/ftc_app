@@ -33,7 +33,7 @@ public class DemoTeleOp extends LinearOpMode {
 //        head = hardwareMap.dcMotor.get("h");
 //        head.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         gripper = hardwareMap.servo.get("gripper");
-        gripper.setPosition(45);
+        gripper.setPosition(.5);
         waitForStart();
         double speedLeft;
         double speedRight;

@@ -50,6 +50,11 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
     }
 
     @Override
+    public boolean isAlgorithmBusy() {
+        return Math.abs(error) > GYRO_DEGREE_THRESHOLD;
+    }
+
+    @Override
     public void pivot(double speed, double angle, boolean absolute, boolean nonBlocking) {
         this.desiredSpeed = speed;
         this.targetAngle = angle;
@@ -127,13 +132,11 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
 
     private void pivotNonBlocking() {
         error = getError(targetAngle, absolute);
+
         if(Math.abs(error) > GYRO_DEGREE_THRESHOLD) {
             executionLoop();
         } else {
-            // reset instance variables
-            this.previousTime = System.currentTimeMillis();
-            this.previousError = 0;
-            this.integral = 0;
+            driveTrain.pivot(0);
         }
     }
 }

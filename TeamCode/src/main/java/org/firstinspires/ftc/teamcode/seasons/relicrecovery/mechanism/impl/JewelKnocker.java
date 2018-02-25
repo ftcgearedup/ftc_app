@@ -19,8 +19,6 @@ import java.io.File;
  */
 
 public class JewelKnocker implements IMechanism {
-    private final JSONConfigOptions optionsMap = new JSONConfigOptions("options.json");
-
     private Servo knockerServo;
     private Servo armServo;
 
@@ -28,27 +26,12 @@ public class JewelKnocker implements IMechanism {
 
     private OpMode opMode;
 
-    private final int JEWEL_ARM_DELAY_MS;
-
-    private int retractPos;
-    private int extendPos;
-    private int leftRotationPos;
-    private int centerRotationPos;
-    private int rightRotationPos;
-
+    private static final int JEWEL_ARM_DELAY_MS = 500;
 
 
     public JewelKnocker(Robot robot) {
         this.opMode = robot.getCurrentOpMode();
         HardwareMap hwMap = opMode.hardwareMap;
-
-        JEWEL_ARM_DELAY_MS = optionsMap.retrieveAsInt("jewelKnockerDelayMS");
-
-        retractPos = optionsMap.retrieveAsInt("jewelKnockerRetractPosition");
-        extendPos = optionsMap.retrieveAsInt("jewelKnockerExtendPosition");
-        leftRotationPos = optionsMap.retrieveAsInt("jewelKnockerLeftRotation");
-        centerRotationPos = optionsMap.retrieveAsInt("jewelKnockerCenterRotation");
-        rightRotationPos = optionsMap.retrieveAsInt("jewelKnockerRightRotation");
 
         this.armServo = hwMap.servo.get("js");
         this.knockerServo = hwMap.servo.get("rs");
@@ -73,15 +56,21 @@ public class JewelKnocker implements IMechanism {
 
             centerRotation();
 
+            timer.reset();
             while(linearOpMode.opModeIsActive() && timer.milliseconds() < JEWEL_ARM_DELAY_MS) {
                 extendArm();
             }
 
-            if(isRedAlliance && isJewelBlue()) {
-                leftRotation();
-            } else {
-                rightRotation();
+            timer.reset();
+            while(linearOpMode.opModeIsActive() && timer.milliseconds() < JEWEL_ARM_DELAY_MS) {
+                if (isRedAlliance && isJewelBlue()) {
+                    leftRotation();
+                } else {
+                    rightRotation();
+                }
             }
+
+            retractArm();
         }
     }
 
@@ -89,35 +78,35 @@ public class JewelKnocker implements IMechanism {
      * Retracts Jewel Arm
      */
     public void retractArm() {
-        armServo.setPosition(retractPos);
+        armServo.setPosition(0.3);
     }
 
     /**
      * Extends Jewel Arm
      */
     public void extendArm() {
-        armServo.setPosition(extendPos);
+        armServo.setPosition(0.85);
     }
 
     /**
      *
      */
     public void leftRotation() {
-        knockerServo.setPosition(leftRotationPos);
+        knockerServo.setPosition(0);
     }
 
     /**
      *
      */
     public void centerRotation() {
-        knockerServo.setPosition(centerRotationPos);
+        knockerServo.setPosition(0.5);
     }
 
     /**
      *
      */
     public void rightRotation() {
-        knockerServo.setPosition(rightRotationPos);
+        knockerServo.setPosition(1.0);
     }
 
     /**

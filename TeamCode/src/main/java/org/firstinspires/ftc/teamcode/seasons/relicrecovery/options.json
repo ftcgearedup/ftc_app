@@ -1,8 +1,8 @@
 {
   "wheelDiameter" : 4,
 
-  "isLeftWheelReversed" : true,
-  "isRightWheelReversed" : true,
+  "isLeftMotorReversed" : true,
+  "isRightMotorReversed" : true,
 
   "wheelGearRatioIn" : 1.0,
   "wheelGearRatioOut" : 1.5,
@@ -20,6 +20,9 @@
   "glyphLiftIsIntakeReversed" : true,
 
   "relicArmGripperOpenPosition" : 0,
-  "relicArmGripperClosePosition" : 1
+  "relicArmGripperClosePosition" : 1,
 
+  "autonomousVuMarkScanTimeMS" : 1000,
+
+  "teleopJoystickDeadzone" : 0.2
 }

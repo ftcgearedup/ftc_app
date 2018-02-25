@@ -20,12 +20,6 @@ public class JSONConfigOptions {
 
     private Map<String, JsonElement> result = new HashMap<>();
 
-    /**
-     * This method parses the data of a JSON File to a internally stored Map<>String, JsonElement>
-     *
-     * @param file the file to parse the JSON data from
-     */
-
     private void parseFile(File file){
 
         JsonObject obj = null;

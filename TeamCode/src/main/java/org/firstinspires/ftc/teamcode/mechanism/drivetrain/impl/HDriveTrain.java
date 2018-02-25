@@ -165,10 +165,14 @@ public class HDriveTrain implements IDirectionalDriveTrain {
 
     @Override
     public void pivot(double pivotSpeed) {
-        this.currentPivot = -pivotSpeed;
+        this.currentPivot = pivotSpeed;
 
-        leftDrive.setPower(this.currentSpeedY - pivotSpeed);
-        rightDrive.setPower(this.currentSpeedY + pivotSpeed);
+        leftDrive.setPower(currentSpeedY + pivotSpeed);
+        rightDrive.setPower(currentSpeedY - pivotSpeed);
+
+        opMode.telemetry.addData("left power", leftDrive.getPower());
+        opMode.telemetry.addData("right power", rightDrive.getPower());
+        opMode.telemetry.update();
     }
 
     @Override
@@ -253,10 +257,10 @@ public class HDriveTrain implements IDirectionalDriveTrain {
 
     @Override
     public void drive(double speedX, double speedY) {
-        this.currentSpeedY = -speedY;
+        this.currentSpeedY = speedY;
 
-        leftDrive.setPower(this.currentPivot - speedY);
-        rightDrive.setPower(-this.currentPivot - speedY);
+        leftDrive.setPower(this.currentPivot + speedY);
+        rightDrive.setPower(-this.currentPivot + speedY);
 
         middleDrive.setPower(-speedX);
     }
