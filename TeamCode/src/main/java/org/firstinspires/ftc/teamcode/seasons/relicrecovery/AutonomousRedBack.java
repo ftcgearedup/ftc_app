@@ -26,7 +26,6 @@ public class AutonomousRedBack extends LinearOpMode {
 
     private VuMarkScanAlgorithm vuMarkScanAlgorithm;
 
-    private DistanceSensorDriveAlgorithm frontDistanceSensorDrive;
     private DistanceSensorDriveAlgorithm rightDistanceSensorDrive;
     private DistanceSensorDriveAlgorithm leftDistanceSensorDrive;
 
@@ -47,10 +46,6 @@ public class AutonomousRedBack extends LinearOpMode {
 
         bno055IMUWrapper.startIntegration();
 
-        frontDistanceSensorDrive = new DistanceSensorDriveAlgorithm(
-                robot, robot.getHDriveTrain(), robot.getFrontRangeSensor(),
-                DistanceSensorDriveAlgorithm.RobotSide.FRONT);
-
         rightDistanceSensorDrive = new DistanceSensorDriveAlgorithm(
                 robot, robot.getHDriveTrain(), robot.getRightRangeSensor(),
                 DistanceSensorDriveAlgorithm.RobotSide.RIGHT);
@@ -67,6 +62,7 @@ public class AutonomousRedBack extends LinearOpMode {
 
         vuMarkScanAlgorithm.activate();
 
+        // raise glyph lift and stop lift motors
         robot.getGlyphLift().raiseGlyphLift();
 
         timer.reset();
@@ -76,6 +72,11 @@ public class AutonomousRedBack extends LinearOpMode {
                 && timer.milliseconds() < VUMARK_SCAN_TIME
                 && scannedVuMark == RelicRecoveryVuMark.UNKNOWN) {
             scannedVuMark = vuMarkScanAlgorithm.detect();
+
+            // stop glyph lift if it is at its target position
+            if(!robot.getGlyphLift().isGlyphLiftBusy()) {
+                robot.getGlyphLift().setLiftMotorPower(0);
+            }
         }
 
         vuMarkScanAlgorithm.deactivate();
@@ -102,11 +103,25 @@ public class AutonomousRedBack extends LinearOpMode {
         } while(rightDistanceSensorDrive.isAlgorithmBusy());
 
         switch (scannedVuMark) {
+            case LEFT:
+                gyroPivotAlgorithm.pivot(0.5, 240, false, false);
+                break;
+            case RIGHT:
+                gyroPivotAlgorithm.pivot(0.5, 300, false, false);
+                break;
             case UNKNOWN:
-                robot.getHDriveTrain().directionalDrive(90, 0.5, 6,false);
+            case CENTER:
                 break;
         }
 
+        // drive forward into cryptobox
+        robot.getHDriveTrain().directionalDrive(90, 0.5, 8,false);
+
+        // run intake in reverse to eject glyph
         robot.getGlyphLift().ejectGlyph();
+
+        // back up while ejecting glyph
+        robot.getHDriveTrain().directionalDrive(270, 0.5, 6, false);
+
     }
 }

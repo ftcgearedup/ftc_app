@@ -21,7 +21,7 @@ public class AutonomousRedLeft extends LinearOpMode {
     private VuMarkScanAlgorithm vuMarkScanAlgorithm;
     private IGyroPivotAlgorithm gyroPivotAlgorithm;
     private BNO055IMUWrapper bno055IMUWrapper;
-    private DistanceSensorDriveAlgorithm frontDistanceSensorDrive;
+
     private DistanceSensorDriveAlgorithm rightDistanceSensorDrive;
     private DistanceSensorDriveAlgorithm leftDistanceSensorDrive;
 
@@ -33,10 +33,6 @@ public class AutonomousRedLeft extends LinearOpMode {
         gyroPivotAlgorithm = new BNO055IMUGyroPivotAlgorithm(robot, robot.getHDriveTrain(), bno055IMUWrapper);
 
         bno055IMUWrapper.startIntegration();
-
-        frontDistanceSensorDrive = new DistanceSensorDriveAlgorithm(
-                robot, robot.getHDriveTrain(), robot.getFrontRangeSensor(),
-                DistanceSensorDriveAlgorithm.RobotSide.FRONT);
 
         rightDistanceSensorDrive = new DistanceSensorDriveAlgorithm(
                 robot, robot.getHDriveTrain(), robot.getRightRangeSensor(),
