@@ -48,7 +48,7 @@ public class DataGramLog {
     /**
      * This method appends the file, using data from the phone. It adds the date, and time, as well as the log tag and message.
      *
-     * @param text the text that you want the log message displays.
+     * @param text the text that you want the log message to display.
      * @param tag the tag is attached to the log message and is used to filter log messages by type.
      * @param format this allows you to chose the format for the date that you wish to call display.
      */
