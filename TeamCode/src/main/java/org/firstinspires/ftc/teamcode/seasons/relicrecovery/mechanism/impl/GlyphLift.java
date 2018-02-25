@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
@@ -23,15 +25,18 @@ public class GlyphLift implements IMechanism {
     private final double MAX_LIFT_MOTOR_POWER_DOWN;
 
     private final int LIFT_RAISED_POSITION = 850;
-    private final int GLYPH_EJECT_POSITON = 3000;
+    private final int GLYPH_EJECT_POSITON = -3000;
 
     private OpMode opMode;
 
     private DcMotor liftMotorLeft;
     private DcMotor liftMotorRight;
     private DcMotor glyphIntakeMotor;
-    private TouchSensor touchSensor;
+
     private ColorSensor colorSensor;
+
+    private TouchSensor glyphTouchSensor;
+    private DigitalChannel liftTouchSensor;
 
     /**
      * Construct a new {@link GlyphLift} with a reference to the utilizing robot.
@@ -63,7 +68,9 @@ public class GlyphLift implements IMechanism {
         this.liftMotorLeft = hwMap.dcMotor.get("liftml");
         this.liftMotorRight = hwMap.dcMotor.get("liftmr");
         this.glyphIntakeMotor = hwMap.dcMotor.get("gm");
-        this.touchSensor = hwMap.touchSensor.get("gts");
+
+        this.glyphTouchSensor = hwMap.touchSensor.get("gts");
+        this.liftTouchSensor = hwMap.digitalChannel.get("lts");
         this.colorSensor = hwMap.colorSensor.get("gcs");
 
         // reverse lift motor
@@ -89,8 +96,17 @@ public class GlyphLift implements IMechanism {
         return colorSensor;
     }
 
-    public TouchSensor getTouchSensor() {
-        return touchSensor;
+    public TouchSensor getGlyphTouchSensor() {
+        return glyphTouchSensor;
+    }
+
+    public DigitalChannel getLiftTouchSensor() {
+        return liftTouchSensor;
+    }
+
+    private boolean isLiftTouchSensorPressed() {
+        // the lift touch sensor value is inverted
+        return !liftTouchSensor.getState();
     }
 
     private void setLiftMotorsPosition(int targetPosition, double speed) {
@@ -111,6 +127,7 @@ public class GlyphLift implements IMechanism {
      *
      */
     public void ejectGlyph() {
+        glyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         glyphIntakeMotor.setTargetPosition(GLYPH_EJECT_POSITON);
         glyphIntakeMotor.setPower(1.0);
@@ -127,7 +144,26 @@ public class GlyphLift implements IMechanism {
      *
      */
     public void lowerGlyphLift() {
-        setLiftMotorsPosition(-LIFT_RAISED_POSITION, MAX_LIFT_MOTOR_POWER_DOWN);
+        liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        if(opMode instanceof LinearOpMode) {
+            LinearOpMode linearOpMode = (LinearOpMode)opMode;
+
+            while(linearOpMode.opModeIsActive() && !isLiftTouchSensorPressed()) {
+                setLiftMotorPower(-MAX_LIFT_MOTOR_POWER_DOWN);
+            }
+
+            setLiftMotorPower(0);
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isGlyphLiftBusy() {
+        return liftMotorLeft.isBusy() && liftMotorRight.isBusy();
     }
 
     /**
@@ -152,6 +188,15 @@ public class GlyphLift implements IMechanism {
      */
     public void setLiftMotorPower(double power) {
         double powerCoefficient = (power < 0 ? MAX_LIFT_MOTOR_POWER_DOWN : MAX_LIFT_MOTOR_POWER_UP);
+
+        // set lift motors mode to run using encoders
+        liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // if lift touch sensor is pressed and desired power is in reverse, stop the lift motors
+        if (isLiftTouchSensorPressed() && power < 0) {
+            powerCoefficient = 0;
+        }
 
         liftMotorLeft.setPower(power * powerCoefficient);
         liftMotorRight.setPower(power * powerCoefficient);
