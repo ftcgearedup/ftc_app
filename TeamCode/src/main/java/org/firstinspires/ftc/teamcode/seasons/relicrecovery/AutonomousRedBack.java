@@ -31,11 +31,13 @@ public class AutonomousRedBack extends LinearOpMode {
 
     private ElapsedTime timer;
 
-    private static final double VUMARK_SCAN_TIME = 1000;
+    private double vuMarkScanTimeMS;
 
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new RelicRecoveryRobot(this);
+        
+        vuMarkScanTimeMS = robot.getOptionsMap().retrieveAsDouble("autonomousVuMarkScanTimeMS");
 
         // initialize vuforia
         robot.getVisionHelper().initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
@@ -69,7 +71,7 @@ public class AutonomousRedBack extends LinearOpMode {
 
         // scan VuMark
         while(opModeIsActive()
-                && timer.milliseconds() < VUMARK_SCAN_TIME
+                && timer.milliseconds() < vuMarkScanTimeMS
                 && scannedVuMark == RelicRecoveryVuMark.UNKNOWN) {
             scannedVuMark = vuMarkScanAlgorithm.detect();
 

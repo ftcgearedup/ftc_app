@@ -20,5 +20,9 @@
   "glyphLiftIsIntakeReversed" : true,
 
   "relicArmGripperOpenPosition" : 0,
-  "relicArmGripperClosePosition" : 1
+  "relicArmGripperClosePosition" : 1,
+
+  "autonomousVuMarkScanTimeMS" : 1000,
+
+  "teleopJoystickDeadzone" : 0.2
 }

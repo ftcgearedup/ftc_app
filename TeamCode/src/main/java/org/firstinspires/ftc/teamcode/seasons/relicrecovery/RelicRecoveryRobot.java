@@ -33,7 +33,6 @@ public class RelicRecoveryRobot extends Robot {
      * Construct a new Relic Recovery robot, with an op-mode that is using this robot.
      *
      * @param opMode the op-mode that this robot is using.
-     * @param configOptions the {@link JSONConfigOptions} instance to use with this robot object
      */
     public RelicRecoveryRobot(OpMode opMode) {
         super(opMode);

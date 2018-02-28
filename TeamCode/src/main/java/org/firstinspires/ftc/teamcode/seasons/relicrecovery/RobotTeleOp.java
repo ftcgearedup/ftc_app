@@ -10,29 +10,35 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  *
  * DRIVER 1:
  *
- * Right Stick (Y)    - Movement
+ * Right Stick (X, Y) - Movement
  * Left Stick (X)     - Rotation
  * Right Trigger      - Slow Driving
  *
- * Y Button           - Jewel Arm Lower and Center Rotator (Hold)
+ * Y Button           - Jewel Knocker Lower and Center Rotator
  *
  * DRIVER 2:
  *
  * Left Stick (Y)     - Glyph Intake Height
  * Right Stick (Y)    - Glyph Intake Run (Up for Inward, Down for Outward)
+ * A Button           - Relic Arm Grip Toggle
+ * Up Button          - Relic Arm Rotator Up
+ * Down Button        - Relic Arm Rotator Down
+ * Left Trigger       - Relic Arm Retract
+ * Right Trigger      - Relic Arm Extend
  */
 @TeleOp(name = "TELEOP", group = "teleop")
 public class RobotTeleOp extends LinearOpMode {
     private RelicRecoveryRobot robot;
 
-    private static final float JOYSTICK_DEADZONE = 0.2f;
+    private static float joystickDeadzone;
 
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new RelicRecoveryRobot(this);
+        joystickDeadzone = (float) robot.getOptionsMap().retrieveAsDouble("teleopJoystickDeadzone");
 
-        gamepad1.setJoystickDeadzone(JOYSTICK_DEADZONE);
-        gamepad2.setJoystickDeadzone(JOYSTICK_DEADZONE);
+        gamepad1.setJoystickDeadzone(joystickDeadzone);
+        gamepad2.setJoystickDeadzone(joystickDeadzone);
 
         robot.getJewelKnocker().retractArm();
 
