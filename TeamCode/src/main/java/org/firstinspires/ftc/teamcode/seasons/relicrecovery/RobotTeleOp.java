@@ -4,23 +4,22 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
- This class is the competition robot tele-op program.
-
- CONTROLS USED
-
- DRIVER 1:
-
- Right Stick   - Movement
- Left Stick (X)- Rotation
- Right Trigger - Slow Driving
-
- Y             - Jewel Arm Lower and Center Rotator (Hold)
-
- DRIVER 2:
-
- Left Stick (Y)      - Glyph Intake Height
- Right Stick (Y)     - Glyph Intake Run (Up for Inward, Down for Outward)
-
+ * This class is the Relic Recovery competition robot tele-op program.
+ *
+ * CONTROLS USED
+ *
+ * DRIVER 1:
+ *
+ * Right Stick (Y)    - Movement
+ * Left Stick (X)     - Rotation
+ * Right Trigger      - Slow Driving
+ *
+ * Y Button           - Jewel Arm Lower and Center Rotator (Hold)
+ *
+ * DRIVER 2:
+ *
+ * Left Stick (Y)     - Glyph Intake Height
+ * Right Stick (Y)    - Glyph Intake Run (Up for Inward, Down for Outward)
  */
 @TeleOp(name = "TELEOP", group = "teleop")
 public class RobotTeleOp extends LinearOpMode {
