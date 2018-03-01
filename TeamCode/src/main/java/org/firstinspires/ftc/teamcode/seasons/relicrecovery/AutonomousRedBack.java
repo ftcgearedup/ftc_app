@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMa
 
 
 /**
- * Created by Owner on 12/5/2017.
+ * The Relic Recovery back red alliance program.
  */
 @Autonomous(name = "Red Back", group = "autonomous")
 public class AutonomousRedBack extends LinearOpMode {

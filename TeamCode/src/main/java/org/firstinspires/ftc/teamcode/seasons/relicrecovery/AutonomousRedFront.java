@@ -13,10 +13,10 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMa
 
 
 /**
- * Created by Owner on 12/5/2017.
+ * The Relic Recovery front red alliance program.
  */
-@Autonomous(name = "Blue Right", group = "autonomous")
-public class AutonomousBlueRight extends LinearOpMode {
+@Autonomous(name = "Red Front", group = "autonomous")
+public class AutonomousRedFront extends LinearOpMode {
 
     private RelicRecoveryRobot robot;
     private VuMarkScanAlgorithm vuMarkScanAlgorithm;
@@ -47,6 +47,7 @@ public class AutonomousBlueRight extends LinearOpMode {
         boolean isStoneRed = true;
         boolean isStoneRight = false;
 
+
         ElapsedTime driveTimer = new ElapsedTime();
 
 //        if(robot.balancingStoneSensor.red() > 0){
@@ -72,11 +73,11 @@ public class AutonomousBlueRight extends LinearOpMode {
             scannedVuMark = vuMarkScanAlgorithm.detect();
         }
 
-        vuMarkScanAlgorithm.deactivate();
-
         if(scannedVuMark == RelicRecoveryVuMark.UNKNOWN) {
             scannedVuMark = RelicRecoveryVuMark.CENTER;
         }
+
+        vuMarkScanAlgorithm.deactivate();
 
         telemetry.addData("VuMark", scannedVuMark);
         telemetry.update();
@@ -98,31 +99,34 @@ public class AutonomousBlueRight extends LinearOpMode {
 //            telemetry.addData(">", "jewel is red");
 //            telemetry.update();
 //
-//            robot.getHDriveTrain().directionalDrive(0, 0.5, 2, false); //drive 4 inches right
+//            robot.getHDriveTrain().directionalDrive(180, 0.5, 2, false); //drive 4 inches right
 //
 //            robot.getJewelKnocker().retractArm();
 //
-//            robot.getHDriveTrain().directionalDrive(0, 1.0, 18, false); //drive 4 inches right
+//            robot.getHDriveTrain().directionalDrive(180, 1.0, 18, false); //drive 4 inches right
 //            sleep(500);
 //        } else if (robot.getJewelKnocker().isJewelBlue()) {
 //            telemetry.addData(">", "jewel is blue");
 //            telemetry.update();
 //
-//            robot.getHDriveTrain().directionalDrive(180, 1.0, 2, false); // drive 4 inches left
+//            robot.getHDriveTrain().directionalDrive(0, 0.5, 2, false); // drive 4 inches left
 //
 //            robot.getJewelKnocker().retractArm();
 //
-//            robot.getHDriveTrain().directionalDrive(0, 1.0, 24, false); //drive 4 inches right
+//            robot.getHDriveTrain().directionalDrive(180, 1.0, 22, false); //drive 4 inches right
 //        }
 
         // gyro pivot to zero degree angle
         gyroPivotAlgorithm.pivot(0.5, 0, true, false);
 
+        // drive forward before driving into balancing stone
+        robot.getHDriveTrain().directionalDrive(270, 0.3, 4, false); //drive 4 inches right
+
         driveTimer.reset();
 
         // drive of balancing stone
         while(driveTimer.milliseconds() < 1000) {
-            robot.getHDriveTrain().drive(-0.5, 0.0);
+            robot.getHDriveTrain().drive(0.5, 0.0);
         }
         robot.getHDriveTrain().stopDriveMotors();
 
@@ -137,16 +141,18 @@ public class AutonomousBlueRight extends LinearOpMode {
         switch (scannedVuMark) {
             case UNKNOWN:
             case CENTER:
-                robot.getHDriveTrain().directionalDrive(0, 0.5, 16, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 16, false);
+//                rightDistanceSensorDrive.driveToDistance(52, 0.5, false);
                 break;
             case LEFT:
-                robot.getHDriveTrain().directionalDrive(0, 0.5, 9, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 23, false);
                 break;
             case RIGHT:
-                robot.getHDriveTrain().directionalDrive(0, 0.5, 23, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 9, false);
                 break;
         }
 
+        // pivot to face cryptobox
         gyroPivotAlgorithm.pivot(0.3, 180, true, false);
 
         robot.getGlyphLift().setLiftMotorPower(-0.2);
@@ -173,6 +179,5 @@ public class AutonomousBlueRight extends LinearOpMode {
         robot.getHDriveTrain().stopDriveMotors();
 
         robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
-
     }
 }

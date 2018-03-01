@@ -92,14 +92,29 @@ public class GlyphLift implements IMechanism {
         liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
+    /**
+     * Get the glyph lift color sensor
+     *
+     * @return the glyph lift color sensor
+     */
     public ColorSensor getColorSensor() {
         return colorSensor;
     }
 
+    /**
+     * Get the glyph touch sensor
+     *
+     * @return get the glyph touch sensor
+     */
     public TouchSensor getGlyphTouchSensor() {
         return glyphTouchSensor;
     }
 
+    /**
+     * Get the lift touch sensor
+     *
+     * @return the lift touch sensor
+     */
     public DigitalChannel getLiftTouchSensor() {
         return liftTouchSensor;
     }
@@ -124,7 +139,7 @@ public class GlyphLift implements IMechanism {
     }
 
     /**
-     *
+     * Run the intake in reverse in order to eject a glyph
      */
     public void ejectGlyph() {
         glyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -134,14 +149,14 @@ public class GlyphLift implements IMechanism {
     }
 
     /**
-     *
+     * Raise the glyph lift
      */
     public void raiseGlyphLift() {
         setLiftMotorsPosition(LIFT_RAISED_POSITION, MAX_LIFT_MOTOR_POWER_UP);
     }
 
     /**
-     *
+     * Lower the glyph lift
      */
     public void lowerGlyphLift() {
         liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -159,8 +174,10 @@ public class GlyphLift implements IMechanism {
     }
 
     /**
+     * Return if the glyph lift is busy (i.e. currently lowering or raising).
+     * The lift is busy after {@link #lowerGlyphLift()} or {@link #raiseGlyphLift()} is called.
      *
-     * @return
+     * @return if the glyph lift is current running (lowering or raising)
      */
     public boolean isGlyphLiftBusy() {
         return liftMotorLeft.isBusy() && liftMotorRight.isBusy();

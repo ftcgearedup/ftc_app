@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -12,10 +13,10 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMa
 
 
 /**
- * Created by Owner on 12/5/2017.
+ * The Relic Recovery front blue alliance program.
  */
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name = "Red Left", group = "autonomous")
-public class AutonomousRedLeft extends LinearOpMode {
+@Autonomous(name = "Blue Front", group = "autonomous")
+public class AutonomousBlueFront extends LinearOpMode {
 
     private RelicRecoveryRobot robot;
     private VuMarkScanAlgorithm vuMarkScanAlgorithm;
@@ -46,16 +47,7 @@ public class AutonomousRedLeft extends LinearOpMode {
         boolean isStoneRed = true;
         boolean isStoneRight = false;
 
-
         ElapsedTime driveTimer = new ElapsedTime();
-
-//        if(robot.balancingStoneSensor.red() > 0){
-//            isStoneRed = true;
-//            telemetry.addData(">", "Red stone detected.");
-//        } else {
-//            isStoneRed = false;
-//            telemetry.addData(">", "Blue stone detected.");
-//        }
 
 //        robot.getGlyphLift().initializeGrippers();
 //        robot.getIntake().raiseIntake();
@@ -72,11 +64,11 @@ public class AutonomousRedLeft extends LinearOpMode {
             scannedVuMark = vuMarkScanAlgorithm.detect();
         }
 
+        vuMarkScanAlgorithm.deactivate();
+
         if(scannedVuMark == RelicRecoveryVuMark.UNKNOWN) {
             scannedVuMark = RelicRecoveryVuMark.CENTER;
         }
-
-        vuMarkScanAlgorithm.deactivate();
 
         telemetry.addData("VuMark", scannedVuMark);
         telemetry.update();
@@ -98,36 +90,35 @@ public class AutonomousRedLeft extends LinearOpMode {
 //            telemetry.addData(">", "jewel is red");
 //            telemetry.update();
 //
-//            robot.getHDriveTrain().directionalDrive(180, 0.5, 2, false); //drive 4 inches right
+//            robot.getHDriveTrain().directionalDrive(0, 0.5, 2, false); //drive 4 inches right
 //
 //            robot.getJewelKnocker().retractArm();
 //
-//            robot.getHDriveTrain().directionalDrive(180, 1.0, 18, false); //drive 4 inches right
+//            robot.getHDriveTrain().directionalDrive(0, 1.0, 18, false); //drive 4 inches right
 //            sleep(500);
 //        } else if (robot.getJewelKnocker().isJewelBlue()) {
 //            telemetry.addData(">", "jewel is blue");
 //            telemetry.update();
 //
-//            robot.getHDriveTrain().directionalDrive(0, 0.5, 2, false); // drive 4 inches left
+//            robot.getHDriveTrain().directionalDrive(180, 0.5, 2, false); // drive 4 inches left
 //
 //            robot.getJewelKnocker().retractArm();
 //
-//            robot.getHDriveTrain().directionalDrive(180, 1.0, 22, false); //drive 4 inches right
+//            robot.getHDriveTrain().directionalDrive(0, 1.0, 24, false); //drive 4 inches right
 //        }
 
         // gyro pivot to zero degree angle
-        gyroPivotAlgorithm.pivot(0.5, 0, true, false);
-
-        // drive forward before driving into balancing stone
-        robot.getHDriveTrain().directionalDrive(270, 0.3, 4, false); //drive 4 inches right
+        gyroPivotAlgorithm.pivot(0.5, 90, true, false);
 
         driveTimer.reset();
 
-        // drive of balancing stone
-        while(driveTimer.milliseconds() < 1000) {
+        // drive into wall
+        while(driveTimer.milliseconds() < 1500) {
             robot.getHDriveTrain().drive(0.5, 0.0);
         }
         robot.getHDriveTrain().stopDriveMotors();
+
+        gyroPivotAlgorithm.pivot(0.5, 90, true, false);
 
 ////        // pivot to face cryptobox
 ////        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
@@ -136,31 +127,28 @@ public class AutonomousRedLeft extends LinearOpMode {
 //
 //        robot.getHDriveTrain().directionalDrive(0, 0.5, 4, false);
 
-        // drive right/left to face key column
         switch (scannedVuMark) {
             case UNKNOWN:
             case CENTER:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 16, false);
-//                rightDistanceSensorDrive.driveToDistance(52, 0.5, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 25, false);
                 break;
             case LEFT:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 23, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 16, false);
                 break;
             case RIGHT:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 9, false);
+                robot.getHDriveTrain().directionalDrive(180, 0.5, 30, false);
                 break;
         }
-
-        // pivot to face cryptobox
-        gyroPivotAlgorithm.pivot(0.3, 180, true, false);
 
         robot.getGlyphLift().setLiftMotorPower(-0.2);
         sleep(750);
         robot.getGlyphLift().setLiftMotorPower(0.2);
 
+        gyroPivotAlgorithm.pivot(0.5, 90, true, false);
+
         driveTimer.reset();
 
-        // drive into cryptobox
+        // drive into balancing stone
         while(driveTimer.milliseconds() < 1000) {
             robot.getHDriveTrain().drive(0, -0.5);
         }
@@ -178,5 +166,6 @@ public class AutonomousRedLeft extends LinearOpMode {
         robot.getHDriveTrain().stopDriveMotors();
 
         robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
+
     }
 }

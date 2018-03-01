@@ -15,7 +15,8 @@ import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 import java.io.File;
 
 /**
- *
+ * This class is responsible for the control of the jewel knocker, which is used
+ * to knock a jewel off of the jewel platform.
  */
 
 public class JewelKnocker implements IMechanism {
@@ -28,7 +29,11 @@ public class JewelKnocker implements IMechanism {
 
     private static final int JEWEL_ARM_DELAY_MS = 500;
 
-
+    /**
+     * Construct a new {@link JewelKnocker} instance.
+     *
+     * @param robot the robot to use this JewelKnocker object
+     */
     public JewelKnocker(Robot robot) {
         this.opMode = robot.getCurrentOpMode();
         HardwareMap hwMap = opMode.hardwareMap;
@@ -45,7 +50,10 @@ public class JewelKnocker implements IMechanism {
     }
 
     /**
-     * @param isRedAlliance
+     * This method implements an algorithm to knock the appropriate jewel off of the jewel platform.
+     *
+     * @param isRedAlliance whether the robot is on the red alliance. This is used to determine
+     *                      if the robot should knock the blue jewel off of the platform.
      */
     public void knockJewel(boolean isRedAlliance) {
         ElapsedTime timer = new ElapsedTime();
@@ -92,21 +100,21 @@ public class JewelKnocker implements IMechanism {
     }
 
     /**
-     *
+     * Rotate the knocker servo to the left
      */
     public void leftRotation() {
         knockerServo.setPosition(0);
     }
 
     /**
-     *
+     * Rotate the knocker servo to the center position
      */
     public void centerRotation() {
         knockerServo.setPosition(0.5);
     }
 
     /**
-     *
+     * Rotate the knocker servo to the right
      */
     public void rightRotation() {
         knockerServo.setPosition(1.0);

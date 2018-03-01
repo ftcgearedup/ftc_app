@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
 
 /**
- *
+ * The relic arm class is represents the relic arm mechanism on the robot.
  */
 
 public class RelicArm implements IMechanism {
@@ -22,6 +22,11 @@ public class RelicArm implements IMechanism {
 
     private OpMode opMode;
 
+    /**
+     * Create a new {@link RelicArm} instance.
+     *
+     * @param robot the robot using this relic arm object
+     */
     public RelicArm(Robot robot) {
         this.opMode = robot.getCurrentOpMode();
         HardwareMap hwMap = opMode.hardwareMap;
