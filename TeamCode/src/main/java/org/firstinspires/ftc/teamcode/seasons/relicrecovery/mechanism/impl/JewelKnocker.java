@@ -80,8 +80,14 @@ public class JewelKnocker implements IMechanism {
                 }
             }
 
-            // retract servo arm
-            retractArm();
+            // rotate to center position while retracting
+            timer.reset();
+            while(linearOpMode.opModeIsActive() && timer.milliseconds() < JEWEL_ARM_DELAY_MS) {
+                centerRotation();
+
+                // retract servo arm
+                retractArm();
+            }
         }
     }
 
@@ -89,14 +95,14 @@ public class JewelKnocker implements IMechanism {
      * Retracts Jewel Arm
      */
     public void retractArm() {
-        armServo.setPosition(0.3);
+        armServo.setPosition(0.25);
     }
 
     /**
      * Extends Jewel Arm
      */
     public void extendArm() {
-        armServo.setPosition(0.85);
+        armServo.setPosition(0.8);
     }
 
     /**

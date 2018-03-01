@@ -21,11 +21,11 @@ public class GlyphLift implements IMechanism {
 
     private JSONConfigOptions optionsMap = new JSONConfigOptions("options.json");
 
-    private final double MAX_LIFT_MOTOR_POWER_UP;
-    private final double MAX_LIFT_MOTOR_POWER_DOWN;
+    public final double MAX_LIFT_MOTOR_POWER_UP;
+    public final double MAX_LIFT_MOTOR_POWER_DOWN;
 
     private final int LIFT_RAISED_POSITION = 850;
-    private final int GLYPH_EJECT_POSITON = -3000;
+    private final int GLYPH_EJECT_POSITON = 3000;
 
     private OpMode opMode;
 
@@ -119,7 +119,11 @@ public class GlyphLift implements IMechanism {
         return liftTouchSensor;
     }
 
-    private boolean isLiftTouchSensorPressed() {
+    /**
+     *
+     * @return
+     */
+    public boolean isLiftTouchSensorPressed() {
         // the lift touch sensor value is inverted
         return !liftTouchSensor.getState();
     }
@@ -153,24 +157,6 @@ public class GlyphLift implements IMechanism {
      */
     public void raiseGlyphLift() {
         setLiftMotorsPosition(LIFT_RAISED_POSITION, MAX_LIFT_MOTOR_POWER_UP);
-    }
-
-    /**
-     * Lower the glyph lift
-     */
-    public void lowerGlyphLift() {
-        liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        if(opMode instanceof LinearOpMode) {
-            LinearOpMode linearOpMode = (LinearOpMode)opMode;
-
-            while(linearOpMode.opModeIsActive() && !isLiftTouchSensorPressed()) {
-                setLiftMotorPower(-MAX_LIFT_MOTOR_POWER_DOWN);
-            }
-
-            setLiftMotorPower(0);
-        }
     }
 
     /**

@@ -89,6 +89,9 @@ public class AutonomousRedBack extends LinearOpMode {
         // knock jewel
         robot.getJewelKnocker().knockJewel(true);
 
+        // move back to left position
+        robot.getJewelKnocker().rightRotation();
+
         // drive off balancing stone
         robot.getHDriveTrain().directionalDrive(180, 0.5, 24, false);
 
@@ -96,10 +99,15 @@ public class AutonomousRedBack extends LinearOpMode {
         gyroPivotAlgorithm.pivot(0.5, 270, true, false);
 
         // lower the lift
-        robot.getGlyphLift().lowerGlyphLift();
+        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().MAX_LIFT_MOTOR_POWER_DOWN);
 
         // align to middle column
         do {
+            // stop lift if the lift touch sensor is pressed
+            if(robot.getGlyphLift().isLiftTouchSensorPressed()) {
+                robot.getGlyphLift().setLiftMotorPower(0);
+            }
+
             gyroPivotAlgorithm.pivot(0.1, 270, true, true);
             rightDistanceSensorDrive.driveToDistance(25, 1.0, true);
         } while(rightDistanceSensorDrive.isAlgorithmBusy());
@@ -117,7 +125,12 @@ public class AutonomousRedBack extends LinearOpMode {
         }
 
         // drive forward into cryptobox
-        robot.getHDriveTrain().directionalDrive(90, 0.5, 8,false);
+        timer.reset();
+        while(opModeIsActive() && timer.milliseconds() < 600) {
+            robot.getHDriveTrain().drive(0, 0.5);
+        }
+
+        robot.getHDriveTrain().drive(0.0, 0.0);
 
         // run intake in reverse to eject glyph
         robot.getGlyphLift().ejectGlyph();
