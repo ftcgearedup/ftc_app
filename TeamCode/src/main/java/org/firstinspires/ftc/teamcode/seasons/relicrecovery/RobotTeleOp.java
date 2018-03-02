@@ -115,6 +115,11 @@ public class RobotTeleOp extends LinearOpMode {
             telemetry.addData("Glyph Touch Sensor", robot.getGlyphLift().getGlyphTouchSensor().isPressed());
             telemetry.addData("Glyph Lift Touch Sensor", !robot.getGlyphLift().getLiftTouchSensor().getState());
 
+            telemetry.addData("left lift motor position", robot.getGlyphLift().getLiftLeftMotorPosition());
+            telemetry.addData("right lift motor position", robot.getGlyphLift().getLiftRightMotorPosition());
+
+            telemetry.addData("relic arm motor position", robot.getRelicArm().getArmMotorPosition());
+
             telemetry.update();
 
             robot.getHDriveTrain().pivot(pivot);

@@ -16,11 +16,13 @@
 
   "glyphLiftMotorPowerUp" : 1.0,
   "glyphLiftMotorPowerDown" : 0.4,
+  "glyphLiftMaxEncoderPosition": 500,
   "glyphLiftIsLiftReversed" : true,
   "glyphLiftIsIntakeReversed" : true,
 
   "relicArmGripperOpenPosition" : 0,
   "relicArmGripperClosePosition" : 1,
+  "relicArmMotorMaxPosition": 500,
 
   "autonomousVuMarkScanTimeMS" : 1000,
 

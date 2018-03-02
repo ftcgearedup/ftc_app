@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.RelicRecoveryRobot;
 import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 /**
@@ -19,13 +20,12 @@ import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 public class GlyphLift implements IMechanism {
 
-    private JSONConfigOptions optionsMap = new JSONConfigOptions("options.json");
-
     public final double MAX_LIFT_MOTOR_POWER_UP;
     public final double MAX_LIFT_MOTOR_POWER_DOWN;
 
     private final int LIFT_RAISED_POSITION = 850;
     private final int GLYPH_EJECT_POSITON = 3000;
+    private final int LIFT_MAX_ENCODER_POSITION;
 
     private OpMode opMode;
 
@@ -38,14 +38,18 @@ public class GlyphLift implements IMechanism {
     private TouchSensor glyphTouchSensor;
     private DigitalChannel liftTouchSensor;
 
+    private JSONConfigOptions optionsMap;
+
     /**
      * Construct a new {@link GlyphLift} with a reference to the utilizing robot.
      *
      * @param robot the robot using this glyph lift
      */
     public GlyphLift(Robot robot) {
+        this.optionsMap = ((RelicRecoveryRobot)robot).getOptionsMap();
         MAX_LIFT_MOTOR_POWER_UP = optionsMap.retrieveAsDouble("glyphLiftMotorPowerUp");
         MAX_LIFT_MOTOR_POWER_DOWN = optionsMap.retrieveAsDouble("glyphLiftMotorPowerDown");
+        LIFT_MAX_ENCODER_POSITION = optionsMap.retrieveAsInt("glyphLiftMaxEncoderPosition");
 
         DcMotorSimple.Direction liftMotorDir;
         DcMotorSimple.Direction intakeMotorDir;
@@ -119,6 +123,14 @@ public class GlyphLift implements IMechanism {
         return liftTouchSensor;
     }
 
+    public int getLiftLeftMotorPosition() {
+        return liftMotorLeft.getCurrentPosition();
+    }
+
+    public int getLiftRightMotorPosition() {
+        return liftMotorRight.getCurrentPosition();
+    }
+
     /**
      *
      * @return
@@ -161,7 +173,7 @@ public class GlyphLift implements IMechanism {
 
     /**
      * Return if the glyph lift is busy (i.e. currently lowering or raising).
-     * The lift is busy after {@link #lowerGlyphLift()} or {@link #raiseGlyphLift()} is called.
+     * The lift is busy after {@link #raiseGlyphLift()} is called.
      *
      * @return if the glyph lift is current running (lowering or raising)
      */
@@ -198,6 +210,12 @@ public class GlyphLift implements IMechanism {
 
         // if lift touch sensor is pressed and desired power is in reverse, stop the lift motors
         if (isLiftTouchSensorPressed() && power < 0) {
+            powerCoefficient = 0;
+        }
+
+        // stop if any of the two lift motors exceeded their max position and the direction is up
+        if((liftMotorLeft.getCurrentPosition() >= LIFT_MAX_ENCODER_POSITION
+                || liftMotorRight.getCurrentPosition() >= LIFT_MAX_ENCODER_POSITION) && power > 0) {
             powerCoefficient = 0;
         }
 

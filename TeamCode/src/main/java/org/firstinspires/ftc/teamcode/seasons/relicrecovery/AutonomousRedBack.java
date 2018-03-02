@@ -93,7 +93,7 @@ public class AutonomousRedBack extends LinearOpMode {
         robot.getJewelKnocker().rightRotation();
 
         // drive off balancing stone
-        robot.getHDriveTrain().directionalDrive(180, 0.5, 24, false);
+        robot.getHDriveTrain().directionalDrive(180, 1.0, 24, false);
 
         // pivot to face cryptobox
         gyroPivotAlgorithm.pivot(0.5, 270, true, false);
@@ -110,14 +110,14 @@ public class AutonomousRedBack extends LinearOpMode {
 
             gyroPivotAlgorithm.pivot(0.1, 270, true, true);
             rightDistanceSensorDrive.driveToDistance(25, 1.0, true);
-        } while(rightDistanceSensorDrive.isAlgorithmBusy());
+        } while(opModeIsActive() && rightDistanceSensorDrive.isAlgorithmBusy());
 
         switch (scannedVuMark) {
             case LEFT:
-                gyroPivotAlgorithm.pivot(0.5, 240, false, false);
+                gyroPivotAlgorithm.pivot(0.5, 247, false, false);
                 break;
             case RIGHT:
-                gyroPivotAlgorithm.pivot(0.5, 300, false, false);
+                gyroPivotAlgorithm.pivot(0.5, 293, false, false);
                 break;
             case UNKNOWN:
             case CENTER:
@@ -126,8 +126,8 @@ public class AutonomousRedBack extends LinearOpMode {
 
         // drive forward into cryptobox
         timer.reset();
-        while(opModeIsActive() && timer.milliseconds() < 600) {
-            robot.getHDriveTrain().drive(0, 0.5);
+        while(opModeIsActive() && timer.milliseconds() < 400) {
+            robot.getHDriveTrain().drive(0, 1.0);
         }
 
         robot.getHDriveTrain().drive(0.0, 0.0);
@@ -138,5 +138,7 @@ public class AutonomousRedBack extends LinearOpMode {
         // back up while ejecting glyph
         robot.getHDriveTrain().directionalDrive(270, 0.5, 6, false);
 
+        // gyro pivot back to 270 after backing up
+        gyroPivotAlgorithm.pivot(0.5, 270, true, false);
     }
 }

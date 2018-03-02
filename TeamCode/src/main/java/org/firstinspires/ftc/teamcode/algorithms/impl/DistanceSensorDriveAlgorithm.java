@@ -87,7 +87,7 @@ public class DistanceSensorDriveAlgorithm {
      *                    non-{@link LinearOpMode}, this method will always be non-blocking, regardless
      *                    of the value for this parameter, due to the nature of non-{@link LinearOpMode}.
      */
-    public void driveToDistance(int targetDistance, double speed, boolean nonBlocking) {
+    public void driveToDistance(double targetDistance, double speed, boolean nonBlocking) {
         this.targetDistance = targetDistance;
 
         if(nonBlocking || !(opMode instanceof LinearOpMode)) {

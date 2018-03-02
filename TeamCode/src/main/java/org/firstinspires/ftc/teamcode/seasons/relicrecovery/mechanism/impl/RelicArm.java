@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.RelicRecoveryRobot;
+import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 /**
  * The relic arm class is represents the relic arm mechanism on the robot.
@@ -22,6 +24,10 @@ public class RelicArm implements IMechanism {
 
     private OpMode opMode;
 
+    private JSONConfigOptions optionsMap;
+
+    private final int ARM_MOTOR_MAX_POSITION;
+
     /**
      * Create a new {@link RelicArm} instance.
      *
@@ -30,6 +36,10 @@ public class RelicArm implements IMechanism {
     public RelicArm(Robot robot) {
         this.opMode = robot.getCurrentOpMode();
         HardwareMap hwMap = opMode.hardwareMap;
+
+        this.optionsMap = ((RelicRecoveryRobot)robot).getOptionsMap();
+
+        ARM_MOTOR_MAX_POSITION = optionsMap.retrieveAsInt("relicArmMotorMaxPosition");
 
         armMotor = hwMap.dcMotor.get("ram");
         gripperServo = hwMap.servo.get("rag");
@@ -55,6 +65,10 @@ public class RelicArm implements IMechanism {
         } else if(currentPosition > position) {
             armRotationServo.setPosition(currentPosition - amount);
         }
+    }
+
+    public int getArmMotorPosition() {
+        return armMotor.getCurrentPosition();
     }
 
     /**
@@ -97,6 +111,12 @@ public class RelicArm implements IMechanism {
      * @param power The power you want to set the Main Arm to move at
      */
     public void setArmMainPower(double power) {
+        if(power < 0 &&
+                (armMotor.getCurrentPosition() <= ARM_MOTOR_MAX_POSITION
+                        || armMotor.getCurrentPosition() >= 0)) {
+            power = 0;
+        }
+
         armMotor.setPower(power);
     }
 
