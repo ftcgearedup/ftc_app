@@ -2,7 +2,7 @@
   "wheelDiameter" : 4,
 
   "isLeftMotorReversed" : true,
-  "isRightMotorReversed" : true,
+  "isRightMotorReversed" : false,
 
   "wheelGearRatioIn" : 1.0,
   "wheelGearRatioOut" : 1.5,
@@ -11,16 +11,18 @@
   "jewelKnockerExtendPosition" : 0.85,
   "jewelKnockerLeftRotation" : 0,
   "jewelKnockerCenterRotation" : 0.5,
-  "jewelKnockerRightRotation" : 1,
+  "jewelKnockerRightRotation" : 1.0,
   "jewelKnockerDelayMS" : 500,
 
-  "glyphLiftMotorPowerUp" : 0.4,
-  "glyphLiftMotorPowerDown" : 0.9,
+  "glyphLiftMotorPowerUp" : 1.0,
+  "glyphLiftMotorPowerDown" : 0.4,
+  "glyphLiftMaxEncoderPosition": 500,
   "glyphLiftIsLiftReversed" : true,
   "glyphLiftIsIntakeReversed" : true,
 
   "relicArmGripperOpenPosition" : 0,
   "relicArmGripperClosePosition" : 1,
+  "relicArmMotorMaxPosition": 500,
 
   "autonomousVuMarkScanTimeMS" : 1000,
 

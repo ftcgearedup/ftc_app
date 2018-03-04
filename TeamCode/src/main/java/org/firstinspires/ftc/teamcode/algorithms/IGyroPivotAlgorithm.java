@@ -23,8 +23,9 @@ public interface IGyroPivotAlgorithm {
     void pivot(double speed, double angle, boolean absolute, boolean nonBlocking);
 
     /**
+     * Return if the algorithm is busy (i.e. currently running)
      *
-     * @return
+     * @return whether the algorithm is still running
      */
     boolean isAlgorithmBusy();
 }

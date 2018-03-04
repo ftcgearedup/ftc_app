@@ -30,7 +30,6 @@ public class DistanceSensorTest extends LinearOpMode {
         bno055IMUWrapper.startIntegration();
 
         while(!isStarted() && !opModeIsActive()) {
-            telemetry.addData("front", robot.getFrontRangeSensor().getDistance(DistanceUnit.INCH));
             telemetry.addData("left", robot.getLeftRangeSensor().getDistance(DistanceUnit.INCH));
             telemetry.addData("right", robot.getRightRangeSensor().getDistance(DistanceUnit.INCH));
             telemetry.update();

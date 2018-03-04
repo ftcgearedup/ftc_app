@@ -13,16 +13,16 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMa
 
 
 /**
- * Created by Owner on 12/5/2017.
+ * The Relic Recovery front blue alliance program.
  */
-@Autonomous(name = "Blue Left", group = "autonomous")
-public class AutonomousBlueLeft extends LinearOpMode {
+@Autonomous(name = "Blue Front", group = "autonomous")
+public class AutonomousBlueFront extends LinearOpMode {
 
     private RelicRecoveryRobot robot;
     private VuMarkScanAlgorithm vuMarkScanAlgorithm;
     private IGyroPivotAlgorithm gyroPivotAlgorithm;
     private BNO055IMUWrapper bno055IMUWrapper;
-    private DistanceSensorDriveAlgorithm frontDistanceSensorDrive;
+
     private DistanceSensorDriveAlgorithm rightDistanceSensorDrive;
     private DistanceSensorDriveAlgorithm leftDistanceSensorDrive;
 
@@ -34,10 +34,6 @@ public class AutonomousBlueLeft extends LinearOpMode {
         gyroPivotAlgorithm = new BNO055IMUGyroPivotAlgorithm(robot, robot.getHDriveTrain(), bno055IMUWrapper);
 
         bno055IMUWrapper.startIntegration();
-
-        frontDistanceSensorDrive = new DistanceSensorDriveAlgorithm(
-                robot, robot.getHDriveTrain(), robot.getFrontRangeSensor(),
-                DistanceSensorDriveAlgorithm.RobotSide.FRONT);
 
         rightDistanceSensorDrive = new DistanceSensorDriveAlgorithm(
                 robot, robot.getHDriveTrain(), robot.getRightRangeSensor(),

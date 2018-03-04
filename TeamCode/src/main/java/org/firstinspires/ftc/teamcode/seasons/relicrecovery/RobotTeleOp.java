@@ -4,29 +4,27 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 /**
- This class is the competition robot tele-op program.
-
- CONTROLS USED
-
- DRIVER 1:
-
- Right Stick         - Movement
- Left Stick (X)      - Rotation
- Right Trigger       - Slow Driving
-
- Y                   - Jewel Arm Extend and Center Rotator (Hold)
-
- DRIVER 2:
-
- Left Stick (Y)      - Glyph Intake Height
- Right Stick (Y)     - Glyph Intake Run (Up for Inward, Down for Outward)
-
- A                   - Relic Arm Grip Toggle
- Up                  - Relic Arm Rotator Up
- Down                - Relic Arm Rotator Down
- Left Trigger        - Relic Arm Retract
- Right Trigger       - Relic Arm Extend
-
+ * This class is the Relic Recovery competition robot tele-op program.
+ *
+ * CONTROLS USED
+ *
+ * DRIVER 1:
+ *
+ * Right Stick (X, Y) - Movement
+ * Left Stick (X)     - Rotation
+ * Right Trigger      - Slow Driving
+ *
+ * Y Button           - Jewel Knocker Lower and Center Rotator
+ *
+ * DRIVER 2:
+ *
+ * Left Stick (Y)     - Glyph Intake Height
+ * Right Stick (Y)    - Glyph Intake Run (Up for Inward, Down for Outward)
+ * A Button           - Relic Arm Grip Toggle
+ * Up Button          - Relic Arm Rotator Up
+ * Down Button        - Relic Arm Rotator Down
+ * Left Trigger       - Relic Arm Retract
+ * Right Trigger      - Relic Arm Extend
  */
 @TeleOp(name = "TELEOP", group = "teleop")
 public class RobotTeleOp extends LinearOpMode {
@@ -102,7 +100,7 @@ public class RobotTeleOp extends LinearOpMode {
                 robot.getJewelKnocker().centerRotation();
             } else {
                 robot.getJewelKnocker().retractArm();
-                robot.getJewelKnocker().leftRotation();
+                robot.getJewelKnocker().rightRotation();
             }
 
             // glyph lift intake power control
@@ -114,7 +112,13 @@ public class RobotTeleOp extends LinearOpMode {
             telemetry.addData("GCS Red Level", robot.getGlyphLift().getColorSensor().red());
             telemetry.addData("GCS Blue Level", robot.getGlyphLift().getColorSensor().blue());
 
-            telemetry.addData("Glyph Touch Sensor", robot.getGlyphLift().getTouchSensor().isPressed());
+            telemetry.addData("Glyph Touch Sensor", robot.getGlyphLift().getGlyphTouchSensor().isPressed());
+            telemetry.addData("Glyph Lift Touch Sensor", !robot.getGlyphLift().getLiftTouchSensor().getState());
+
+            telemetry.addData("left lift motor position", robot.getGlyphLift().getLiftLeftMotorPosition());
+            telemetry.addData("right lift motor position", robot.getGlyphLift().getLiftRightMotorPosition());
+
+            telemetry.addData("relic arm motor position", robot.getRelicArm().getArmMotorPosition());
 
             telemetry.update();
 

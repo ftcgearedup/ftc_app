@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.RelicRecoveryRobot;
 import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 /**
@@ -17,21 +20,25 @@ import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 public class GlyphLift implements IMechanism {
 
-    private JSONConfigOptions optionsMap = new JSONConfigOptions("options.json");
-
-    private final double MAX_LIFT_MOTOR_POWER_UP;
-    private final double MAX_LIFT_MOTOR_POWER_DOWN;
+    public final double MAX_LIFT_MOTOR_POWER_UP;
+    public final double MAX_LIFT_MOTOR_POWER_DOWN;
 
     private final int LIFT_RAISED_POSITION = 850;
     private final int GLYPH_EJECT_POSITON = 3000;
+    private final int LIFT_MAX_ENCODER_POSITION;
 
     private OpMode opMode;
 
     private DcMotor liftMotorLeft;
     private DcMotor liftMotorRight;
     private DcMotor glyphIntakeMotor;
-    private TouchSensor touchSensor;
+
     private ColorSensor colorSensor;
+
+    private TouchSensor glyphTouchSensor;
+    private DigitalChannel liftTouchSensor;
+
+    private JSONConfigOptions optionsMap;
 
     /**
      * Construct a new {@link GlyphLift} with a reference to the utilizing robot.
@@ -39,8 +46,10 @@ public class GlyphLift implements IMechanism {
      * @param robot the robot using this glyph lift
      */
     public GlyphLift(Robot robot) {
+        this.optionsMap = ((RelicRecoveryRobot)robot).getOptionsMap();
         MAX_LIFT_MOTOR_POWER_UP = optionsMap.retrieveAsDouble("glyphLiftMotorPowerUp");
         MAX_LIFT_MOTOR_POWER_DOWN = optionsMap.retrieveAsDouble("glyphLiftMotorPowerDown");
+        LIFT_MAX_ENCODER_POSITION = optionsMap.retrieveAsInt("glyphLiftMaxEncoderPosition");
 
         DcMotorSimple.Direction liftMotorDir;
         DcMotorSimple.Direction intakeMotorDir;
@@ -63,7 +72,9 @@ public class GlyphLift implements IMechanism {
         this.liftMotorLeft = hwMap.dcMotor.get("liftml");
         this.liftMotorRight = hwMap.dcMotor.get("liftmr");
         this.glyphIntakeMotor = hwMap.dcMotor.get("gm");
-        this.touchSensor = hwMap.touchSensor.get("gts");
+
+        this.glyphTouchSensor = hwMap.touchSensor.get("gts");
+        this.liftTouchSensor = hwMap.digitalChannel.get("lts");
         this.colorSensor = hwMap.colorSensor.get("gcs");
 
         // reverse lift motor
@@ -85,12 +96,48 @@ public class GlyphLift implements IMechanism {
         liftMotorLeft.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
+    /**
+     * Get the glyph lift color sensor
+     *
+     * @return the glyph lift color sensor
+     */
     public ColorSensor getColorSensor() {
         return colorSensor;
     }
 
-    public TouchSensor getTouchSensor() {
-        return touchSensor;
+    /**
+     * Get the glyph touch sensor
+     *
+     * @return get the glyph touch sensor
+     */
+    public TouchSensor getGlyphTouchSensor() {
+        return glyphTouchSensor;
+    }
+
+    /**
+     * Get the lift touch sensor
+     *
+     * @return the lift touch sensor
+     */
+    public DigitalChannel getLiftTouchSensor() {
+        return liftTouchSensor;
+    }
+
+    public int getLiftLeftMotorPosition() {
+        return liftMotorLeft.getCurrentPosition();
+    }
+
+    public int getLiftRightMotorPosition() {
+        return liftMotorRight.getCurrentPosition();
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isLiftTouchSensorPressed() {
+        // the lift touch sensor value is inverted
+        return !liftTouchSensor.getState();
     }
 
     private void setLiftMotorsPosition(int targetPosition, double speed) {
@@ -108,26 +155,30 @@ public class GlyphLift implements IMechanism {
     }
 
     /**
-     *
+     * Run the intake in reverse in order to eject a glyph
      */
     public void ejectGlyph() {
+        glyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         glyphIntakeMotor.setTargetPosition(GLYPH_EJECT_POSITON);
         glyphIntakeMotor.setPower(1.0);
     }
 
     /**
-     *
+     * Raise the glyph lift
      */
     public void raiseGlyphLift() {
         setLiftMotorsPosition(LIFT_RAISED_POSITION, MAX_LIFT_MOTOR_POWER_UP);
     }
 
     /**
+     * Return if the glyph lift is busy (i.e. currently lowering or raising).
+     * The lift is busy after {@link #raiseGlyphLift()} is called.
      *
+     * @return if the glyph lift is current running (lowering or raising)
      */
-    public void lowerGlyphLift() {
-        setLiftMotorsPosition(-LIFT_RAISED_POSITION, MAX_LIFT_MOTOR_POWER_DOWN);
+    public boolean isGlyphLiftBusy() {
+        return liftMotorLeft.isBusy() && liftMotorRight.isBusy();
     }
 
     /**
@@ -152,6 +203,21 @@ public class GlyphLift implements IMechanism {
      */
     public void setLiftMotorPower(double power) {
         double powerCoefficient = (power < 0 ? MAX_LIFT_MOTOR_POWER_DOWN : MAX_LIFT_MOTOR_POWER_UP);
+
+        // set lift motors mode to run using encoders
+        liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // if lift touch sensor is pressed and desired power is in reverse, stop the lift motors
+        if (isLiftTouchSensorPressed() && power < 0) {
+            powerCoefficient = 0;
+        }
+
+        // stop if any of the two lift motors exceeded their max position and the direction is up
+        if((liftMotorLeft.getCurrentPosition() >= LIFT_MAX_ENCODER_POSITION
+                || liftMotorRight.getCurrentPosition() >= LIFT_MAX_ENCODER_POSITION) && power > 0) {
+            powerCoefficient = 0;
+        }
 
         liftMotorLeft.setPower(power * powerCoefficient);
         liftMotorRight.setPower(power * powerCoefficient);

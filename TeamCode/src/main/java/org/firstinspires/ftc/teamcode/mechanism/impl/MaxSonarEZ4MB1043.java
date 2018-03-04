@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode.mechanism.impl;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
 
+/**
+ * This class represents an Maxbotix MB1043 sensor.*
+ */
 public class MaxSonarEZ4MB1043 extends MaxSonarEZ4AbstractSensor {
     /**
      * Creates a new MaxSonarEZ4MB1043 instance.

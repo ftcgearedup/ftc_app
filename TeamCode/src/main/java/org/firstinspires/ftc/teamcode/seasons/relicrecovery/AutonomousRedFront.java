@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
@@ -15,11 +14,10 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMa
 
 
 /**
- * The Relic Recovery back red alliance program.
+ * The Relic Recovery front red alliance program.
  */
-@Autonomous(name = "Red Back", group = "autonomous")
-public class AutonomousRedBack extends LinearOpMode {
-
+@Autonomous(name = "Red Front", group = "autonomous")
+public class AutonomousRedFront extends LinearOpMode {
     private RelicRecoveryRobot robot;
     private IGyroPivotAlgorithm gyroPivotAlgorithm;
     private BNO055IMUWrapper bno055IMUWrapper;
@@ -36,7 +34,7 @@ public class AutonomousRedBack extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new RelicRecoveryRobot(this);
-        
+
         vuMarkScanTimeMS = robot.getOptionsMap().retrieveAsDouble("autonomousVuMarkScanTimeMS");
 
         // initialize vuforia
@@ -70,13 +68,13 @@ public class AutonomousRedBack extends LinearOpMode {
         timer.reset();
 
         // scan VuMark
-        while(opModeIsActive()
+        while (opModeIsActive()
                 && timer.milliseconds() < vuMarkScanTimeMS
                 && scannedVuMark == RelicRecoveryVuMark.UNKNOWN) {
             scannedVuMark = vuMarkScanAlgorithm.detect();
 
             // stop glyph lift if it is at its target position
-            if(!robot.getGlyphLift().isGlyphLiftBusy()) {
+            if (!robot.getGlyphLift().isGlyphLiftBusy()) {
                 robot.getGlyphLift().setLiftMotorPower(0);
             }
         }
@@ -95,8 +93,11 @@ public class AutonomousRedBack extends LinearOpMode {
         // drive off balancing stone
         robot.getHDriveTrain().directionalDrive(180, 1.0, 24, false);
 
+        // drive forward a bit before pivoting to face the cryptobox
+        robot.getHDriveTrain().directionalDrive(90, 0.5, 3, false);
+
         // pivot to face cryptobox
-        gyroPivotAlgorithm.pivot(0.5, 270, true, false);
+        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
 
         // lower the lift
         robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().MAX_LIFT_MOTOR_POWER_DOWN);
@@ -104,13 +105,13 @@ public class AutonomousRedBack extends LinearOpMode {
         // align to middle column
         do {
             // stop lift if the lift touch sensor is pressed
-            if(robot.getGlyphLift().isLiftTouchSensorPressed()) {
+            if (robot.getGlyphLift().isLiftTouchSensorPressed()) {
                 robot.getGlyphLift().setLiftMotorPower(0);
             }
 
-            gyroPivotAlgorithm.pivot(0.1, 270, true, true);
-            rightDistanceSensorDrive.driveToDistance(25, 1.0, true);
-        } while(opModeIsActive() && rightDistanceSensorDrive.isAlgorithmBusy());
+            gyroPivotAlgorithm.pivot(0.1, 180, true, true);
+            leftDistanceSensorDrive.driveToDistance(15.5, 1.0, true);
+        } while (opModeIsActive() && leftDistanceSensorDrive.isAlgorithmBusy());
 
         switch (scannedVuMark) {
             case LEFT:
@@ -126,7 +127,7 @@ public class AutonomousRedBack extends LinearOpMode {
 
         // drive forward into cryptobox
         timer.reset();
-        while(opModeIsActive() && timer.milliseconds() < 400) {
+        while (opModeIsActive() && timer.milliseconds() < 400) {
             robot.getHDriveTrain().drive(0, 1.0);
         }
 
@@ -139,6 +140,6 @@ public class AutonomousRedBack extends LinearOpMode {
         robot.getHDriveTrain().directionalDrive(270, 0.5, 6, false);
 
         // gyro pivot back to 270 after backing up
-        gyroPivotAlgorithm.pivot(0.5, 270, true, false);
+        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
     }
 }
