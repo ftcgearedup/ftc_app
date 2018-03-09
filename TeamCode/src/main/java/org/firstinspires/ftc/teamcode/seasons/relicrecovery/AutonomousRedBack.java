@@ -10,8 +10,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.algorithms.impl.BNO055IMUGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.algorithms.impl.DistanceSensorDriveAlgorithm;
+import org.firstinspires.ftc.teamcode.algorithms.impl.TimeDriveAlgorithm;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMarkScanAlgorithm;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.WiggleDriveAlgorithm;
 
 
 /**
@@ -29,6 +31,10 @@ public class AutonomousRedBack extends LinearOpMode {
     private DistanceSensorDriveAlgorithm rightDistanceSensorDrive;
     private DistanceSensorDriveAlgorithm leftDistanceSensorDrive;
 
+    private WiggleDriveAlgorithm wiggleDriveAlgorithm;
+
+    private TimeDriveAlgorithm timeDriveAlgorithm;
+
     private ElapsedTime timer;
 
     private double vuMarkScanTimeMS;
@@ -45,6 +51,9 @@ public class AutonomousRedBack extends LinearOpMode {
         vuMarkScanAlgorithm = new VuMarkScanAlgorithm(robot, robot.getVisionHelper());
         bno055IMUWrapper = new BNO055IMUWrapper(robot);
         gyroPivotAlgorithm = new BNO055IMUGyroPivotAlgorithm(robot, robot.getHDriveTrain(), bno055IMUWrapper);
+
+        this.timeDriveAlgorithm = new TimeDriveAlgorithm(robot, robot.getHDriveTrain());
+        this.wiggleDriveAlgorithm = new WiggleDriveAlgorithm(robot, robot.getHDriveTrain());
 
         bno055IMUWrapper.startIntegration();
 
@@ -96,7 +105,8 @@ public class AutonomousRedBack extends LinearOpMode {
         robot.getHDriveTrain().directionalDrive(180, 1.0, 24, false);
 
         // pivot to face cryptobox
-        gyroPivotAlgorithm.pivot(0.5, 270, true, false);
+        // gyroPivotAlgorithm.pivot(0.5, 270, true, false);
+        timeDriveAlgorithm.pivot(1.0, 350);
 
         // lower the lift
         robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().MAX_LIFT_MOTOR_POWER_DOWN);
@@ -114,10 +124,10 @@ public class AutonomousRedBack extends LinearOpMode {
 
         switch (scannedVuMark) {
             case LEFT:
-                gyroPivotAlgorithm.pivot(0.5, 247, false, false);
+                gyroPivotAlgorithm.pivot(0.5, 293, false, false);
                 break;
             case RIGHT:
-                gyroPivotAlgorithm.pivot(0.5, 293, false, false);
+                gyroPivotAlgorithm.pivot(0.5, 247, false, false);
                 break;
             case UNKNOWN:
             case CENTER:
@@ -140,5 +150,27 @@ public class AutonomousRedBack extends LinearOpMode {
 
         // gyro pivot back to 270 after backing up
         gyroPivotAlgorithm.pivot(0.5, 270, true, false);
+
+        // drive left to align with glyph pit
+        robot.getHDriveTrain().directionalDrive(0, 1.0, 20, false);
+
+        // turn to face glyph pit
+        //gyroPivotAlgorithm.pivot(0.5, 90, false, false);
+        timeDriveAlgorithm.pivot(1.0, 750);
+
+        // run intake
+        robot.getGlyphLift().setGlyphIntakeMotorPower(-1.0);
+
+        // drive into glyph pit
+        robot.getHDriveTrain().directionalDrive(90, 1.0, 30, false);
+
+        // gyro pivot once in glyph pile
+        gyroPivotAlgorithm.pivot(0.5, 45, false, false);
+
+        // wiggle-drive forward into glyph pile
+        wiggleDriveAlgorithm.drive(1.0, 500, 3000);
+
+        // stop intake
+        robot.getGlyphLift().setGlyphIntakeMotorPower(0);
     }
 }

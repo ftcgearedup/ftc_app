@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -161,7 +160,10 @@ public class GlyphLift implements IMechanism {
         glyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         glyphIntakeMotor.setTargetPosition(GLYPH_EJECT_POSITON);
+
         glyphIntakeMotor.setPower(1.0);
+
+        glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /**

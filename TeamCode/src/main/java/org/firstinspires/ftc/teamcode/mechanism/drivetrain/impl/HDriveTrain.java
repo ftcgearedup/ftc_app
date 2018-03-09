@@ -58,6 +58,7 @@ public class HDriveTrain implements IDirectionalDriveTrain {
          * @return the final, constructed {@link HDriveTrain} object.
          */
         public HDriveTrain build() {
+            // todo: check if all options are set
             return hDriveTrain;
         }
 
@@ -259,5 +260,29 @@ public class HDriveTrain implements IDirectionalDriveTrain {
         rightDrive.setPower(-this.currentPivot + speedY);
 
         middleDrive.setPower(-speedX);
+    }
+
+    /**
+     *
+     * @param power
+     */
+    public void setRightMotorPower(double power) {
+        rightDrive.setPower(power);
+    }
+
+    /**
+     *
+     * @param power
+     */
+    public void setLeftMotorPower(double power) {
+        leftDrive.setPower(power);
+    }
+
+    /**
+     *
+     * @param power
+     */
+    public void setMiddleMotorPower(double power) {
+        middleDrive.setPower(power);
     }
 }
