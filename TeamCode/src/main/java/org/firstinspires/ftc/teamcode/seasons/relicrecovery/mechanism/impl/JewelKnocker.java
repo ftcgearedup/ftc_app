@@ -25,9 +25,11 @@ public class JewelKnocker implements IMechanism {
 
     private ColorSensor jewelColorSensor;
 
+    private static JSONConfigOptions optionsMap = new JSONConfigOptions("options.json");
+
     private OpMode opMode;
 
-    private static final int JEWEL_ARM_DELAY_MS = 500;
+    private static final int JEWEL_ARM_DELAY_MS = optionsMap.retrieveAsInt("jewelKnockerDelayMS");
     private static final int JEWEL_BLUE_LEVEL = 30;
     private static final int JEWEL_RED_LEVEL = 50;
 
@@ -97,35 +99,35 @@ public class JewelKnocker implements IMechanism {
      * Retracts Jewel Arm
      */
     public void retractArm() {
-        armServo.setPosition(0.25);
+        armServo.setPosition(optionsMap.retrieveAsDouble("jewelKnockerRetractPosition"));
     }
 
     /**
      * Extends Jewel Arm
      */
     public void extendArm() {
-        armServo.setPosition(0.8);
+        armServo.setPosition(optionsMap.retrieveAsDouble("jewelKnockerExtendPosition"));
     }
 
     /**
      * Rotate the knocker servo to the left
      */
     public void leftRotation() {
-        knockerServo.setPosition(0);
+        knockerServo.setPosition(optionsMap.retrieveAsDouble("jewelKnockerLeftRotation"));
     }
 
     /**
      * Rotate the knocker servo to the center position
      */
     public void centerRotation() {
-        knockerServo.setPosition(0.5);
+        knockerServo.setPosition(optionsMap.retrieveAsDouble("jewelKnockerCenterRotation"));
     }
 
     /**
      * Rotate the knocker servo to the right
      */
     public void rightRotation() {
-        knockerServo.setPosition(1.0);
+        knockerServo.setPosition(optionsMap.retrieveAsDouble("jewelKnockerRightRotation"));
     }
 
     /**

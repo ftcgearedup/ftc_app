@@ -19,7 +19,7 @@ public interface IDirectionalDriveTrain extends IDriveTrain {
      * The latter indicates completion of the drive movement with {@link #isDriveTrainBusy()}.
      *
      * @param angleDegrees the angle to drive at in relation to the robot. This must be within
-     *                     a range of +90 to -90 degrees, where 0 is right, 180 is left,
+     *                     a range of +90 to -90 degrees, where 0 is left, 180 is right,
      *                     90 is forward, and 270 is backward. The convention is similar
      *                     to how angles are measured in math, counterclockwise from the right.
      * @param speed speed to drive within a range of 1.0 to 0

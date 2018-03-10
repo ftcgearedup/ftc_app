@@ -27,6 +27,11 @@ public class RelicArm implements IMechanism {
     private JSONConfigOptions optionsMap;
 
     private final int ARM_MOTOR_MAX_POSITION;
+    private final double RAISE_ARM_POSITION = optionsMap.retrieveAsDouble("relicArmRaiseArmPosition");
+    private final double RAISE_ARM_AMOUNT = optionsMap.retrieveAsDouble("relicArmRaiseArmAmount");
+    private final double LOWER_ARM_POSITION = optionsMap.retrieveAsDouble("relicArmLowerArmPosition");
+    private final double LOWER_ARM_AMOUNT = optionsMap.retrieveAsDouble("relicArmLowerArmAmount");
+    private final double ROTATION_INITIALIZE_POSITION = optionsMap.retrieveAsDouble("relicArmRotationInitializePosition");
 
     /**
      * Create a new {@link RelicArm} instance.
@@ -40,6 +45,7 @@ public class RelicArm implements IMechanism {
         this.optionsMap = ((RelicRecoveryRobot)robot).getOptionsMap();
 
         ARM_MOTOR_MAX_POSITION = optionsMap.retrieveAsInt("relicArmMotorMaxPosition");
+
 
         armMotor = hwMap.dcMotor.get("ram");
         gripperServo = hwMap.servo.get("rag");
@@ -75,25 +81,25 @@ public class RelicArm implements IMechanism {
      * Raises the relic arm rotation servo
      */
     public void raiseArmRotation() {
-        stepServoPosition(0.2, 0.02);
+        stepServoPosition(RAISE_ARM_POSITION, RAISE_ARM_AMOUNT);
     }
 
     /**
      * Lowers the relic arm rotation servo
      */
     public void lowerArmRotation() {
-        stepServoPosition(1.0, 0.02);
+        stepServoPosition(LOWER_ARM_POSITION, LOWER_ARM_AMOUNT);
     }
 
     private void initializeArmRotationPosition() {
-        armRotationServo.setPosition(0.02);
+        armRotationServo.setPosition(ROTATION_INITIALIZE_POSITION);
     }
 
     /**
      * Opens the relic arm gripper
      */
     public void openGripper() {
-        gripperServo.setPosition(0.5);
+        gripperServo.setPosition(optionsMap.retrieveAsDouble("relicArmGripperOpenPosition"));
         isClosed = false;
     }
 
@@ -101,7 +107,7 @@ public class RelicArm implements IMechanism {
      * Closes the relic arm gripper
      */
     public void closeGripper() {
-        gripperServo.setPosition(1.0);
+        gripperServo.setPosition(optionsMap.retrieveAsDouble("relicArmGripperClosePosition"));
         isClosed = true;
     }
 

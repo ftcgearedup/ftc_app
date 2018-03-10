@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.algorithms.impl.BNO055IMUGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.algorithms.impl.DistanceSensorDriveAlgorithm;
@@ -19,16 +20,27 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMa
 public class AutonomousBlueFront extends LinearOpMode {
 
     private RelicRecoveryRobot robot;
-    private VuMarkScanAlgorithm vuMarkScanAlgorithm;
     private IGyroPivotAlgorithm gyroPivotAlgorithm;
     private BNO055IMUWrapper bno055IMUWrapper;
+
+    private VuMarkScanAlgorithm vuMarkScanAlgorithm;
 
     private DistanceSensorDriveAlgorithm rightDistanceSensorDrive;
     private DistanceSensorDriveAlgorithm leftDistanceSensorDrive;
 
+    private ElapsedTime timer;
+
+    private double vuMarkScanTimeMS;
+
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new RelicRecoveryRobot(this);
+
+        vuMarkScanTimeMS = robot.getOptionsMap().retrieveAsDouble("autonomousVuMarkScanTimeMS");
+
+        // initialize vuforia
+        robot.getVisionHelper().initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
+
         vuMarkScanAlgorithm = new VuMarkScanAlgorithm(robot, robot.getVisionHelper());
         bno055IMUWrapper = new BNO055IMUWrapper(robot);
         gyroPivotAlgorithm = new BNO055IMUGyroPivotAlgorithm(robot, robot.getHDriveTrain(), bno055IMUWrapper);
@@ -37,135 +49,101 @@ public class AutonomousBlueFront extends LinearOpMode {
 
         rightDistanceSensorDrive = new DistanceSensorDriveAlgorithm(
                 robot, robot.getHDriveTrain(), robot.getRightRangeSensor(),
-                DistanceSensorDriveAlgorithm.RobotSide.FRONT);
+                DistanceSensorDriveAlgorithm.RobotSide.RIGHT);
 
         leftDistanceSensorDrive = new DistanceSensorDriveAlgorithm(
                 robot, robot.getHDriveTrain(), robot.getLeftRangeSensor(),
-                DistanceSensorDriveAlgorithm.RobotSide.FRONT);
+                DistanceSensorDriveAlgorithm.RobotSide.LEFT);
 
-        //detect color of stone
-        boolean isStoneRed = true;
-        boolean isStoneRight = false;
-
-        ElapsedTime driveTimer = new ElapsedTime();
-
-//        robot.getGlyphLift().initializeGrippers();
-//        robot.getIntake().raiseIntake();
-        robot.getJewelKnocker().retractArm();
-
+        this.timer = new ElapsedTime();
         waitForStart();
 
-        RelicRecoveryVuMark scannedVuMark = RelicRecoveryVuMark.CENTER;
+        RelicRecoveryVuMark scannedVuMark = RelicRecoveryVuMark.UNKNOWN;
 
         vuMarkScanAlgorithm.activate();
 
-        driveTimer.reset();
-        while (driveTimer.milliseconds() < 1000) {
+        // raise glyph lift and stop lift motors
+        robot.getGlyphLift().raiseGlyphLift();
+
+        timer.reset();
+
+        // scan VuMark
+        while (opModeIsActive()
+                && timer.milliseconds() < vuMarkScanTimeMS
+                && scannedVuMark == RelicRecoveryVuMark.UNKNOWN) {
             scannedVuMark = vuMarkScanAlgorithm.detect();
+
+            // stop glyph lift if it is at its target position
+            if (!robot.getGlyphLift().isGlyphLiftBusy()) {
+                robot.getGlyphLift().setLiftMotorPower(0);
+            }
         }
 
         vuMarkScanAlgorithm.deactivate();
 
-        if(scannedVuMark == RelicRecoveryVuMark.UNKNOWN) {
+        if (scannedVuMark == RelicRecoveryVuMark.UNKNOWN) {
             scannedVuMark = RelicRecoveryVuMark.CENTER;
         }
 
         telemetry.addData("VuMark", scannedVuMark);
         telemetry.update();
 
-//        robot.getGlyphLift().closeRedGripper();
+// knock jewel
+        robot.getJewelKnocker().knockJewel(true);
 
-        sleep(500);
+        // move back to left position
+        robot.getJewelKnocker().rightRotation();
 
-        robot.getGlyphLift().setLiftMotorPower(1);
-        sleep(250);
-        robot.getGlyphLift().setLiftMotorPower(0);
+        // drive off balancing stone
+        robot.getHDriveTrain().directionalDrive(0, 1.0, 24, false);
 
-        // Lower Jewel Mechinism
-        robot.getJewelKnocker().extendArm();
+        // drive forward a bit before pivoting to face the cryptobox
+        robot.getHDriveTrain().directionalDrive(90, 0.5, 3, false);
 
-        sleep(1000);
+        // pivot to face cryptobox
+        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
 
-//        if (robot.getJewelKnocker().isJewelRed()) {
-//            telemetry.addData(">", "jewel is red");
-//            telemetry.update();
-//
-//            robot.getHDriveTrain().directionalDrive(0, 0.5, 2, false); //drive 4 inches right
-//
-//            robot.getJewelKnocker().retractArm();
-//
-//            robot.getHDriveTrain().directionalDrive(0, 1.0, 18, false); //drive 4 inches right
-//            sleep(500);
-//        } else if (robot.getJewelKnocker().isJewelBlue()) {
-//            telemetry.addData(">", "jewel is blue");
-//            telemetry.update();
-//
-//            robot.getHDriveTrain().directionalDrive(180, 0.5, 2, false); // drive 4 inches left
-//
-//            robot.getJewelKnocker().retractArm();
-//
-//            robot.getHDriveTrain().directionalDrive(0, 1.0, 24, false); //drive 4 inches right
-//        }
+        // lower the lift
+        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().MAX_LIFT_MOTOR_POWER_DOWN);
 
-        // gyro pivot to zero degree angle
-        gyroPivotAlgorithm.pivot(0.5, 90, true, false);
+// align to middle column
+        do {
+            // stop lift if the lift touch sensor is pressed
+            if (robot.getGlyphLift().isLiftTouchSensorPressed()) {
+                robot.getGlyphLift().setLiftMotorPower(0);
+            }
 
-        driveTimer.reset();
-
-        // drive into wall
-        while(driveTimer.milliseconds() < 1500) {
-            robot.getHDriveTrain().drive(0.5, 0.0);
-        }
-        robot.getHDriveTrain().stopDriveMotors();
-
-        gyroPivotAlgorithm.pivot(0.5, 90, true, false);
-
-////        // pivot to face cryptobox
-////        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
-//
-//        robot.getHDriveTrain().directionalDrive(180, 0.5, 24, false);
-//
-//        robot.getHDriveTrain().directionalDrive(0, 0.5, 4, false);
+            gyroPivotAlgorithm.pivot(0.1, 180, true, true);
+            rightDistanceSensorDrive.driveToDistance(15.5, 1.0, true);
+        } while (opModeIsActive() && rightDistanceSensorDrive.isAlgorithmBusy());
 
         switch (scannedVuMark) {
-            case UNKNOWN:
-            case CENTER:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 25, false);
-                break;
             case LEFT:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 16, false);
+                gyroPivotAlgorithm.pivot(0.5, 247, false, false);
                 break;
             case RIGHT:
-                robot.getHDriveTrain().directionalDrive(180, 0.5, 30, false);
+                gyroPivotAlgorithm.pivot(0.5, 293, false, false);
+                break;
+            case UNKNOWN:
+            case CENTER:
                 break;
         }
 
-        robot.getGlyphLift().setLiftMotorPower(-0.2);
-        sleep(750);
-        robot.getGlyphLift().setLiftMotorPower(0.2);
-
-        gyroPivotAlgorithm.pivot(0.5, 90, true, false);
-
-        driveTimer.reset();
-
-        // drive into balancing stone
-        while(driveTimer.milliseconds() < 1000) {
-            robot.getHDriveTrain().drive(0, -0.5);
+        // drive forward into cryptobox
+        timer.reset();
+        while (opModeIsActive() && timer.milliseconds() < 400) {
+            robot.getHDriveTrain().drive(0, 1.0);
         }
-        robot.getHDriveTrain().stopDriveMotors();
 
-//        robot.getGlyphLift().openRedGripper();
-        robot.getHDriveTrain().directionalDrive(90, 0.5, 4, false);
+        robot.getHDriveTrain().drive(0.0, 0.0);
 
-        driveTimer.reset();
+        // run intake in reverse to eject glyph
+        robot.getGlyphLift().ejectGlyph();
 
-        // drive into cryptobox
-        while(driveTimer.milliseconds() < 1000) {
-            robot.getHDriveTrain().drive(0, -0.5);
-        }
-        robot.getHDriveTrain().stopDriveMotors();
+        // back up while ejecting glyph
+        robot.getHDriveTrain().directionalDrive(270, 0.5, 6, false);
 
-        robot.getHDriveTrain().directionalDrive(90, 0.5, 12, false);
-
+        // gyro pivot back to 270 after backing up
+        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
     }
 }
