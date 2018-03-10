@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.algorithms.impl.BNO055IMUGyroPivotAlgorith
 import org.firstinspires.ftc.teamcode.algorithms.impl.DistanceSensorDriveAlgorithm;
 import org.firstinspires.ftc.teamcode.algorithms.impl.TimeDriveAlgorithm;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.EncoderPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMarkScanAlgorithm;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.WiggleDriveAlgorithm;
 
@@ -35,6 +36,8 @@ public class AutonomousRedBack extends LinearOpMode {
 
     private TimeDriveAlgorithm timeDriveAlgorithm;
 
+    private EncoderPivotAlgorithm encoderPivotAlgorithm;
+
     private ElapsedTime timer;
 
     private double vuMarkScanTimeMS;
@@ -54,6 +57,7 @@ public class AutonomousRedBack extends LinearOpMode {
 
         this.timeDriveAlgorithm = new TimeDriveAlgorithm(robot, robot.getHDriveTrain());
         this.wiggleDriveAlgorithm = new WiggleDriveAlgorithm(robot, robot.getHDriveTrain());
+        this.encoderPivotAlgorithm = new EncoderPivotAlgorithm(robot, robot.getHDriveTrain());
 
         bno055IMUWrapper.startIntegration();
 
@@ -148,29 +152,62 @@ public class AutonomousRedBack extends LinearOpMode {
         // back up while ejecting glyph
         robot.getHDriveTrain().directionalDrive(270, 0.5, 6, false);
 
-        // gyro pivot back to 270 after backing up
-        gyroPivotAlgorithm.pivot(0.5, 270, true, false);
+        // don't gyro pivot after when key column is center
+        if(scannedVuMark == RelicRecoveryVuMark.LEFT || scannedVuMark == RelicRecoveryVuMark.RIGHT) {
+            // gyro pivot back to 270 after backing up
+            gyroPivotAlgorithm.pivot(0.5, 270, true, false);
+        }
 
         // drive left to align with glyph pit
-        robot.getHDriveTrain().directionalDrive(0, 1.0, 20, false);
+        robot.getHDriveTrain().directionalDrive(0, 1.0, 18, false);
 
         // turn to face glyph pit
+        encoderPivotAlgorithm.encoderPivot(0.5, 1400);
+
         //gyroPivotAlgorithm.pivot(0.5, 90, false, false);
-        timeDriveAlgorithm.pivot(1.0, 750);
+        // timeDriveAlgorithm.pivot(0.8, 900);
 
         // run intake
         robot.getGlyphLift().setGlyphIntakeMotorPower(-1.0);
 
         // drive into glyph pit
-        robot.getHDriveTrain().directionalDrive(90, 1.0, 30, false);
+        robot.getHDriveTrain().directionalDrive(90, 1.0, 32, false);
 
         // gyro pivot once in glyph pile
-        gyroPivotAlgorithm.pivot(0.5, 45, false, false);
+        encoderPivotAlgorithm.encoderPivot(0.5, 350);
+//        gyroPivotAlgorithm.pivot(0.5, 45, false, false);
+
+        timer.reset();
 
         // wiggle-drive forward into glyph pile
-        wiggleDriveAlgorithm.drive(1.0, 500, 3000);
+        while(opModeIsActive() && !robot.getGlyphLift().getGlyphTouchSensor().isPressed() && timer.milliseconds() < 4000) {
+            wiggleDriveAlgorithm.drive(0.5, 500);
+        }
+
+        // stop after wiggle drive
+        robot.getHDriveTrain().stopDriveMotors();
+
+        // back up from glyph pit
+        robot.getHDriveTrain().directionalDrive(270, 1.0, 12, false);
+
+        // pivot to face cryptobox again
+        gyroPivotAlgorithm.pivot(0.5, 270, false, false);
 
         // stop intake
         robot.getGlyphLift().setGlyphIntakeMotorPower(0);
+
+        timer.reset();
+
+        // drive right into balancing stone
+        while(opModeIsActive() && timer.milliseconds() < 2000) {
+            robot.getHDriveTrain().drive(0.5, 0.0);
+            gyroPivotAlgorithm.pivot(0.1, 270, true, true);
+        }
+
+        // stop the robot
+        robot.getHDriveTrain().stopDriveMotors();
+
+        // drive left an inch off of balancing stone
+        robot.getHDriveTrain().directionalDrive(0, 1.0, 1, false);
     }
 }

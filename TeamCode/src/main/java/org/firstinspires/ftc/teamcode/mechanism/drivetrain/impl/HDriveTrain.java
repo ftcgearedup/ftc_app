@@ -264,25 +264,33 @@ public class HDriveTrain implements IDirectionalDriveTrain {
 
     /**
      *
-     * @param power
      */
-    public void setRightMotorPower(double power) {
-        rightDrive.setPower(power);
+    public void resetEncoders() {
+       setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+       setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /**
      *
-     * @param power
+     * @return
      */
-    public void setLeftMotorPower(double power) {
-        leftDrive.setPower(power);
+    public DcMotor getRightDriveMotor() {
+        return rightDrive;
     }
 
     /**
      *
-     * @param power
+     * @return
      */
-    public void setMiddleMotorPower(double power) {
-        middleDrive.setPower(power);
+    public DcMotor getLeftDriveMotor() {
+        return leftDrive;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public DcMotor getMiddleDriveMotor() {
+        return middleDrive;
     }
 }

@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HDriveTrain;
 public class WiggleDriveAlgorithm {
     private HDriveTrain hDriveTrain;
     private OpMode opMode;
+    private boolean driveLeft = false;
+    private ElapsedTime betweenTimer;
 
     /**
      *
@@ -22,40 +24,26 @@ public class WiggleDriveAlgorithm {
     public WiggleDriveAlgorithm(Robot robot, HDriveTrain hDriveTrain) {
         this.opMode = robot.getCurrentOpMode();
         this.hDriveTrain = hDriveTrain;
+        this.betweenTimer = new ElapsedTime();
     }
 
     /**
      *
      * @param speed
      * @param betweenMilliseconds
-     * @param milliseconds
      */
-    public void drive(double speed, double betweenMilliseconds, double milliseconds) {
-        ElapsedTime betweenTimer = new ElapsedTime();
-        ElapsedTime driveTimer = new ElapsedTime();
-
-        boolean driveLeft = false;
-
-        if(opMode instanceof LinearOpMode) {
-            LinearOpMode linearOpMode = (LinearOpMode)opMode;
-
-            while(linearOpMode.opModeIsActive() && driveTimer.milliseconds() < milliseconds) {
-                if(betweenTimer.milliseconds() > betweenMilliseconds) {
-                    betweenTimer.reset();
-
-                    driveLeft = !driveLeft;
-                }
-
-                if(driveLeft) {
-                    hDriveTrain.setLeftMotorPower(0);
-                    hDriveTrain.setRightMotorPower(speed);
-                } else {
-                    hDriveTrain.setRightMotorPower(0);
-                    hDriveTrain.setLeftMotorPower(speed);
-                }
-            }
+    public void drive(double speed, double betweenMilliseconds) {
+        if(betweenTimer.milliseconds() > betweenMilliseconds) {
+            betweenTimer.reset();
+            driveLeft = !driveLeft;
         }
 
-        hDriveTrain.stopDriveMotors();
+        if(driveLeft) {
+            hDriveTrain.getLeftDriveMotor().setPower(0);
+            hDriveTrain.getRightDriveMotor().setPower(speed);
+        } else {
+            hDriveTrain.getRightDriveMotor().setPower(0);
+            hDriveTrain.getLeftDriveMotor().setPower(speed);
+        }
     }
 }

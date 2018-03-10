@@ -29,7 +29,7 @@ public class JewelKnocker implements IMechanism {
 
     private static final int JEWEL_ARM_DELAY_MS = 500;
     private static final int JEWEL_BLUE_LEVEL = 30;
-    private static final int JEWEL_RED_LEVEL =
+    private static final int JEWEL_RED_LEVEL = 50;
 
     /**
      * Construct a new {@link JewelKnocker} instance.
