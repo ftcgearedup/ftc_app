@@ -117,9 +117,8 @@ public class RelicArm implements IMechanism {
      * @param power The power you want to set the Main Arm to move at
      */
     public void setArmMainPower(double power) {
-        if(power < 0 &&
-                (armMotor.getCurrentPosition() <= ARM_MOTOR_MAX_POSITION
-                        || armMotor.getCurrentPosition() >= 0)) {
+        if((power < 0 && armMotor.getCurrentPosition() <= ARM_MOTOR_MAX_POSITION)
+                        || (power > 0 && armMotor.getCurrentPosition() >= 0)) {
             power = 0;
         }
 
