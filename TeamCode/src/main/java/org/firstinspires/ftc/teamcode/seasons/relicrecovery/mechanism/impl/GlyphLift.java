@@ -19,11 +19,13 @@ import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 public class GlyphLift implements IMechanism {
 
+    private JSONConfigOptions optionsMap;
+
     public final double MAX_LIFT_MOTOR_POWER_UP;
     public final double MAX_LIFT_MOTOR_POWER_DOWN;
 
-    private final int LIFT_RAISED_POSITION = 850;
-    private final int GLYPH_EJECT_POSITON = 3000;
+    private final int LIFT_RAISED_POSITION = optionsMap.retrieveAsInt("glyphLiftLiftRaisedPosition");
+    private final int GLYPH_EJECT_POSITON = optionsMap.retrieveAsInt("glyphLiftGlyphEjectPosition");
     private final int LIFT_MAX_ENCODER_POSITION;
 
     private OpMode opMode;
@@ -36,8 +38,6 @@ public class GlyphLift implements IMechanism {
 
     private TouchSensor glyphTouchSensor;
     private DigitalChannel liftTouchSensor;
-
-    private JSONConfigOptions optionsMap;
 
     /**
      * Construct a new {@link GlyphLift} with a reference to the utilizing robot.
@@ -188,7 +188,7 @@ public class GlyphLift implements IMechanism {
      * The intake motor controls if the intake runs inward or outward.
      *
      *@param power the power to run the intake motor in a range of 1.0 to -1.0
-     *             Negative values run the intake inward, positive
+     *             Negative values run the intake inward, positive runs it outward
      */
     public void setGlyphIntakeMotorPower(double power) {
         glyphIntakeMotor.setPower(power);
