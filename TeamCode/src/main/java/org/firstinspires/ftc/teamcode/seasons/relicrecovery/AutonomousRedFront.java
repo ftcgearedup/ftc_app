@@ -10,7 +10,10 @@ import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.algorithms.impl.BNO055IMUGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.algorithms.impl.DistanceSensorDriveAlgorithm;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.EncoderPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMarkScanAlgorithm;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.WiggleDriveAlgorithm;
+import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 
 /**
@@ -27,15 +30,25 @@ public class AutonomousRedFront extends LinearOpMode {
     private DistanceSensorDriveAlgorithm rightDistanceSensorDrive;
     private DistanceSensorDriveAlgorithm leftDistanceSensorDrive;
 
+    private EncoderPivotAlgorithm encoderPivotAlgorithm;
+    private WiggleDriveAlgorithm wiggleDriveAlgorithm;
+
     private ElapsedTime timer;
 
     private double vuMarkScanTimeMS;
+
+    private JSONConfigOptions configOptions;
+
+    private int GLYPH_COLOR_SENSOR_THRESHOLD;
 
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new RelicRecoveryRobot(this);
 
-        vuMarkScanTimeMS = robot.getOptionsMap().retrieveAsDouble("autonomousVuMarkScanTimeMS");
+        configOptions = robot.getOptionsMap();
+
+        vuMarkScanTimeMS = configOptions.retrieveAsDouble("autonomousVuMarkScanTimeMS");
+        GLYPH_COLOR_SENSOR_THRESHOLD = configOptions.retrieveAsInt("gcsThreshold");
 
         // initialize vuforia
         robot.getVisionHelper().initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
@@ -43,6 +56,9 @@ public class AutonomousRedFront extends LinearOpMode {
         vuMarkScanAlgorithm = new VuMarkScanAlgorithm(robot, robot.getVisionHelper());
         bno055IMUWrapper = new BNO055IMUWrapper(robot);
         gyroPivotAlgorithm = new BNO055IMUGyroPivotAlgorithm(robot, robot.getHDriveTrain(), bno055IMUWrapper);
+
+        this.encoderPivotAlgorithm = new EncoderPivotAlgorithm(robot, robot.getHDriveTrain());
+        this.wiggleDriveAlgorithm = new WiggleDriveAlgorithm(robot, robot.getHDriveTrain());
 
         bno055IMUWrapper.startIntegration();
 
@@ -91,13 +107,14 @@ public class AutonomousRedFront extends LinearOpMode {
         robot.getJewelKnocker().rightRotation();
 
         // drive off balancing stone
-        robot.getHDriveTrain().directionalDrive(180, 1.0, 24, false);
+        robot.getHDriveTrain().directionalDrive(180, 1.0, 26, false);
 
         // drive forward a bit before pivoting to face the cryptobox
         robot.getHDriveTrain().directionalDrive(90, 0.5, 3, false);
 
         // pivot to face cryptobox
-        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
+        encoderPivotAlgorithm.encoderPivot(0.5, 1400);
+        //gyroPivotAlgorithm.pivot(0.5, 180, true, false);
 
         // lower the lift
         robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().MAX_LIFT_MOTOR_POWER_DOWN);
@@ -115,10 +132,10 @@ public class AutonomousRedFront extends LinearOpMode {
 
         switch (scannedVuMark) {
             case LEFT:
-                gyroPivotAlgorithm.pivot(0.5, 247, false, false);
+                gyroPivotAlgorithm.pivot(0.5, 203, false, false);
                 break;
             case RIGHT:
-                gyroPivotAlgorithm.pivot(0.5, 293, false, false);
+                gyroPivotAlgorithm.pivot(0.5, 157, false, false);
                 break;
             case UNKNOWN:
             case CENTER:
@@ -139,7 +156,31 @@ public class AutonomousRedFront extends LinearOpMode {
         // back up while ejecting glyph
         robot.getHDriveTrain().directionalDrive(270, 0.5, 6, false);
 
-        // gyro pivot back to 270 after backing up
-        gyroPivotAlgorithm.pivot(0.5, 180, true, false);
+        // gyro pivot back to 0 after backing up to face glyph pit
+        if(scannedVuMark == RelicRecoveryVuMark.LEFT || scannedVuMark == RelicRecoveryVuMark.RIGHT) {
+            gyroPivotAlgorithm.pivot(0.5, 180, true, false);
+        }
+
+        // encoder pivot to face glyph pit
+        encoderPivotAlgorithm.encoderPivot(0.5, 1300);
+
+        // run intake
+        robot.getGlyphLift().setGlyphIntakeMotorPower(-1.0);
+
+        // drive into glyph pit
+        robot.getHDriveTrain().directionalDrive(90, 1.0, 24, false);
+
+        timer.reset();
+
+        // wiggle-drive forward into glyph pile
+        while(opModeIsActive() && robot.getGlyphLift().getColorSensor().red() < GLYPH_COLOR_SENSOR_THRESHOLD && timer.milliseconds() < 4000) {
+            wiggleDriveAlgorithm.drive(1.0, 250);
+        }
+
+        // center before backing up
+        gyroPivotAlgorithm.pivot(0.5, 0, true, false);
+
+        // back up out of glyph pit
+        robot.getHDriveTrain().directionalDrive(270, 0.5, 24, false);
     }
 }

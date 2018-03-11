@@ -189,7 +189,7 @@ public class AutonomousRedBack extends LinearOpMode {
 
         // wiggle-drive forward into glyph pile
         while(opModeIsActive() && robot.getGlyphLift().getColorSensor().red() < GLYPH_COLOR_SENSOR_THRESHOLD && timer.milliseconds() < 4000) {
-            wiggleDriveAlgorithm.drive(0.5, 500);
+            wiggleDriveAlgorithm.drive(1.0, 250);
         }
 
         // stop after wiggle drive
@@ -231,11 +231,19 @@ public class AutonomousRedBack extends LinearOpMode {
         // drive forward to cryptobox
         robot.getHDriveTrain().directionalDrive(90, 1.0, 24, false);
 
+        // wait between driving forward with encoders and time drive
+        timer.reset();
+        while(opModeIsActive() && timer.milliseconds() < 500) {
+            idle();
+        }
+
         // time drive to push glyph in cryptobox
         timer.reset();
-        while(opModeIsActive() && timer.milliseconds() < 1000) {
-            robot.getHDriveTrain().drive(0, 0.5);
+        while(opModeIsActive() && timer.milliseconds() < 500) {
+            robot.getHDriveTrain().drive(0, 1.0);
         }
+
+        robot.getHDriveTrain().stopDriveMotors();
 
         // run intake in reverse to eject glyph
         robot.getGlyphLift().ejectGlyph();
@@ -258,7 +266,7 @@ public class AutonomousRedBack extends LinearOpMode {
         }
 
         timer.reset();
-        while(opModeIsActive() && timer.milliseconds() < 500) {
+        while(opModeIsActive() && timer.milliseconds() < 250) {
             robot.getHDriveTrain().drive(0, -1.0);
         }
 

@@ -231,7 +231,10 @@ public class HDriveTrain implements IDirectionalDriveTrain {
             this.isRunningToPosition = true;
         } else if(!isDriveTrainBusy()) {
             this.isRunningToPosition = false;
+
             stopDriveMotors();
+
+            setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
@@ -243,7 +246,10 @@ public class HDriveTrain implements IDirectionalDriveTrain {
         while(linearOpMode.opModeIsActive() && isDriveTrainBusy()) {
             linearOpMode.idle();
         }
+
         stopDriveMotors();
+
+        setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
@@ -260,14 +266,6 @@ public class HDriveTrain implements IDirectionalDriveTrain {
         rightDrive.setPower(-this.currentPivot + speedY);
 
         middleDrive.setPower(-speedX);
-    }
-
-    /**
-     *
-     */
-    public void resetEncoders() {
-       setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-       setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /**

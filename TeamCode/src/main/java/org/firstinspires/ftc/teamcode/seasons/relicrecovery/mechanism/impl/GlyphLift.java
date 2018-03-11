@@ -25,7 +25,7 @@ public class GlyphLift implements IMechanism {
     public final double MAX_LIFT_MOTOR_POWER_DOWN;
 
     private final int LIFT_RAISED_POSITION;
-    private final int GLYPH_EJECT_POSITON;
+    private final int GLYPH_EJECT_POSITION;
     private final int LIFT_MAX_ENCODER_POSITION;
 
     private OpMode opMode;
@@ -49,7 +49,7 @@ public class GlyphLift implements IMechanism {
         LIFT_RAISED_POSITION = optionsMap.retrieveAsInt("glyphLiftLiftRaisedPosition");
 
         MAX_LIFT_MOTOR_POWER_UP = optionsMap.retrieveAsDouble("glyphLiftMotorPowerUp");
-        GLYPH_EJECT_POSITON = optionsMap.retrieveAsInt("glyphLiftGlyphEjectPosition");
+        GLYPH_EJECT_POSITION = optionsMap.retrieveAsInt("glyphLiftGlyphEjectPosition");
         MAX_LIFT_MOTOR_POWER_DOWN = optionsMap.retrieveAsDouble("glyphLiftMotorPowerDown");
         LIFT_MAX_ENCODER_POSITION = optionsMap.retrieveAsInt("glyphLiftMaxEncoderPosition");
 
@@ -162,7 +162,7 @@ public class GlyphLift implements IMechanism {
     public void ejectGlyph() {
         glyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        glyphIntakeMotor.setTargetPosition(GLYPH_EJECT_POSITON);
+        glyphIntakeMotor.setTargetPosition(GLYPH_EJECT_POSITION);
 
         glyphIntakeMotor.setPower(1.0);
 

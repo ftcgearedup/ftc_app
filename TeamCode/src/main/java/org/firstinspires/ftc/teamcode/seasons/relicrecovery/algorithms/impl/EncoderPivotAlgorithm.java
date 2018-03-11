@@ -19,8 +19,6 @@ public class EncoderPivotAlgorithm {
         if(opMode instanceof LinearOpMode) {
             LinearOpMode linearOpMode = (LinearOpMode)opMode;
 
-            hDriveTrain.resetEncoders();
-
             while(linearOpMode.opModeIsActive()
                     && hDriveTrain.getLeftDriveMotor().getCurrentPosition() < encoderCounts
                     && hDriveTrain.getRightDriveMotor().getCurrentPosition() < encoderCounts) {
