@@ -24,8 +24,8 @@ public class GlyphLift implements IMechanism {
     public final double MAX_LIFT_MOTOR_POWER_UP;
     public final double MAX_LIFT_MOTOR_POWER_DOWN;
 
-    private final int LIFT_RAISED_POSITION = optionsMap.retrieveAsInt("glyphLiftLiftRaisedPosition");
-    private final int GLYPH_EJECT_POSITON = optionsMap.retrieveAsInt("glyphLiftGlyphEjectPosition");
+    private final int LIFT_RAISED_POSITION;
+    private final int GLYPH_EJECT_POSITON;
     private final int LIFT_MAX_ENCODER_POSITION;
 
     private OpMode opMode;
@@ -46,7 +46,10 @@ public class GlyphLift implements IMechanism {
      */
     public GlyphLift(Robot robot) {
         this.optionsMap = ((RelicRecoveryRobot)robot).getOptionsMap();
+        LIFT_RAISED_POSITION = optionsMap.retrieveAsInt("glyphLiftLiftRaisedPosition");
+
         MAX_LIFT_MOTOR_POWER_UP = optionsMap.retrieveAsDouble("glyphLiftMotorPowerUp");
+        GLYPH_EJECT_POSITON = optionsMap.retrieveAsInt("glyphLiftGlyphEjectPosition");
         MAX_LIFT_MOTOR_POWER_DOWN = optionsMap.retrieveAsDouble("glyphLiftMotorPowerDown");
         LIFT_MAX_ENCODER_POSITION = optionsMap.retrieveAsInt("glyphLiftMaxEncoderPosition");
 

@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
@@ -15,6 +14,7 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.EncoderPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMarkScanAlgorithm;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.WiggleDriveAlgorithm;
+import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 
 /**
@@ -42,10 +42,18 @@ public class AutonomousRedBack extends LinearOpMode {
 
     private double vuMarkScanTimeMS;
 
+    private JSONConfigOptions configOptions;
+
+    private int GLYPH_COLOR_SENSOR_THRESHOLD;
+
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new RelicRecoveryRobot(this);
-        
+
+        this.configOptions = robot.getOptionsMap();
+
+        GLYPH_COLOR_SENSOR_THRESHOLD = configOptions.retrieveAsInt("gcsThreshold");
+
         vuMarkScanTimeMS = robot.getOptionsMap().retrieveAsDouble("autonomousVuMarkScanTimeMS");
 
         // initialize vuforia
@@ -171,7 +179,7 @@ public class AutonomousRedBack extends LinearOpMode {
         robot.getGlyphLift().setGlyphIntakeMotorPower(-1.0);
 
         // drive into glyph pit
-        robot.getHDriveTrain().directionalDrive(90, 1.0, 32, false);
+        robot.getHDriveTrain().directionalDrive(90, 1.0, 36, false);
 
         // gyro pivot once in glyph pile
         encoderPivotAlgorithm.encoderPivot(0.5, 350);
@@ -180,7 +188,7 @@ public class AutonomousRedBack extends LinearOpMode {
         timer.reset();
 
         // wiggle-drive forward into glyph pile
-        while(opModeIsActive() && !robot.getGlyphLift().getGlyphTouchSensor().isPressed() && timer.milliseconds() < 4000) {
+        while(opModeIsActive() && robot.getGlyphLift().getColorSensor().red() < GLYPH_COLOR_SENSOR_THRESHOLD && timer.milliseconds() < 4000) {
             wiggleDriveAlgorithm.drive(0.5, 500);
         }
 
@@ -188,10 +196,11 @@ public class AutonomousRedBack extends LinearOpMode {
         robot.getHDriveTrain().stopDriveMotors();
 
         // back up from glyph pit
-        robot.getHDriveTrain().directionalDrive(270, 1.0, 12, false);
+        robot.getHDriveTrain().directionalDrive(270, 1.0, 14, false);
 
         // pivot to face cryptobox again
-        gyroPivotAlgorithm.pivot(0.5, 270, false, false);
+        encoderPivotAlgorithm.encoderPivot(0.5, 800);
+        //gyroPivotAlgorithm.pivot(0.5, 270, false, false);
 
         // stop intake
         robot.getGlyphLift().setGlyphIntakeMotorPower(0);
@@ -201,13 +210,58 @@ public class AutonomousRedBack extends LinearOpMode {
         // drive right into balancing stone
         while(opModeIsActive() && timer.milliseconds() < 2000) {
             robot.getHDriveTrain().drive(0.5, 0.0);
-            gyroPivotAlgorithm.pivot(0.1, 270, true, true);
+            gyroPivotAlgorithm.pivot(0.3, 270, true, true);
         }
 
         // stop the robot
         robot.getHDriveTrain().stopDriveMotors();
 
         // drive left an inch off of balancing stone
-        robot.getHDriveTrain().directionalDrive(0, 1.0, 1, false);
+        robot.getHDriveTrain().directionalDrive(0, 1.0, 3, false);
+
+        // check if second glyph is on bottom and key column is red
+        if(robot.getGlyphLift().getColorSensor().red() > GLYPH_COLOR_SENSOR_THRESHOLD
+                && scannedVuMark == RelicRecoveryVuMark.LEFT) {
+            robot.getGlyphLift().raiseGlyphLift();
+        }
+
+        // ensure robot is facing cryptobox
+        //gyroPivotAlgorithm.pivot(1.0, 270, false, false);
+
+        // drive forward to cryptobox
+        robot.getHDriveTrain().directionalDrive(90, 1.0, 24, false);
+
+        // time drive to push glyph in cryptobox
+        timer.reset();
+        while(opModeIsActive() && timer.milliseconds() < 1000) {
+            robot.getHDriveTrain().drive(0, 0.5);
+        }
+
+        // run intake in reverse to eject glyph
+        robot.getGlyphLift().ejectGlyph();
+
+        // back up while ejecting glyph
+        robot.getHDriveTrain().directionalDrive(270, 0.5, 6, false);
+
+        // drive forward and back to ensure glyph is in
+        timer.reset();
+        while(opModeIsActive() && timer.milliseconds() < 500) {
+            robot.getHDriveTrain().drive(0, 1.0);
+        }
+
+        robot.getHDriveTrain().stopDriveMotors();
+
+        // wait half a second before reversing
+        timer.reset();
+        while(opModeIsActive() && timer.milliseconds() < 500) {
+            idle();
+        }
+
+        timer.reset();
+        while(opModeIsActive() && timer.milliseconds() < 500) {
+            robot.getHDriveTrain().drive(0, -1.0);
+        }
+
+        robot.getHDriveTrain().stopDriveMotors();
     }
 }

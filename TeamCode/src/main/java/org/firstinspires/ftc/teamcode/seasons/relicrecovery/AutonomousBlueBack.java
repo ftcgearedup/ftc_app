@@ -167,7 +167,7 @@ public class AutonomousBlueBack extends LinearOpMode {
         gyroPivotAlgorithm.pivot(0.5, 45, false, false);
 
         // wiggle-drive forward into glyph pile
-        wiggleDriveAlgorithm.drive(1.0, 500, 3000);
+        wiggleDriveAlgorithm.drive(1.0, 500);
 
         // stop intake
         robot.getGlyphLift().setGlyphIntakeMotorPower(0);

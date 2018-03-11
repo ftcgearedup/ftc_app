@@ -27,11 +27,12 @@ public class RelicArm implements IMechanism {
     private JSONConfigOptions optionsMap;
 
     private final int ARM_MOTOR_MAX_POSITION;
-    private final double RAISE_ARM_POSITION = optionsMap.retrieveAsDouble("relicArmRaiseArmPosition");
-    private final double RAISE_ARM_AMOUNT = optionsMap.retrieveAsDouble("relicArmRaiseArmAmount");
-    private final double LOWER_ARM_POSITION = optionsMap.retrieveAsDouble("relicArmLowerArmPosition");
-    private final double LOWER_ARM_AMOUNT = optionsMap.retrieveAsDouble("relicArmLowerArmAmount");
-    private final double ROTATION_INITIALIZE_POSITION = optionsMap.retrieveAsDouble("relicArmRotationInitializePosition");
+    private final double ARM_MOTOR_MIN_POSITION;
+    private final double RAISE_ARM_POSITION;
+    private final double RAISE_ARM_AMOUNT;
+    private final double LOWER_ARM_POSITION;
+    private final double LOWER_ARM_AMOUNT;
+    private final double ROTATION_INITIALIZE_POSITION;
 
     /**
      * Create a new {@link RelicArm} instance.
@@ -44,14 +45,20 @@ public class RelicArm implements IMechanism {
 
         this.optionsMap = ((RelicRecoveryRobot)robot).getOptionsMap();
 
+        RAISE_ARM_AMOUNT = optionsMap.retrieveAsDouble("relicArmRaiseArmAmount");
+        RAISE_ARM_POSITION = optionsMap.retrieveAsDouble("relicArmRaiseArmPosition");
+        LOWER_ARM_POSITION = optionsMap.retrieveAsDouble("relicArmLowerArmPosition");
+        LOWER_ARM_AMOUNT = optionsMap.retrieveAsDouble("relicArmLowerArmAmount");
         ARM_MOTOR_MAX_POSITION = optionsMap.retrieveAsInt("relicArmMotorMaxPosition");
-
+        ARM_MOTOR_MIN_POSITION = optionsMap.retrieveAsInt("relicArmMotorMinPosition");
+        ROTATION_INITIALIZE_POSITION = optionsMap.retrieveAsDouble("relicArmRotationInitializePosition");
 
         armMotor = hwMap.dcMotor.get("ram");
         gripperServo = hwMap.servo.get("rag");
         armRotationServo = hwMap.servo.get("rar");
 
         // brake and run using encoder for
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -118,7 +125,7 @@ public class RelicArm implements IMechanism {
      */
     public void setArmMainPower(double power) {
         if((power < 0 && armMotor.getCurrentPosition() <= ARM_MOTOR_MAX_POSITION)
-                        || (power > 0 && armMotor.getCurrentPosition() >= 0)) {
+                        || (power > 0 && armMotor.getCurrentPosition() >= ARM_MOTOR_MIN_POSITION)) {
             power = 0;
         }
 

@@ -7,12 +7,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.RelicRecoveryRobot;
 import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
-
-import java.io.File;
 
 /**
  * This class is responsible for the control of the jewel knocker, which is used
@@ -25,13 +23,14 @@ public class JewelKnocker implements IMechanism {
 
     private ColorSensor jewelColorSensor;
 
-    private static JSONConfigOptions optionsMap = new JSONConfigOptions("options.json");
+    private static JSONConfigOptions optionsMap;
 
     private OpMode opMode;
 
-    private static final int JEWEL_ARM_DELAY_MS = optionsMap.retrieveAsInt("jewelKnockerDelayMS");
-    private static final int JEWEL_BLUE_LEVEL = 30;
-    private static final int JEWEL_RED_LEVEL = 50;
+    private final int SECOND_JEWEL_ARM_DELAY_MS;
+    private final int FIRST_JEWEL_ARM_DELAY_MS;
+    private final int JEWEL_BLUE_LEVEL = 30;
+    private final int JEWEL_RED_LEVEL = 50;
 
     /**
      * Construct a new {@link JewelKnocker} instance.
@@ -41,6 +40,11 @@ public class JewelKnocker implements IMechanism {
     public JewelKnocker(Robot robot) {
         this.opMode = robot.getCurrentOpMode();
         HardwareMap hwMap = opMode.hardwareMap;
+
+        optionsMap = ((RelicRecoveryRobot)robot).getOptionsMap();
+
+        SECOND_JEWEL_ARM_DELAY_MS = optionsMap.retrieveAsInt("jewelKnockerDelayMS");
+        FIRST_JEWEL_ARM_DELAY_MS = optionsMap.retrieveAsInt("jewelKnockerScanMS");
 
         this.armServo = hwMap.servo.get("js");
         this.knockerServo = hwMap.servo.get("rs");
@@ -69,28 +73,31 @@ public class JewelKnocker implements IMechanism {
             centerRotation();
 
             // extend servo arm
+            extendArm();
+
             timer.reset();
-            while(linearOpMode.opModeIsActive() && timer.milliseconds() < JEWEL_ARM_DELAY_MS) {
-                extendArm();
+            while(linearOpMode.opModeIsActive() && timer.milliseconds() < FIRST_JEWEL_ARM_DELAY_MS) {
+                linearOpMode.idle();
+            }
+
+            if (isRedAlliance && isJewelBlue()) {
+                leftRotation();
+            } else {
+                rightRotation();
             }
 
             // rotate left or right
             timer.reset();
-            while(linearOpMode.opModeIsActive() && timer.milliseconds() < JEWEL_ARM_DELAY_MS) {
-                if (isRedAlliance && isJewelBlue()) {
-                    leftRotation();
-                } else {
-                    rightRotation();
-                }
+            while(linearOpMode.opModeIsActive() && timer.milliseconds() < SECOND_JEWEL_ARM_DELAY_MS) {
+                linearOpMode.idle();
             }
 
-            // rotate to center position while retracting
-            timer.reset();
-            while(linearOpMode.opModeIsActive() && timer.milliseconds() < JEWEL_ARM_DELAY_MS) {
-                centerRotation();
+            // retract servo arm
+            retractArm();
 
-                // retract servo arm
-                retractArm();
+            timer.reset();
+            while(linearOpMode.opModeIsActive() && timer.milliseconds() < SECOND_JEWEL_ARM_DELAY_MS) {
+                linearOpMode.idle();
             }
         }
     }
