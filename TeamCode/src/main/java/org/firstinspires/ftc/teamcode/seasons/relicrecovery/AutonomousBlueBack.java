@@ -11,8 +11,10 @@ import org.firstinspires.ftc.teamcode.algorithms.impl.BNO055IMUGyroPivotAlgorith
 import org.firstinspires.ftc.teamcode.algorithms.impl.DistanceSensorDriveAlgorithm;
 import org.firstinspires.ftc.teamcode.algorithms.impl.TimeDriveAlgorithm;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.EncoderPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMarkScanAlgorithm;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.WiggleDriveAlgorithm;
+import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 
 /**
@@ -20,7 +22,6 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.Wigg
  */
 @Autonomous(name = "Blue Back", group = "autonomous")
 public class AutonomousBlueBack extends LinearOpMode {
-
     private RelicRecoveryRobot robot;
     private IGyroPivotAlgorithm gyroPivotAlgorithm;
     private BNO055IMUWrapper bno055IMUWrapper;
@@ -34,13 +35,23 @@ public class AutonomousBlueBack extends LinearOpMode {
 
     private TimeDriveAlgorithm timeDriveAlgorithm;
 
+    private EncoderPivotAlgorithm encoderPivotAlgorithm;
+
     private ElapsedTime timer;
 
     private double vuMarkScanTimeMS;
 
+    private JSONConfigOptions configOptions;
+
+    private int GLYPH_COLOR_SENSOR_THRESHOLD;
+
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new RelicRecoveryRobot(this);
+
+        this.configOptions = robot.getOptionsMap();
+
+        GLYPH_COLOR_SENSOR_THRESHOLD = configOptions.retrieveAsInt("gcsThreshold");
 
         vuMarkScanTimeMS = robot.getOptionsMap().retrieveAsDouble("autonomousVuMarkScanTimeMS");
 
@@ -53,6 +64,7 @@ public class AutonomousBlueBack extends LinearOpMode {
 
         this.timeDriveAlgorithm = new TimeDriveAlgorithm(robot, robot.getHDriveTrain());
         this.wiggleDriveAlgorithm = new WiggleDriveAlgorithm(robot, robot.getHDriveTrain());
+        this.encoderPivotAlgorithm = new EncoderPivotAlgorithm(robot, robot.getHDriveTrain());
 
         bno055IMUWrapper.startIntegration();
 
@@ -147,30 +159,108 @@ public class AutonomousBlueBack extends LinearOpMode {
         // back up while ejecting glyph
         robot.getHDriveTrain().directionalDrive(270, 0.5, 6, false);
 
-        // gyro pivot back to 270 after backing up
-        gyroPivotAlgorithm.pivot(0.5, 270, true, false);
+        // don't gyro pivot after when key column is center
+        if(scannedVuMark == RelicRecoveryVuMark.LEFT || scannedVuMark == RelicRecoveryVuMark.RIGHT) {
+            // gyro pivot back to 270 after backing up
+            gyroPivotAlgorithm.pivot(0.5, 270, true, false);
+        }
 
         // drive left to align with glyph pit
-        robot.getHDriveTrain().directionalDrive(0, 1.0, 20, false);
+        robot.getHDriveTrain().directionalDrive(180, 1.0, 18, false);
 
         // turn to face glyph pit
+        encoderPivotAlgorithm.encoderPivot(0.5, 1400);
+
         //gyroPivotAlgorithm.pivot(0.5, 90, false, false);
-        timeDriveAlgorithm.pivot(1.0, 750);
+        // timeDriveAlgorithm.pivot(0.8, 900);
 
         // run intake
         robot.getGlyphLift().setGlyphIntakeMotorPower(-1.0);
 
         // drive into glyph pit
-        robot.getHDriveTrain().directionalDrive(90, 1.0, 30, false);
+        robot.getHDriveTrain().directionalDrive(90, 1.0, 36, false);
 
         // gyro pivot once in glyph pile
-        gyroPivotAlgorithm.pivot(0.5, 45, false, false);
+        encoderPivotAlgorithm.encoderPivot(0.5, 350);
+//        gyroPivotAlgorithm.pivot(0.5, 45, false, false);
+
+        timer.reset();
 
         // wiggle-drive forward into glyph pile
-        wiggleDriveAlgorithm.drive(1.0, 500);
+        while(opModeIsActive() && robot.getGlyphLift().getColorSensor().red() < GLYPH_COLOR_SENSOR_THRESHOLD && timer.milliseconds() < 4000) {
+            wiggleDriveAlgorithm.drive(0.5, 500);
+        }
+
+        // stop after wiggle drive
+        robot.getHDriveTrain().stopDriveMotors();
+
+        // back up from glyph pit
+        robot.getHDriveTrain().directionalDrive(270, 1.0, 14, false);
+
+        // pivot to face cryptobox again
+        encoderPivotAlgorithm.encoderPivot(0.5, 800);
+        //gyroPivotAlgorithm.pivot(0.5, 270, false, false);
 
         // stop intake
         robot.getGlyphLift().setGlyphIntakeMotorPower(0);
 
+        timer.reset();
+
+        // drive right into balancing stone
+        while(opModeIsActive() && timer.milliseconds() < 2000) {
+            robot.getHDriveTrain().drive(0.5, 0.0);
+            gyroPivotAlgorithm.pivot(0.3, 270, true, true);
+        }
+
+        // stop the robot
+        robot.getHDriveTrain().stopDriveMotors();
+
+        // drive left an inch off of balancing stone
+        robot.getHDriveTrain().directionalDrive(0, 1.0, 3, false);
+
+        // check if second glyph is on bottom and key column is left
+        if(robot.getGlyphLift().getColorSensor().red() > GLYPH_COLOR_SENSOR_THRESHOLD
+                && scannedVuMark == RelicRecoveryVuMark.LEFT) {
+            robot.getGlyphLift().raiseGlyphLift();
+        }
+
+        // ensure robot is facing cryptobox
+        //gyroPivotAlgorithm.pivot(1.0, 270, false, false);
+
+        // drive forward to cryptobox
+        robot.getHDriveTrain().directionalDrive(90, 1.0, 24, false);
+
+        // time drive to push glyph in cryptobox
+        timer.reset();
+        while(opModeIsActive() && timer.milliseconds() < 1000) {
+            robot.getHDriveTrain().drive(0, 0.5);
+        }
+
+        // run intake in reverse to eject glyph
+        robot.getGlyphLift().ejectGlyph();
+
+        // back up while ejecting glyph
+        robot.getHDriveTrain().directionalDrive(270, 0.5, 6, false);
+
+        // drive forward and back to ensure glyph is in
+        timer.reset();
+        while(opModeIsActive() && timer.milliseconds() < 500) {
+            robot.getHDriveTrain().drive(0, 1.0);
+        }
+
+        robot.getHDriveTrain().stopDriveMotors();
+
+        // wait half a second before reversing
+        timer.reset();
+        while(opModeIsActive() && timer.milliseconds() < 500) {
+            idle();
+        }
+
+        timer.reset();
+        while(opModeIsActive() && timer.milliseconds() < 500) {
+            robot.getHDriveTrain().drive(0, -1.0);
+        }
+
+        robot.getHDriveTrain().stopDriveMotors();
     }
 }

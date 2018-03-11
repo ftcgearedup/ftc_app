@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.impl.VuMa
  */
 @Autonomous(name = "Blue Front", group = "autonomous")
 public class AutonomousBlueFront extends LinearOpMode {
-
     private RelicRecoveryRobot robot;
     private IGyroPivotAlgorithm gyroPivotAlgorithm;
     private BNO055IMUWrapper bno055IMUWrapper;
@@ -56,6 +55,7 @@ public class AutonomousBlueFront extends LinearOpMode {
                 DistanceSensorDriveAlgorithm.RobotSide.LEFT);
 
         this.timer = new ElapsedTime();
+
         waitForStart();
 
         RelicRecoveryVuMark scannedVuMark = RelicRecoveryVuMark.UNKNOWN;
@@ -81,14 +81,10 @@ public class AutonomousBlueFront extends LinearOpMode {
 
         vuMarkScanAlgorithm.deactivate();
 
-        if (scannedVuMark == RelicRecoveryVuMark.UNKNOWN) {
-            scannedVuMark = RelicRecoveryVuMark.CENTER;
-        }
-
         telemetry.addData("VuMark", scannedVuMark);
         telemetry.update();
 
-// knock jewel
+        // knock jewel
         robot.getJewelKnocker().knockJewel(true);
 
         // move back to left position
@@ -106,7 +102,7 @@ public class AutonomousBlueFront extends LinearOpMode {
         // lower the lift
         robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().MAX_LIFT_MOTOR_POWER_DOWN);
 
-// align to middle column
+        // align to middle column
         do {
             // stop lift if the lift touch sensor is pressed
             if (robot.getGlyphLift().isLiftTouchSensorPressed()) {
