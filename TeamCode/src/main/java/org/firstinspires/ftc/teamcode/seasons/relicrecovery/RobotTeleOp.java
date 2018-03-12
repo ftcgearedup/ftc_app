@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 /**
  * This class is the Relic Recovery competition robot tele-op program.
@@ -29,13 +32,19 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @TeleOp(name = "TELEOP", group = "teleop")
 public class RobotTeleOp extends LinearOpMode {
     private RelicRecoveryRobot robot;
+    private JSONConfigOptions configOptions;
 
-    private static float joystickDeadzone;
+    private float joystickDeadzone;
+    private int glyphColorThreshold;
+    private int jewelColorSensorLEDFlash;
 
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new RelicRecoveryRobot(this);
-        joystickDeadzone = (float) robot.getOptionsMap().retrieveAsDouble("teleopJoystickDeadzone");
+        this.configOptions = robot.getOptionsMap();
+        joystickDeadzone = (float) configOptions.retrieveAsDouble("teleopJoystickDeadzone");
+        glyphColorThreshold = configOptions.retrieveAsInt("gcsThreshold");
+        jewelColorSensorLEDFlash = configOptions.retrieveAsInt("jcsFlashMS");
 
         gamepad1.setJoystickDeadzone(joystickDeadzone);
         gamepad2.setJoystickDeadzone(joystickDeadzone);
@@ -52,6 +61,9 @@ public class RobotTeleOp extends LinearOpMode {
 
         boolean relicTogglePressed = true;
         boolean relicGripperOpen = false;
+        boolean isJewelColorSensorLEDLit = false;
+
+        ElapsedTime timer = new ElapsedTime();
 
         while (opModeIsActive()) {
             speedX = gamepad1.right_stick_x;
@@ -101,6 +113,20 @@ public class RobotTeleOp extends LinearOpMode {
             } else {
                 robot.getJewelKnocker().retractArm();
                 robot.getJewelKnocker().rightRotation();
+            }
+
+            if(robot.getGlyphLift().getColorSensor().red() > glyphColorThreshold) {
+                if(timer.milliseconds() > jewelColorSensorLEDFlash) {
+                    timer.reset();
+
+                    isJewelColorSensorLEDLit = !isJewelColorSensorLEDLit;
+
+                    if(isJewelColorSensorLEDLit) {
+                        robot.getJewelKnocker().enableLED();
+                    } else {
+                        robot.getJewelKnocker().disableLED();
+                    }
+                }
             }
 
             // glyph lift intake power control

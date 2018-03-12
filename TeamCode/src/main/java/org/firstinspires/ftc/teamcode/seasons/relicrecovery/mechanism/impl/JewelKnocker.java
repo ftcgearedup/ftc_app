@@ -54,7 +54,7 @@ public class JewelKnocker implements IMechanism {
 
         // retract arm and set center rotation position in initialization
         retractArm();
-        rightRotation();
+        leftRotation();
     }
 
     /**
@@ -149,6 +149,20 @@ public class JewelKnocker implements IMechanism {
      */
     public int getBlue(){
         return jewelColorSensor.blue();
+    }
+
+    /**
+     *
+     */
+    public void enableLED() {
+        jewelColorSensor.enableLed(true);
+    }
+
+    /**
+     *
+     */
+    public void disableLED() {
+        jewelColorSensor.enableLed(false);
     }
 
     private boolean isJewelRed(){
