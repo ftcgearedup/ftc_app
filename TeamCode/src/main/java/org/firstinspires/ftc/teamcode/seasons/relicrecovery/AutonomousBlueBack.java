@@ -107,17 +107,17 @@ public class AutonomousBlueBack extends LinearOpMode {
         telemetry.update();
 
         // knock jewel
-        robot.getJewelKnocker().knockJewel(true);
+        robot.getJewelKnocker().knockJewel(false);
 
         // move back to left position
-        robot.getJewelKnocker().rightRotation();
+        robot.getJewelKnocker().leftRotation();
 
         // drive off balancing stone
-        robot.getHDriveTrain().directionalDrive(0, 1.0, 24, false);
+        robot.getHDriveTrain().directionalDrive(0, 1.0, 28, false);
 
         // pivot to face cryptobox
         // gyroPivotAlgorithm.pivot(0.5, 270, true, false);
-        timeDriveAlgorithm.pivot(1.0, 350);
+        timeDriveAlgorithm.pivot(-1.0, 350);
 
         // lower the lift
         robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().MAX_LIFT_MOTOR_POWER_DOWN);
@@ -129,16 +129,16 @@ public class AutonomousBlueBack extends LinearOpMode {
                 robot.getGlyphLift().setLiftMotorPower(0);
             }
 
-            gyroPivotAlgorithm.pivot(0.1, 270, true, true);
+            gyroPivotAlgorithm.pivot(0.1, 90, true, true);
             leftDistanceSensorDrive.driveToDistance(25, 1.0, true);
         } while(opModeIsActive() && leftDistanceSensorDrive.isAlgorithmBusy());
 
         switch (scannedVuMark) {
             case LEFT:
-                gyroPivotAlgorithm.pivot(0.5, 293, false, false);
+                gyroPivotAlgorithm.pivot(0.5, 113, false, false);
                 break;
             case RIGHT:
-                gyroPivotAlgorithm.pivot(0.5, 247, false, false);
+                gyroPivotAlgorithm.pivot(0.5, 67, false, false);
                 break;
             case UNKNOWN:
             case CENTER:
@@ -162,10 +162,10 @@ public class AutonomousBlueBack extends LinearOpMode {
         // don't gyro pivot after when key column is center
         if(scannedVuMark == RelicRecoveryVuMark.LEFT || scannedVuMark == RelicRecoveryVuMark.RIGHT) {
             // gyro pivot back to 270 after backing up
-            gyroPivotAlgorithm.pivot(0.5, 270, true, false);
+            gyroPivotAlgorithm.pivot(0.5, 90, true, false);
         }
 
-        // drive left to align with glyph pit
+        // drive right to align with glyph pit
         robot.getHDriveTrain().directionalDrive(180, 1.0, 18, false);
 
         // turn to face glyph pit
@@ -181,14 +181,14 @@ public class AutonomousBlueBack extends LinearOpMode {
         robot.getHDriveTrain().directionalDrive(90, 1.0, 36, false);
 
         // gyro pivot once in glyph pile
-        encoderPivotAlgorithm.encoderPivot(0.5, 350);
+        encoderPivotAlgorithm.encoderPivot(-0.5, 300);
 //        gyroPivotAlgorithm.pivot(0.5, 45, false, false);
 
         timer.reset();
 
         // wiggle-drive forward into glyph pile
         while(opModeIsActive() && robot.getGlyphLift().getColorSensor().red() < GLYPH_COLOR_SENSOR_THRESHOLD && timer.milliseconds() < 4000) {
-            wiggleDriveAlgorithm.drive(0.5, 500);
+            wiggleDriveAlgorithm.drive(1.0, 250);
         }
 
         // stop after wiggle drive
@@ -198,7 +198,7 @@ public class AutonomousBlueBack extends LinearOpMode {
         robot.getHDriveTrain().directionalDrive(270, 1.0, 14, false);
 
         // pivot to face cryptobox again
-        encoderPivotAlgorithm.encoderPivot(0.5, 800);
+        encoderPivotAlgorithm.encoderPivot(-0.5, 800);
         //gyroPivotAlgorithm.pivot(0.5, 270, false, false);
 
         // stop intake
@@ -206,21 +206,21 @@ public class AutonomousBlueBack extends LinearOpMode {
 
         timer.reset();
 
-        // drive right into balancing stone
+        // drive left into balancing stone
         while(opModeIsActive() && timer.milliseconds() < 2000) {
-            robot.getHDriveTrain().drive(0.5, 0.0);
-            gyroPivotAlgorithm.pivot(0.3, 270, true, true);
+            robot.getHDriveTrain().drive(-0.5, 0.0);
+            gyroPivotAlgorithm.pivot(0.3, 90, true, true);
         }
 
         // stop the robot
         robot.getHDriveTrain().stopDriveMotors();
 
         // drive left an inch off of balancing stone
-        robot.getHDriveTrain().directionalDrive(0, 1.0, 3, false);
+        robot.getHDriveTrain().directionalDrive(180, 1.0, 3, false);
 
-        // check if second glyph is on bottom and key column is left
+        // check if second glyph is on bottom and key column is right
         if(robot.getGlyphLift().getColorSensor().red() > GLYPH_COLOR_SENSOR_THRESHOLD
-                && scannedVuMark == RelicRecoveryVuMark.LEFT) {
+                && scannedVuMark == RelicRecoveryVuMark.RIGHT) {
             robot.getGlyphLift().raiseGlyphLift();
         }
 
@@ -230,10 +230,16 @@ public class AutonomousBlueBack extends LinearOpMode {
         // drive forward to cryptobox
         robot.getHDriveTrain().directionalDrive(90, 1.0, 24, false);
 
+        // wait between driving forward with encoders and time drive
+        timer.reset();
+        while(opModeIsActive() && timer.milliseconds() < 500) {
+            idle();
+        }
+
         // time drive to push glyph in cryptobox
         timer.reset();
-        while(opModeIsActive() && timer.milliseconds() < 1000) {
-            robot.getHDriveTrain().drive(0, 0.5);
+        while(opModeIsActive() && timer.milliseconds() < 500) {
+            robot.getHDriveTrain().drive(0, 0.7);
         }
 
         // run intake in reverse to eject glyph
@@ -245,7 +251,7 @@ public class AutonomousBlueBack extends LinearOpMode {
         // drive forward and back to ensure glyph is in
         timer.reset();
         while(opModeIsActive() && timer.milliseconds() < 500) {
-            robot.getHDriveTrain().drive(0, 1.0);
+            robot.getHDriveTrain().drive(0, 0.7);
         }
 
         robot.getHDriveTrain().stopDriveMotors();

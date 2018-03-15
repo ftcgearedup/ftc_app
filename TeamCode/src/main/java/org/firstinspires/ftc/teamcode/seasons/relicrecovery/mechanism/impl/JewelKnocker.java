@@ -80,10 +80,18 @@ public class JewelKnocker implements IMechanism {
                 linearOpMode.idle();
             }
 
+            ///For Red///
             if (isRedAlliance && isJewelBlue()) {
                 leftRotation();
             } else {
                 rightRotation();
+            }
+
+            ///For Blue///
+            if (!isRedAlliance && isJewelBlue()) {
+                rightRotation();
+            } else {
+                leftRotation();
             }
 
             // rotate left or right

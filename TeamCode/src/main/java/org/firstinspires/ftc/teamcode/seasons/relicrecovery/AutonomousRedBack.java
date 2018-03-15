@@ -111,7 +111,7 @@ public class AutonomousRedBack extends LinearOpMode {
         robot.getJewelKnocker().knockJewel(true);
 
         // move back to left position
-        robot.getJewelKnocker().rightRotation();
+        robot.getJewelKnocker().leftRotation();
 
         // drive off balancing stone
         robot.getHDriveTrain().directionalDrive(180, 1.0, 24, false);

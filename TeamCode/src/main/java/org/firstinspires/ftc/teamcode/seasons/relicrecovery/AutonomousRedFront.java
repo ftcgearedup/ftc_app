@@ -179,7 +179,7 @@ public class AutonomousRedFront extends LinearOpMode {
         }
 
         // back up out of glyph pit
-        robot.getHDriveTrain().directionalDrive(270, 0.5, 24, false);
+        robot.getHDriveTrain().directionalDrive(270, 0.5, 26, false);
 
         // stop the intake
         robot.getGlyphLift().setGlyphIntakeMotorPower(0);
@@ -269,10 +269,11 @@ public class AutonomousRedFront extends LinearOpMode {
 //            driveAlgorithmToUse.driveToDistance(targetDistance, 1.0, true);
 //        } while (opModeIsActive() && driveAlgorithmToUse.isAlgorithmBusy());
 
+
         // drive forward into cryptobox
         timer.reset();
         while (opModeIsActive() && timer.milliseconds() < 750) {
-            robot.getHDriveTrain().drive(0, 1.0);
+            robot.getHDriveTrain().drive(0, 0.7);
         }
 
         robot.getHDriveTrain().drive(0.0, 0.0);
@@ -286,7 +287,7 @@ public class AutonomousRedFront extends LinearOpMode {
         // drive forward and back to ensure glyph is in
         timer.reset();
         while(opModeIsActive() && timer.milliseconds() < 500) {
-            robot.getHDriveTrain().drive(0, 1.0);
+            robot.getHDriveTrain().drive(0, 0.7);
         }
 
         robot.getHDriveTrain().stopDriveMotors();

@@ -112,7 +112,7 @@ public class RobotTeleOp extends LinearOpMode {
                 robot.getJewelKnocker().centerRotation();
             } else {
                 robot.getJewelKnocker().retractArm();
-                robot.getJewelKnocker().rightRotation();
+                robot.getJewelKnocker().leftRotation();
             }
 
             if(robot.getGlyphLift().getColorSensor().red() > glyphColorThreshold) {
