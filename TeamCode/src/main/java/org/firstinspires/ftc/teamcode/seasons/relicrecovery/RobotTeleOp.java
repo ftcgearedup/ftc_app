@@ -87,9 +87,9 @@ public class RobotTeleOp extends LinearOpMode {
             }
 
             // Relic rotation servo control
-            if(gamepad2.dpad_up) {
+            if(gamepad2.dpad_up || gamepad2.right_bumper) {
                 robot.getRelicArm().raiseArmRotation();
-            } else if(gamepad2.dpad_down) {
+            } else if(gamepad2.dpad_down || gamepad2.left_bumper) {
                 robot.getRelicArm().lowerArmRotation();
             }
 

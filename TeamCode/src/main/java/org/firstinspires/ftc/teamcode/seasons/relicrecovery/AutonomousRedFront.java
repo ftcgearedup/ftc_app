@@ -149,6 +149,9 @@ public class AutonomousRedFront extends LinearOpMode {
             robot.getHDriveTrain().drive(0, 1.0);
         }
 
+        // ensure lift is stopped
+        robot.getGlyphLift().setLiftMotorPower(0);
+
         robot.getHDriveTrain().drive(0.0, 0.0);
 
         // run intake in reverse to eject glyph

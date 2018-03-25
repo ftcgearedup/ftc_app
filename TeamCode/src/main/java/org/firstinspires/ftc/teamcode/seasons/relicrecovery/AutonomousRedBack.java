@@ -131,7 +131,7 @@ public class AutonomousRedBack extends LinearOpMode {
             }
 
             gyroPivotAlgorithm.pivot(0.1, 270, true, true);
-            rightDistanceSensorDrive.driveToDistance(25, 1.0, true);
+            rightDistanceSensorDrive.driveToDistance(23, 1.0, true);
         } while(opModeIsActive() && rightDistanceSensorDrive.isAlgorithmBusy());
 
         switch (scannedVuMark) {
@@ -152,6 +152,9 @@ public class AutonomousRedBack extends LinearOpMode {
             robot.getHDriveTrain().drive(0, 1.0);
         }
 
+        // ensure lift is stopped
+        robot.getGlyphLift().setLiftMotorPower(0);
+
         robot.getHDriveTrain().drive(0.0, 0.0);
 
         // run intake in reverse to eject glyph
@@ -167,7 +170,7 @@ public class AutonomousRedBack extends LinearOpMode {
         }
 
         // drive left to align with glyph pit
-        robot.getHDriveTrain().directionalDrive(0, 1.0, 18, false);
+        robot.getHDriveTrain().directionalDrive(0, 1.0, 16, false);
 
         // turn to face glyph pit
         encoderPivotAlgorithm.encoderPivot(0.5, 1400);
@@ -179,7 +182,7 @@ public class AutonomousRedBack extends LinearOpMode {
         robot.getGlyphLift().setGlyphIntakeMotorPower(-1.0);
 
         // drive into glyph pit
-        robot.getHDriveTrain().directionalDrive(90, 1.0, 36, false);
+        robot.getHDriveTrain().directionalDrive(90, 1.0, 34, false);
 
         // gyro pivot once in glyph pile
         encoderPivotAlgorithm.encoderPivot(0.5, 350);
@@ -188,7 +191,7 @@ public class AutonomousRedBack extends LinearOpMode {
         timer.reset();
 
         // wiggle-drive forward into glyph pile
-        while(opModeIsActive() && robot.getGlyphLift().getColorSensor().red() < GLYPH_COLOR_SENSOR_THRESHOLD && timer.milliseconds() < 4000) {
+        while(opModeIsActive() && robot.getGlyphLift().getColorSensor().red() < GLYPH_COLOR_SENSOR_THRESHOLD && timer.milliseconds() < 3000) {
             wiggleDriveAlgorithm.drive(1.0, 250);
         }
 
@@ -216,8 +219,11 @@ public class AutonomousRedBack extends LinearOpMode {
         // stop the robot
         robot.getHDriveTrain().stopDriveMotors();
 
-        // drive left an inch off of balancing stone
-        robot.getHDriveTrain().directionalDrive(0, 1.0, 3, false);
+        // drive left off of balancing stone
+        robot.getHDriveTrain().directionalDrive(0, 1.0, 2, false);
+
+        // pivot after driving left off balancing stone
+        gyroPivotAlgorithm.pivot(0.5, 270, false, false);
 
         // check if second glyph is on bottom and key column is red
         if(robot.getGlyphLift().getColorSensor().red() > GLYPH_COLOR_SENSOR_THRESHOLD

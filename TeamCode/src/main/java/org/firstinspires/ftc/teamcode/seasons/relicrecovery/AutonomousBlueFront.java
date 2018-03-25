@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
@@ -127,6 +128,9 @@ public class AutonomousBlueFront extends LinearOpMode {
                 robot.getGlyphLift().setLiftMotorPower(0);
             }
 
+            telemetry.addData("right distance sensor", robot.getRightRangeSensor().getDistance(DistanceUnit.INCH));
+            telemetry.update();
+
             gyroPivotAlgorithm.pivot(0.1, 180, true, true);
             rightDistanceSensorDrive.driveToDistance(15.5, 1.0, true);
         } while (opModeIsActive() && rightDistanceSensorDrive.isAlgorithmBusy());
@@ -148,6 +152,9 @@ public class AutonomousBlueFront extends LinearOpMode {
         while (opModeIsActive() && timer.milliseconds() < 400) {
             robot.getHDriveTrain().drive(0, 1.0);
         }
+
+        // ensure lift is stopped
+        robot.getGlyphLift().setLiftMotorPower(0);
 
         robot.getHDriveTrain().drive(0.0, 0.0);
 

@@ -35,10 +35,18 @@ public class DistanceSensorTest extends LinearOpMode {
             telemetry.update();
         }
 
+        // lower lift
+        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().MAX_LIFT_MOTOR_POWER_DOWN);
+
         do {
-            gyroPivotAlgorithm.pivot(0.1, 0, true, true);
-            rightDistanceSensorDrive.driveToDistance(25, 1.0, true);
-        } while(rightDistanceSensorDrive.isAlgorithmBusy());
+            // stop lift if the lift touch sensor is pressed
+            if (robot.getGlyphLift().isLiftTouchSensorPressed()) {
+                robot.getGlyphLift().setLiftMotorPower(0);
+            }
+
+            gyroPivotAlgorithm.pivot(0.1, 180, true, true);
+            rightDistanceSensorDrive.driveToDistance(15.5, 1.0, true);
+        } while (opModeIsActive() && rightDistanceSensorDrive.isAlgorithmBusy());
 
         //rightDistanceSensorDrive.driveToDistance(25, 1.0, false);
     }

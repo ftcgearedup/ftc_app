@@ -130,7 +130,7 @@ public class AutonomousBlueBack extends LinearOpMode {
             }
 
             gyroPivotAlgorithm.pivot(0.1, 90, true, true);
-            leftDistanceSensorDrive.driveToDistance(25, 1.0, true);
+            leftDistanceSensorDrive.driveToDistance(23, 1.0, true);
         } while(opModeIsActive() && leftDistanceSensorDrive.isAlgorithmBusy());
 
         switch (scannedVuMark) {
@@ -151,6 +151,9 @@ public class AutonomousBlueBack extends LinearOpMode {
             robot.getHDriveTrain().drive(0, 1.0);
         }
 
+        // ensure lift is stopped
+        robot.getGlyphLift().setLiftMotorPower(0);
+
         robot.getHDriveTrain().drive(0.0, 0.0);
 
         // run intake in reverse to eject glyph
@@ -166,7 +169,7 @@ public class AutonomousBlueBack extends LinearOpMode {
         }
 
         // drive right to align with glyph pit
-        robot.getHDriveTrain().directionalDrive(180, 1.0, 18, false);
+        robot.getHDriveTrain().directionalDrive(180, 1.0, 16, false);
 
         // turn to face glyph pit
         encoderPivotAlgorithm.encoderPivot(0.5, 1400);
@@ -178,7 +181,7 @@ public class AutonomousBlueBack extends LinearOpMode {
         robot.getGlyphLift().setGlyphIntakeMotorPower(-1.0);
 
         // drive into glyph pit
-        robot.getHDriveTrain().directionalDrive(90, 1.0, 36, false);
+        robot.getHDriveTrain().directionalDrive(90, 1.0, 34, false);
 
         // gyro pivot once in glyph pile
         encoderPivotAlgorithm.encoderPivot(-0.5, 300);
@@ -187,7 +190,7 @@ public class AutonomousBlueBack extends LinearOpMode {
         timer.reset();
 
         // wiggle-drive forward into glyph pile
-        while(opModeIsActive() && robot.getGlyphLift().getColorSensor().red() < GLYPH_COLOR_SENSOR_THRESHOLD && timer.milliseconds() < 4000) {
+        while(opModeIsActive() && robot.getGlyphLift().getColorSensor().red() < GLYPH_COLOR_SENSOR_THRESHOLD && timer.milliseconds() < 3000) {
             wiggleDriveAlgorithm.drive(1.0, 250);
         }
 
@@ -206,7 +209,7 @@ public class AutonomousBlueBack extends LinearOpMode {
 
         timer.reset();
 
-        // drive left into balancing stone
+        // drive right into balancing stone
         while(opModeIsActive() && timer.milliseconds() < 2000) {
             robot.getHDriveTrain().drive(-0.5, 0.0);
             gyroPivotAlgorithm.pivot(0.3, 90, true, true);
@@ -216,7 +219,10 @@ public class AutonomousBlueBack extends LinearOpMode {
         robot.getHDriveTrain().stopDriveMotors();
 
         // drive left an inch off of balancing stone
-        robot.getHDriveTrain().directionalDrive(180, 1.0, 3, false);
+        robot.getHDriveTrain().directionalDrive(180, 1.0, 2, false);
+
+        // pivot after driving left off balancing stone
+        gyroPivotAlgorithm.pivot(0.5, 90, false, false);
 
         // check if second glyph is on bottom and key column is right
         if(robot.getGlyphLift().getColorSensor().red() > GLYPH_COLOR_SENSOR_THRESHOLD
