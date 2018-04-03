@@ -1,37 +1,71 @@
 package org.firstinspires.ftc.teamcode.mechanism.impl;
 
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.I2cAddr;
-import com.qualcomm.robotcore.hardware.I2cDeviceReader;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
-import com.qualcomm.robotcore.hardware.configuration.I2cSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.utils.Wire;
 
-@I2cSensor(name = "MB1043 Range Sensor", description = "Range Sensor from MaxBotix", xmlTag = "MB1242")
-public class MaxSonarEZ4MB1242 extends I2cDeviceSynchDevice<I2cDeviceSynch> implements DistanceSensor {
+public class MaxSonarEZ4MB1242 implements DistanceSensor {
 
-    private static final I2cAddr ADDRESS_I2C_DEFAULT = I2cAddr.create7bit(0x70);
+    private Wire sensorWire;
+    private OpMode opMode;
+
+    private double lastRangeReading = 0;
+
+    private static final int ADDRESS_I2C_DEFAULT = 0x70;
+    private static final int RANGE_READING_COMMAND_DELAY_MS = 100;
+
+    /**
+     * Construct a new {@link MaxSonarEZ4MB1242} instance.
+     *
+     * @param robot the robot using this sensor
+     * @param hardwareMapName the name of the i2c device that represents
+     *                        this sensor in the configuration file
+     */
+    public MaxSonarEZ4MB1242(Robot robot, String hardwareMapName) {
+        this.opMode = robot.getCurrentOpMode();
+        sensorWire = new Wire(opMode.hardwareMap, hardwareMapName, ADDRESS_I2C_DEFAULT);
+
+        takeRangeReading();
+    }
+
+    private void takeRangeReading() {
+        sensorWire.beginWrite(0x51);
+        sensorWire.write(0);
+        sensorWire.endWrite();
+    }
 
     @Override
     public double getDistance(DistanceUnit unit) {
-        return 0;
-    }
+        double currentRuntime = opMode.getRuntime();
 
-    public enum Register {
-        FIRST(0),
-        RANGE_READING(0x51),
-        ADDR_UNLOCK_1(0xAA),
-        ADDR_UNLOCK_2(0xA5),
-        LAST(ADDR_UNLOCK_2.bVal);
+        // return the maximum distance if a response hasn't been
+        // received yet from the last range reading command
+        int distanceRead = 765;
 
-        public int bVal;
+        // wait a specified amount of time before requesting another range reading
+        if(currentRuntime - this.lastRangeReading > RANGE_READING_COMMAND_DELAY_MS) {
+            this.lastRangeReading = currentRuntime;
 
-        Register(int bVal) {
-            this.bVal = bVal;
+            // request to read the high and low range bytes
+            sensorWire.requestFrom(0, 2);
+
+            // write the actual command (0x51) to request a range reading
+            takeRangeReading();
         }
+
+        // check if a response has been received
+        if(sensorWire.responseCount() > 0) {
+            sensorWire.getResponse();
+            if(sensorWire.isRead()) {
+                // read the high and low bytes of the reported distance
+                distanceRead = sensorWire.readHL();
+            }
+        }
+
+        return distanceRead;
     }
 
     @Override
@@ -40,33 +74,26 @@ public class MaxSonarEZ4MB1242 extends I2cDeviceSynchDevice<I2cDeviceSynch> impl
     }
 
     @Override
-    protected synchronized boolean doInitialize() {
-        return true;
-    }
-
-    @Override
     public String getDeviceName() {
         return "MaxBotix MB1043 HRLV-MaxSonar-EZ4 Range Sensor";
     }
 
-    private void setOptimalReadWindow() {
-        I2cDeviceSynch.ReadWindow readWindow = new I2cDeviceSynch.ReadWindow(
-                Register.FIRST.bVal,
-                Register.LAST.bVal - Register.FIRST.bVal + 1,
-                I2cDeviceSynch.ReadMode.ONLY_ONCE);
-
-        this.deviceClient.setReadWindow(readWindow);
+    @Override
+    public String getConnectionInfo() {
+        return null;
     }
 
-    public MaxSonarEZ4MB1242(I2cDeviceSynch deviceClient) {
-        super(deviceClient, true);
+    @Override
+    public int getVersion() {
+        return 0;
+    }
 
-        this.deviceClient.read(0, I2cDeviceSynch.ReadWindow.READ_REGISTER_COUNT_MAX);
+    @Override
+    public void resetDeviceConfigurationForOpMode() {
+    }
 
-        this.setOptimalReadWindow();
-        this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT); // Deals with USB cables getting unplugged
-
-        super.registerArmingStateCallback(false);
-        this.deviceClient.engage();
+    @Override
+    public void close() {
+        sensorWire.close();
     }
 }
