@@ -32,8 +32,11 @@ public class GlyphLift implements IMechanism {
 
     private DcMotor liftMotorLeft;
     private DcMotor liftMotorRight;
-    private DcMotor glyphIntakeMotor;
 
+    private DcMotor leftGlyphIntakeMotor;
+    private DcMotor rightGlyphIntakeMotor;
+
+    private TouchSensor touchSensor;
     private ColorSensor colorSensor;
 
     private TouchSensor glyphTouchSensor;
@@ -73,20 +76,24 @@ public class GlyphLift implements IMechanism {
 
         this.liftMotorLeft = hwMap.dcMotor.get("liftml");
         this.liftMotorRight = hwMap.dcMotor.get("liftmr");
-        this.glyphIntakeMotor = hwMap.dcMotor.get("gm");
 
-        this.glyphTouchSensor = hwMap.touchSensor.get("gts");
-        this.liftTouchSensor = hwMap.digitalChannel.get("lts");
+        this.leftGlyphIntakeMotor = hwMap.dcMotor.get("lgm");
+        this.rightGlyphIntakeMotor = hwMap.dcMotor.get("rgm");
+
+        this.touchSensor = hwMap.touchSensor.get("gts");
         this.colorSensor = hwMap.colorSensor.get("gcs");
 
         // reverse lift motor
         liftMotorLeft.setDirection(liftMotorDir);
 
         // reverse glyph intake motor
-        glyphIntakeMotor.setDirection(intakeMotorDir);
+        leftGlyphIntakeMotor.setDirection(intakeMotorDir);
+        rightGlyphIntakeMotor.setDirection(intakeMotorDir);
 
         // run using encoder
-        glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -160,13 +167,15 @@ public class GlyphLift implements IMechanism {
      * Run the intake in reverse in order to eject a glyph
      */
     public void ejectGlyph() {
-        glyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        glyphIntakeMotor.setTargetPosition(GLYPH_EJECT_POSITION);
 
-        glyphIntakeMotor.setPower(1.0);
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftGlyphIntakeMotor.setTargetPosition(GLYPH_EJECT_POSITION);
+        rightGlyphIntakeMotor.setTargetPosition(-GLYPH_EJECT_POSITION);
+
+        leftGlyphIntakeMotor.setPower(1.0);
+        rightGlyphIntakeMotor.setPower(1.0);
     }
 
     /**
@@ -194,7 +203,8 @@ public class GlyphLift implements IMechanism {
      *             Negative values run the intake inward, positive runs it outward
      */
     public void setGlyphIntakeMotorPower(double power) {
-        glyphIntakeMotor.setPower(power);
+        leftGlyphIntakeMotor.setPower(power);
+        rightGlyphIntakeMotor.setPower(-power);
     }
 
     /**
