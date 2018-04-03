@@ -22,6 +22,15 @@
   "glyphLiftLiftRaisedPosition" : 850,
   "glyphLiftGlyphEjectPosition" : 3000,
 
+  "intakeLeftFullOpenPosition" : 0,
+  "intakeLeftMidOpenPosition" : 0,
+  "intakeLeftGripPosition" : 0,
+  "intakeLeftClosePosition" : 0,
+  "intakeRightFullOpenPosition" : 0,
+  "intakeRightMidOpenPosition" : 0,
+  "intakeRightGripPosition" : 0,
+  "intakeRightClosePosition" : 0,
+
   "relicArmGripperOpenPosition" : 0,
   "relicArmGripperClosePosition" : 1,
   "relicArmMotorMaxPosition": 500,
@@ -33,5 +42,6 @@
 
   "autonomousVuMarkScanTimeMS" : 1000,
 
-  "teleopJoystickDeadzone" : 0.2
+  "teleopJoystickDeadzone" : 0.2,
+  "teleopIntakeHeightValue" : 0
 }

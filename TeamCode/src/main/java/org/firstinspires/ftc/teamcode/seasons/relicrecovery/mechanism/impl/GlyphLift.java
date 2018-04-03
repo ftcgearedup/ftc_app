@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.teamcode.Robot;
@@ -28,6 +29,16 @@ public class GlyphLift implements IMechanism {
     private final int GLYPH_EJECT_POSITION;
     private final int LIFT_MAX_ENCODER_POSITION;
 
+    //TODO Get servo positions in json file
+    private final int INTAKE_LEFT_FULL_OPEN_POSITION;
+    private final int INTAKE_RIGHT_FULL_OPEN_POSITION;
+    private final int INTAKE_LEFT_MID_OPEN_POSITION;
+    private final int INTAKE_RIGHT_MID_OPEN_POSITION;
+    private final int INTAKE_LEFT_GRIP_POSITION;
+    private final int INTAKE_RIGHT_GRIP_POSITION;
+    private final int INTAKE_LEFT_CLOSE_POSITION;
+    private final int INTAKE_RIGHT_CLOSE_POSITION;
+
     private OpMode opMode;
 
     private DcMotor liftMotorLeft;
@@ -35,6 +46,9 @@ public class GlyphLift implements IMechanism {
 
     private DcMotor leftGlyphIntakeMotor;
     private DcMotor rightGlyphIntakeMotor;
+
+    private Servo intakeArmLeft;
+    private Servo intakeArmRight;
 
     private TouchSensor touchSensor;
     private ColorSensor colorSensor;
@@ -56,6 +70,16 @@ public class GlyphLift implements IMechanism {
         MAX_LIFT_MOTOR_POWER_DOWN = optionsMap.retrieveAsDouble("glyphLiftMotorPowerDown");
         LIFT_MAX_ENCODER_POSITION = optionsMap.retrieveAsInt("glyphLiftMaxEncoderPosition");
 
+        INTAKE_LEFT_CLOSE_POSITION = optionsMap.retrieveAsInt("intakeLeftClosePosition");
+        INTAKE_LEFT_FULL_OPEN_POSITION = optionsMap.retrieveAsInt("intakeLeftFullOpenPosition");
+        INTAKE_LEFT_GRIP_POSITION = optionsMap.retrieveAsInt("intakeLeftGripPosition");
+        INTAKE_LEFT_MID_OPEN_POSITION = optionsMap.retrieveAsInt("intakeLeftMidOpenPosition");
+
+        INTAKE_RIGHT_CLOSE_POSITION = optionsMap.retrieveAsInt("intakeRightClosePosition");
+        INTAKE_RIGHT_FULL_OPEN_POSITION = optionsMap.retrieveAsInt("intakeRightFullOpenPosition");
+        INTAKE_RIGHT_GRIP_POSITION = optionsMap.retrieveAsInt("intakeRightGripPosition");
+        INTAKE_RIGHT_MID_OPEN_POSITION = optionsMap.retrieveAsInt("intakeRightMidOpenPosition");
+
         DcMotorSimple.Direction liftMotorDir;
         DcMotorSimple.Direction intakeMotorDir;
 
@@ -76,6 +100,9 @@ public class GlyphLift implements IMechanism {
 
         this.liftMotorLeft = hwMap.dcMotor.get("liftml");
         this.liftMotorRight = hwMap.dcMotor.get("liftmr");
+
+        this.intakeArmLeft = hwMap.servo.get("ial");
+        this.intakeArmRight = hwMap.servo.get("iar");
 
         this.leftGlyphIntakeMotor = hwMap.dcMotor.get("lgm");
         this.rightGlyphIntakeMotor = hwMap.dcMotor.get("rgm");
@@ -237,4 +264,33 @@ public class GlyphLift implements IMechanism {
         liftMotorLeft.setPower(power * powerCoefficient);
         liftMotorRight.setPower(power * powerCoefficient);
     }
+    /**
+     * Closes Intake. Intake will retract in full.
+     */
+    public void setIntakeClosePosition(){
+        intakeArmLeft.setPosition(INTAKE_LEFT_CLOSE_POSITION);
+        intakeArmRight.setPosition(INTAKE_RIGHT_CLOSE_POSITION);
+    }
+    /**
+     * Sets intake position to Grip position. Intake will pull in Glyphs in this position.
+     */
+    public void setIntakeGripPosition(){
+        intakeArmLeft.setPosition(INTAKE_LEFT_GRIP_POSITION);
+        intakeArmRight.setPosition(INTAKE_RIGHT_GRIP_POSITION);
+    }
+    /**
+     * Sets intake position to Fully Open position.  Intake will extend all the way out. This will hit the wheel cover unless lift is raised high enough. Use {@link #setIntakeMidOpenPositon()} for a 45° angle.
+     */
+    public void setIntakeFullyOpenPosition(){
+        intakeArmLeft.setPosition(INTAKE_LEFT_FULL_OPEN_POSITION);
+        intakeArmRight.setPosition(INTAKE_RIGHT_FULL_OPEN_POSITION);
+    }
+    /**
+     * Sets intake position to Midway Open position. Intake will open just enough to not touch the wheel cover. For all the way open, use {@link #setIntakeFullyOpenPosition()}.
+     */
+    public void setIntakeMidOpenPositon(){
+        intakeArmLeft.setPosition(INTAKE_LEFT_MID_OPEN_POSITION);
+        intakeArmRight.setPosition(INTAKE_RIGHT_MID_OPEN_POSITION);
+    }
+
 }

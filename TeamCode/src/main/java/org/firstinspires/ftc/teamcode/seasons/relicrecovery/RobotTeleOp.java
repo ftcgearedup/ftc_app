@@ -37,6 +37,7 @@ public class RobotTeleOp extends LinearOpMode {
     private float joystickDeadzone;
     private int glyphColorThreshold;
     private int jewelColorSensorLEDFlash;
+    private int intakeHeightValue;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -45,11 +46,13 @@ public class RobotTeleOp extends LinearOpMode {
         joystickDeadzone = (float) configOptions.retrieveAsDouble("teleopJoystickDeadzone");
         glyphColorThreshold = configOptions.retrieveAsInt("gcsThreshold");
         jewelColorSensorLEDFlash = configOptions.retrieveAsInt("jcsFlashMS");
+        intakeHeightValue = configOptions.retrieveAsInt("teleopIntakeHeightValue");
 
         gamepad1.setJoystickDeadzone(joystickDeadzone);
         gamepad2.setJoystickDeadzone(joystickDeadzone);
 
         robot.getJewelKnocker().retractArm();
+        robot.getGlyphLift().setIntakeClosePosition();
 
         waitForStart();
 
@@ -65,6 +68,7 @@ public class RobotTeleOp extends LinearOpMode {
 
         ElapsedTime timer = new ElapsedTime();
 
+        robot.getGlyphLift().setIntakeMidOpenPositon();
         while (opModeIsActive()) {
             speedX = gamepad1.right_stick_x;
             speedY = -gamepad1.right_stick_y;
@@ -129,8 +133,25 @@ public class RobotTeleOp extends LinearOpMode {
                 }
             }
 
+//                                                              GLYPH LIFT AND INTAKE CONTROLS
+
             // glyph lift intake power control
             robot.getGlyphLift().setGlyphIntakeMotorPower(gamepad2.right_stick_y);
+
+            /*
+             * This adjusts the position of the Glyph Lift Intake. If you are running the intake,
+             * the intake sets to the Grip position to grab the cubes. If you aren't pulling
+             * in glyphs, the intake will go to a 45° angle if it's near the wheel cover,
+             * or fully open if it's not near the cover.
+             */
+            if(gamepad2.right_stick_y != 0){
+                robot.getGlyphLift().setIntakeGripPosition();
+            } else if(robot.getGlyphLift().getLiftLeftMotorPosition() >= intakeHeightValue){
+                robot.getGlyphLift().setIntakeFullyOpenPosition();
+            } else {
+                robot.getGlyphLift().setIntakeMidOpenPositon();
+            }
+
 
             telemetry.addData("Red Level", robot.getJewelKnocker().getRed());
             telemetry.addData("Blue Level", robot.getJewelKnocker().getBlue());
