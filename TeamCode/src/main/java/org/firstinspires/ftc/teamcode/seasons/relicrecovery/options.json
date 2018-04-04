@@ -41,6 +41,7 @@
   "relicArmRotationInitializePosition" : 0.02,
 
   "autonomousVuMarkScanTimeMS" : 1000,
+  "autonomousRotatePosition" : 0,
 
   "teleopJoystickDeadzone" : 0.2,
   "teleopIntakeHeightValue" : 0

@@ -152,7 +152,6 @@ public class RobotTeleOp extends LinearOpMode {
                 robot.getGlyphLift().setIntakeMidOpenPositon();
             }
 
-
             telemetry.addData("Red Level", robot.getJewelKnocker().getRed());
             telemetry.addData("Blue Level", robot.getJewelKnocker().getBlue());
 

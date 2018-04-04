@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
@@ -291,6 +293,34 @@ public class GlyphLift implements IMechanism {
     public void setIntakeMidOpenPositon(){
         intakeArmLeft.setPosition(INTAKE_LEFT_MID_OPEN_POSITION);
         intakeArmRight.setPosition(INTAKE_RIGHT_MID_OPEN_POSITION);
+    }
+    /**
+     * Spin both Glyph Lift wheels in the same direction.
+     *
+     * @param isLeft true is rotate to the left, false is rotate to the right
+     * @param power power at which to rotate motors at
+     */
+    public void spinWheelsInDirection(boolean isLeft, double power){
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        int targetPos = leftGlyphIntakeMotor.getTargetPosition() + optionsMap.retrieveAsInt("autonomousRotatePosition");
+        if(isLeft){
+            leftGlyphIntakeMotor.setTargetPosition(targetPos);
+            rightGlyphIntakeMotor.setTargetPosition(targetPos);
+        } else {
+            leftGlyphIntakeMotor.setTargetPosition(-targetPos);
+            rightGlyphIntakeMotor.setTargetPosition(-targetPos);
+        }
+        leftGlyphIntakeMotor.setPower(power);
+        rightGlyphIntakeMotor.setPower(power);
+        LinearOpMode mode = (LinearOpMode) opMode;
+        while(leftGlyphIntakeMotor.isBusy() && rightGlyphIntakeMotor.isBusy()){
+            mode.idle();
+        }
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
 }
