@@ -52,7 +52,7 @@ public class RobotTeleOp extends LinearOpMode {
         gamepad2.setJoystickDeadzone(joystickDeadzone);
 
         robot.getJewelKnocker().retractArm();
-        robot.getGlyphLift().setIntakeClosePosition();
+        robot.getGlyphLift().setIntakeInitializePosition();
 
         waitForStart();
 
@@ -68,7 +68,7 @@ public class RobotTeleOp extends LinearOpMode {
 
         ElapsedTime timer = new ElapsedTime();
 
-        robot.getGlyphLift().setIntakeMidOpenPositon();
+        robot.getGlyphLift().setIntakeHalfOpenPosition();
         while (opModeIsActive()) {
             speedX = gamepad1.right_stick_x;
             speedY = -gamepad1.right_stick_y;
@@ -144,13 +144,22 @@ public class RobotTeleOp extends LinearOpMode {
              * in glyphs, the intake will go to a 45° angle if it's near the wheel cover,
              * or fully open if it's not near the cover.
              */
-            if(gamepad2.right_stick_y != 0){
+            if(gamepad2.right_stick_y < 0) {
+                telemetry.addData("intake", "grip position");
+
                 robot.getGlyphLift().setIntakeGripPosition();
-            } else if(robot.getGlyphLift().getLiftLeftMotorPosition() >= intakeHeightValue){
+            } else if(robot.getGlyphLift().getLiftLeftMotorPosition() >= intakeHeightValue) {
+                telemetry.addData("intake", "fully open position");
+
                 robot.getGlyphLift().setIntakeFullyOpenPosition();
             } else {
-                robot.getGlyphLift().setIntakeMidOpenPositon();
+                telemetry.addData("intake", "half open position");
+
+                robot.getGlyphLift().setIntakeHalfOpenPosition();
             }
+
+            telemetry.addData("left intake servo", robot.getGlyphLift().intakeArmLeft.getPosition());
+            telemetry.addData("right intake servo", robot.getGlyphLift().intakeArmRight.getPosition());
 
             telemetry.addData("Red Level", robot.getJewelKnocker().getRed());
             telemetry.addData("Blue Level", robot.getJewelKnocker().getBlue());
