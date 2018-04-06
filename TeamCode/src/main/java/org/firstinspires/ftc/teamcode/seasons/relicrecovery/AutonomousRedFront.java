@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
@@ -118,7 +117,7 @@ public class AutonomousRedFront extends LinearOpMode {
         //gyroPivotAlgorithm.pivot(0.5, 180, true, false);
 
         // lower the lift
-        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().MAX_LIFT_MOTOR_POWER_DOWN);
+        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().maxLiftMotorPowerDown);
 
         // align to middle column
         do {

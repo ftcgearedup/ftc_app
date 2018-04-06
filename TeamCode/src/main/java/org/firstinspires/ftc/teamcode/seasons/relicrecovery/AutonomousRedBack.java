@@ -121,7 +121,7 @@ public class AutonomousRedBack extends LinearOpMode {
         timeDriveAlgorithm.pivot(1.0, 350);
 
         // lower the lift
-        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().MAX_LIFT_MOTOR_POWER_DOWN);
+        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().maxLiftMotorPowerDown);
 
         // align to middle column
         do {

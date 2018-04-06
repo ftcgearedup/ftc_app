@@ -23,21 +23,21 @@ public class GlyphLift implements IMechanism {
 
     private JSONConfigOptions optionsMap;
 
-    public final double MAX_LIFT_MOTOR_POWER_UP;
-    public final double MAX_LIFT_MOTOR_POWER_DOWN;
+    public final double maxLiftMotorPowerUp;
+    public final double maxLiftMotorPowerDown;
 
-    private final int LIFT_RAISED_POSITION;
-    private final int GLYPH_EJECT_POSITION;
-    private final int LIFT_MAX_ENCODER_POSITION;
+    private final int liftRaisedPosition;
+    private final int glyphEjectPosition;
+    private final int liftMaxEncoderPosition;
 
-    private final double INTAKE_LEFT_FULL_OPEN_POSITION;
-    private final double INTAKE_RIGHT_FULL_OPEN_POSITION;
-    private final double INTAKE_LEFT_HALFWAY_OPEN_POSITION;
-    private final double INTAKE_RIGHT_HALFWAY_OPEN_POSITION;
-    private final double INTAKE_LEFT_GRIP_POSITION;
-    private final double INTAKE_RIGHT_GRIP_POSITION;
-    private final double INTAKE_LEFT_INITIALIZED_POSITION;
-    private final double INTAKE_RIGHT_INITIALIZED_POSITION;
+    private final double intakeLeftFullOpenPosition;
+    private final double intakeRightFullOpenPosition;
+    private final double intakeLeftHalfwayOpenPosition;
+    private final double intakeRightHalfwayOpenPosition;
+    private final double intakeLeftGripPosition;
+    private final double intakeRightGripPosition;
+    private final double intakeLeftInitializedPosition;
+    private final double intakeRightInitializedPosition;
 
     private OpMode opMode;
 
@@ -62,22 +62,22 @@ public class GlyphLift implements IMechanism {
      */
     public GlyphLift(Robot robot) {
         this.optionsMap = ((RelicRecoveryRobot)robot).getOptionsMap();
-        LIFT_RAISED_POSITION = optionsMap.retrieveAsInt("glyphLiftLiftRaisedPosition");
+        liftRaisedPosition = optionsMap.retrieveAsInt("glyphLiftLiftRaisedPosition");
 
-        MAX_LIFT_MOTOR_POWER_UP = optionsMap.retrieveAsDouble("glyphLiftMotorPowerUp");
-        GLYPH_EJECT_POSITION = optionsMap.retrieveAsInt("glyphLiftGlyphEjectPosition");
-        MAX_LIFT_MOTOR_POWER_DOWN = optionsMap.retrieveAsDouble("glyphLiftMotorPowerDown");
-        LIFT_MAX_ENCODER_POSITION = optionsMap.retrieveAsInt("glyphLiftMaxEncoderPosition");
+        maxLiftMotorPowerUp = optionsMap.retrieveAsDouble("glyphLiftMotorPowerUp");
+        glyphEjectPosition = optionsMap.retrieveAsInt("glyphLiftGlyphEjectPosition");
+        maxLiftMotorPowerDown = optionsMap.retrieveAsDouble("glyphLiftMotorPowerDown");
+        liftMaxEncoderPosition = optionsMap.retrieveAsInt("glyphLiftMaxEncoderPosition");
 
-        INTAKE_LEFT_INITIALIZED_POSITION = optionsMap.retrieveAsDouble("intakeLeftInitializedPosition");
-        INTAKE_LEFT_FULL_OPEN_POSITION = optionsMap.retrieveAsDouble("intakeLeftFullOpenPosition");
-        INTAKE_LEFT_GRIP_POSITION = optionsMap.retrieveAsDouble("intakeLeftGripPosition");
-        INTAKE_LEFT_HALFWAY_OPEN_POSITION = optionsMap.retrieveAsDouble("intakeLeftHalfwayOpenPosition");
+        intakeLeftInitializedPosition = optionsMap.retrieveAsDouble("intakeLeftInitializedPosition");
+        intakeLeftFullOpenPosition = optionsMap.retrieveAsDouble("intakeLeftFullOpenPosition");
+        intakeLeftGripPosition = optionsMap.retrieveAsDouble("intakeLeftGripPosition");
+        intakeLeftHalfwayOpenPosition = optionsMap.retrieveAsDouble("intakeLeftHalfwayOpenPosition");
 
-        INTAKE_RIGHT_INITIALIZED_POSITION = optionsMap.retrieveAsDouble("intakeRightInitializedPosition");
-        INTAKE_RIGHT_FULL_OPEN_POSITION = optionsMap.retrieveAsDouble("intakeRightFullOpenPosition");
-        INTAKE_RIGHT_GRIP_POSITION = optionsMap.retrieveAsDouble("intakeRightGripPosition");
-        INTAKE_RIGHT_HALFWAY_OPEN_POSITION = optionsMap.retrieveAsDouble("intakeRightHalfwayOpenPosition");
+        intakeRightInitializedPosition = optionsMap.retrieveAsDouble("intakeRightInitializedPosition");
+        intakeRightFullOpenPosition = optionsMap.retrieveAsDouble("intakeRightFullOpenPosition");
+        intakeRightGripPosition = optionsMap.retrieveAsDouble("intakeRightGripPosition");
+        intakeRightHalfwayOpenPosition = optionsMap.retrieveAsDouble("intakeRightHalfwayOpenPosition");
 
         DcMotorSimple.Direction liftMotorDir;
         DcMotorSimple.Direction intakeMotorDir;
@@ -200,8 +200,8 @@ public class GlyphLift implements IMechanism {
         leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftGlyphIntakeMotor.setTargetPosition(GLYPH_EJECT_POSITION);
-        rightGlyphIntakeMotor.setTargetPosition(-GLYPH_EJECT_POSITION);
+        leftGlyphIntakeMotor.setTargetPosition(glyphEjectPosition);
+        rightGlyphIntakeMotor.setTargetPosition(-glyphEjectPosition);
 
         leftGlyphIntakeMotor.setPower(1.0);
         rightGlyphIntakeMotor.setPower(1.0);
@@ -211,7 +211,7 @@ public class GlyphLift implements IMechanism {
      * Raise the glyph lift
      */
     public void raiseGlyphLift() {
-        setLiftMotorsPosition(LIFT_RAISED_POSITION, MAX_LIFT_MOTOR_POWER_UP);
+        setLiftMotorsPosition(liftRaisedPosition, maxLiftMotorPowerUp);
     }
 
     /**
@@ -246,7 +246,7 @@ public class GlyphLift implements IMechanism {
      *              Negative values lower the lift and, likewise, positive values raise the lift.
      */
     public void setLiftMotorPower(double power) {
-        double powerCoefficient = (power < 0 ? MAX_LIFT_MOTOR_POWER_DOWN : MAX_LIFT_MOTOR_POWER_UP);
+        double powerCoefficient = (power < 0 ? maxLiftMotorPowerDown : maxLiftMotorPowerUp);
 
         // set lift motors mode to run using encoders
         liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -258,8 +258,8 @@ public class GlyphLift implements IMechanism {
         }
 
         // stop if any of the two lift motors exceeded their max position and the direction is up
-        if((liftMotorLeft.getCurrentPosition() >= LIFT_MAX_ENCODER_POSITION
-                || liftMotorRight.getCurrentPosition() >= LIFT_MAX_ENCODER_POSITION) && power > 0) {
+        if((liftMotorLeft.getCurrentPosition() >= liftMaxEncoderPosition
+                || liftMotorRight.getCurrentPosition() >= liftMaxEncoderPosition) && power > 0) {
             powerCoefficient = 0;
         }
 
@@ -271,16 +271,16 @@ public class GlyphLift implements IMechanism {
      * Closes Intake. Intake will retract in full.
      */
     public void setIntakeInitializePosition() {
-        intakeArmLeft.setPosition(INTAKE_LEFT_INITIALIZED_POSITION);
-        intakeArmRight.setPosition(INTAKE_RIGHT_INITIALIZED_POSITION);
+        intakeArmLeft.setPosition(intakeLeftInitializedPosition);
+        intakeArmRight.setPosition(intakeRightInitializedPosition);
     }
 
     /**
      * Sets intake position to Grip position. Intake will pull in Glyphs in this position.
      */
     public void setIntakeGripPosition() {
-        intakeArmLeft.setPosition(INTAKE_LEFT_GRIP_POSITION);
-        intakeArmRight.setPosition(INTAKE_RIGHT_GRIP_POSITION);
+        intakeArmLeft.setPosition(intakeLeftGripPosition);
+        intakeArmRight.setPosition(intakeRightGripPosition);
     }
 
     /**
@@ -289,8 +289,8 @@ public class GlyphLift implements IMechanism {
      * Use {@link #setIntakeHalfOpenPosition()} for a 45° angle.
      */
     public void setIntakeFullyOpenPosition() {
-        intakeArmLeft.setPosition(INTAKE_LEFT_FULL_OPEN_POSITION);
-        intakeArmRight.setPosition(INTAKE_RIGHT_FULL_OPEN_POSITION);
+        intakeArmLeft.setPosition(intakeLeftFullOpenPosition);
+        intakeArmRight.setPosition(intakeRightFullOpenPosition);
     }
 
     /**
@@ -299,10 +299,10 @@ public class GlyphLift implements IMechanism {
      * For all the way open, use {@link #setIntakeFullyOpenPosition()}.
      */
     public void setIntakeHalfOpenPosition() {
-        opMode.telemetry.addData("json", "setting left halfway to " + INTAKE_LEFT_HALFWAY_OPEN_POSITION);
+        opMode.telemetry.addData("json", "setting left halfway to " + intakeLeftHalfwayOpenPosition);
         opMode.telemetry.update();
-        intakeArmLeft.setPosition(INTAKE_LEFT_HALFWAY_OPEN_POSITION);
-        intakeArmRight.setPosition(INTAKE_RIGHT_HALFWAY_OPEN_POSITION);
+        intakeArmLeft.setPosition(intakeLeftHalfwayOpenPosition);
+        intakeArmRight.setPosition(intakeRightHalfwayOpenPosition);
     }
 
     /**
