@@ -159,20 +159,6 @@ public class JewelKnocker implements IMechanism {
         return jewelColorSensor.blue();
     }
 
-    /**
-     *
-     */
-    public void enableLED() {
-        jewelColorSensor.enableLed(true);
-    }
-
-    /**
-     *
-     */
-    public void disableLED() {
-        jewelColorSensor.enableLed(false);
-    }
-
     private boolean isJewelRed(){
         return getRed() > getBlue();
     }

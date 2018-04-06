@@ -64,9 +64,6 @@ public class RobotTeleOp extends LinearOpMode {
 
         boolean relicTogglePressed = true;
         boolean relicGripperOpen = false;
-        boolean isJewelColorSensorLEDLit = false;
-
-        ElapsedTime timer = new ElapsedTime();
 
         robot.getGlyphLift().setIntakeHalfOpenPosition();
         while (opModeIsActive()) {
@@ -117,20 +114,6 @@ public class RobotTeleOp extends LinearOpMode {
             } else {
                 robot.getJewelKnocker().retractArm();
                 robot.getJewelKnocker().leftRotation();
-            }
-
-            if(robot.getGlyphLift().getColorSensor().red() > glyphColorThreshold) {
-                if(timer.milliseconds() > jewelColorSensorLEDFlash) {
-                    timer.reset();
-
-                    isJewelColorSensorLEDLit = !isJewelColorSensorLEDLit;
-
-                    if(isJewelColorSensorLEDLit) {
-                        robot.getJewelKnocker().enableLED();
-                    } else {
-                        robot.getJewelKnocker().disableLED();
-                    }
-                }
             }
 
 //                                                              GLYPH LIFT AND INTAKE CONTROLS
