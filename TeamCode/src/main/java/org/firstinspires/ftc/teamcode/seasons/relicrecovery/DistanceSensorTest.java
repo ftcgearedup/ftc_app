@@ -36,7 +36,7 @@ public class DistanceSensorTest extends LinearOpMode {
         }
 
         // lower lift
-        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().MAX_LIFT_MOTOR_POWER_DOWN);
+        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().maxLiftMotorPowerDown);
 
         do {
             // stop lift if the lift touch sensor is pressed

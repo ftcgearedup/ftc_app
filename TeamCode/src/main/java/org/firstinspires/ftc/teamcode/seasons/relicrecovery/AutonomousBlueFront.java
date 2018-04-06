@@ -119,7 +119,7 @@ public class AutonomousBlueFront extends LinearOpMode {
         encoderPivotAlgorithm.encoderPivot(0.5, 1400);
 
         // lower the lift
-        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().MAX_LIFT_MOTOR_POWER_DOWN);
+        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().maxLiftMotorPowerDown);
 
         // align to middle column
         do {
