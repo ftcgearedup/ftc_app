@@ -30,7 +30,6 @@ public class GlyphLift implements IMechanism {
     private final int GLYPH_EJECT_POSITION;
     private final int LIFT_MAX_ENCODER_POSITION;
 
-    //TODO Get servo positions in json file
     private final double INTAKE_LEFT_FULL_OPEN_POSITION;
     private final double INTAKE_RIGHT_FULL_OPEN_POSITION;
     private final double INTAKE_LEFT_HALFWAY_OPEN_POSITION;
@@ -170,8 +169,9 @@ public class GlyphLift implements IMechanism {
     }
 
     /**
+     * Return whether the lift touch sensor is pressed.
      *
-     * @return
+     * @return if the lift touch sensor is pressed
      */
     public boolean isLiftTouchSensorPressed() {
         // the lift touch sensor value is inverted
