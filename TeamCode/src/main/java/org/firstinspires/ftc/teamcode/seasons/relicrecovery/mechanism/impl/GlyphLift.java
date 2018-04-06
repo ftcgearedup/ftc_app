@@ -122,6 +122,11 @@ public class GlyphLift implements IMechanism {
         leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        // reset lift motor encoders
+        liftMotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // set lift motors to run using encoder
         liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
