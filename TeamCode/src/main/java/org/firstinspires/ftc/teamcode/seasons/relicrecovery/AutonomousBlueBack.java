@@ -112,12 +112,20 @@ public class AutonomousBlueBack extends LinearOpMode {
         // move back to left position
         robot.getJewelKnocker().leftRotation();
 
-        // drive off balancing stone
-        robot.getHDriveTrain().directionalDrive(0, 1.0, 28, false);
+        // drive off balancing stone toward Glyph Pit
+        robot.getHDriveTrain().directionalDrive(90, 1.0, 28, false);
+        // pivot to face pit
+        gyroPivotAlgorithm.pivot(1, 45, false, false);
 
-        // pivot to face cryptobox
-        // gyroPivotAlgorithm.pivot(0.5, 270, true, false);
-        timeDriveAlgorithm.pivot(-1.0, 350);
+        // turn on intake and set extra intake to grip position
+        robot.getGlyphLift().setGlyphIntakeMotorPower(-1);
+        robot.getGlyphLift().setIntakeGripPosition();
+        // drive forward slowly into pit
+        robot.getHDriveTrain().directionalDrive(90, 0.3, 6, false);
+        // face cryptobox in pile
+        gyroPivotAlgorithm.pivot(1, 270, false, false);
+        // drive out of pit
+        robot.getHDriveTrain().directionalDrive(75, 1, 40, false);
 
         // lower the lift
         robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().maxLiftMotorPowerDown);
@@ -179,6 +187,7 @@ public class AutonomousBlueBack extends LinearOpMode {
 
         // run intake
         robot.getGlyphLift().setGlyphIntakeMotorPower(-1.0);
+        robot.getGlyphLift().setIntakeGripPosition();
 
         // drive into glyph pit
         robot.getHDriveTrain().directionalDrive(90, 1.0, 34, false);
@@ -206,6 +215,7 @@ public class AutonomousBlueBack extends LinearOpMode {
 
         // stop intake
         robot.getGlyphLift().setGlyphIntakeMotorPower(0);
+        robot.getGlyphLift().setIntakeHalfOpenPosition();
 
         timer.reset();
 
