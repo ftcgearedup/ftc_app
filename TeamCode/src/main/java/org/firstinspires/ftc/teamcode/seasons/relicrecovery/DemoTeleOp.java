@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Created by daniel on 11/12/17.
  */
 
-@TeleOp(name = "Promote Video TeleOp", group = "Promote")
+@TeleOp(name = "Demo BotTeleOp", group = "Demo")
 public class DemoTeleOp extends LinearOpMode {
 
     private DcMotor right;
@@ -38,6 +38,7 @@ public class DemoTeleOp extends LinearOpMode {
         double speedLeft;
         double speedRight;
 //        double speedHead;
+        double gripperPosition;
 
 
         while (opModeIsActive()) {
@@ -46,10 +47,12 @@ public class DemoTeleOp extends LinearOpMode {
 
             left.setPower(speedLeft);
             right.setPower(speedRight);
-            if(gamepad1.a){
-                gripper.setPosition(.2); //closed
+            if(gamepad1.b){
+                gripperPosition = .2;
+                gripper.setPosition(gripperPosition); //closed
             } else {
-                gripper.setPosition(.5); //open
+                gripperPosition = .5;
+                gripper.setPosition(gripperPosition); //open
             }
 //            if (gamepad1.right_bumper) {
 //                speedHead = 0.3;
@@ -60,6 +63,8 @@ public class DemoTeleOp extends LinearOpMode {
 //            } else{
 //                head.setPower(0.0);
 //            }
+        telemetry.addData("gripper", gripperPosition );
+        telemetry.update();
         }
     }
 }

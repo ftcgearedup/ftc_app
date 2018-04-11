@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 /**
@@ -156,7 +157,13 @@ public class RobotTeleOp extends LinearOpMode {
             telemetry.addData("left lift motor position", robot.getGlyphLift().getLiftLeftMotorPosition());
             telemetry.addData("right lift motor position", robot.getGlyphLift().getLiftRightMotorPosition());
 
+            telemetry.addData("left intake encoder position", robot.getGlyphLift().getIntakeLeftMotorPosition());
+            telemetry.addData("right intake encoder position", robot.getGlyphLift().getIntakeRightMotorPosition());
+
             telemetry.addData("relic arm motor position", robot.getRelicArm().getArmMotorPosition());
+
+            telemetry.addData("left range sensor", robot.getLeftRangeSensor().getDistance(DistanceUnit.INCH));
+            telemetry.addData("right range sensor", robot.getRightRangeSensor().getDistance(DistanceUnit.INCH));
 
             telemetry.update();
 

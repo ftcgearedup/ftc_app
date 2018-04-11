@@ -118,7 +118,9 @@ public class GlyphLift implements IMechanism {
         leftGlyphIntakeMotor.setDirection(intakeMotorDir);
         rightGlyphIntakeMotor.setDirection(intakeMotorDir);
 
-        // run using encoder
+        // reset encoder and switch to using encoder
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -304,8 +306,6 @@ public class GlyphLift implements IMechanism {
      * For all the way open, use {@link #setIntakeFullyOpenPosition()}.
      */
     public void setIntakeHalfOpenPosition() {
-        opMode.telemetry.addData("json", "setting left halfway to " + intakeLeftHalfwayOpenPosition);
-        opMode.telemetry.update();
         intakeArmLeft.setPosition(intakeLeftHalfwayOpenPosition);
         intakeArmRight.setPosition(intakeRightHalfwayOpenPosition);
     }
@@ -317,8 +317,15 @@ public class GlyphLift implements IMechanism {
      * @param power power at which to rotate motors at
      */
     public void spinWheelsInDirection(boolean isLeft, double power){
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        opMode.telemetry.addData("left mode", leftGlyphIntakeMotor.getMode());
+        opMode.telemetry.addData("right mode", rightGlyphIntakeMotor.getMode());
+        opMode.telemetry.update();
 
         int targetPos = leftGlyphIntakeMotor.getTargetPosition() +
                 optionsMap.retrieveAsInt("autonomousRotatePosition");
@@ -338,9 +345,27 @@ public class GlyphLift implements IMechanism {
         while(leftGlyphIntakeMotor.isBusy() && rightGlyphIntakeMotor.isBusy()){
             linearOpMode.idle();
         }
+        opMode.telemetry.addData("left mode", leftGlyphIntakeMotor.getMode());
+        opMode.telemetry.addData("right mode", rightGlyphIntakeMotor.getMode());
+        opMode.telemetry.update();
+
+        leftGlyphIntakeMotor.setPower(0);
+        rightGlyphIntakeMotor.setPower(0);
 
         leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        opMode.telemetry.addData("left mode", leftGlyphIntakeMotor.getMode());
+        opMode.telemetry.addData("right mode", rightGlyphIntakeMotor.getMode());
+        opMode.telemetry.update();
+
+    }
+    public int getIntakeLeftMotorPosition() {
+        return leftGlyphIntakeMotor.getCurrentPosition();
+    }
+
+    public int getIntakeRightMotorPosition() {
+        return rightGlyphIntakeMotor.getCurrentPosition();
     }
 
 }
