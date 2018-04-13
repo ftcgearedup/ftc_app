@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
@@ -169,30 +170,13 @@ public class AutonomousBlueBack extends LinearOpMode {
             leftDistanceSensorDrive.driveToDistance(columnDist, 1.0, true);
         } while(opModeIsActive() && leftDistanceSensorDrive.isAlgorithmBusy());
 
-        // rotate glyphs
-        switch (scannedVuMark) {
-            case LEFT:
-//                    gyroPivotAlgorithm.pivot(0.5, 113, false, false);
-                break;
-            case RIGHT:
-                //  gyroPivotAlgorithm.pivot(0.5, 67, false, false);
-                break;
-            case UNKNOWN:
-            case CENTER:
-                break;
-        }
-
+        // open intake so it won't interfere with turning the glyph
         robot.getGlyphLift().setIntakeHalfOpenPosition();
-
-        telemetry.addData("wheel spin", "on");
-        telemetry.update();
 
         //turn glyphs to a 45* angle
         robot.getGlyphLift().spinWheelsInDirection(true,1.0);
 
-
-        telemetry.addData("wheel spin", "off");
-        telemetry.update();
+        // turn off intake
         robot.getGlyphLift().setGlyphIntakeMotorPower(0);
 
         // drive forward into cryptobox
@@ -210,17 +194,16 @@ public class AutonomousBlueBack extends LinearOpMode {
         // ensure lift is stopped
         robot.getGlyphLift().setLiftMotorPower(0);
 
-        robot.getHDriveTrain().drive(0.0, 0.0);
+        // stop drivers
+        robot.getHDriveTrain().stopDriveMotors();
 
         // turn off intake
         robot.getGlyphLift().setGlyphIntakeMotorPower(0);
 
-        // back up while ejecting glyph
-        robot.getHDriveTrain().directionalDrive(270, 0.5, 6, false);
-
-
         // drive right to align with glyph pit
-        robot.getHDriveTrain().directionalDrive(180, 1.0, 18, false);
+        do{
+            leftDistanceSensorDrive.driveToDistance(41.1,1,false);
+        } while (opModeIsActive() && leftDistanceSensorDrive.isAlgorithmBusy());
 
         // turn to face glyph pit
         encoderPivotAlgorithm.encoderPivot(0.5, 1400);
@@ -234,20 +217,41 @@ public class AutonomousBlueBack extends LinearOpMode {
 
         // gyro pivot once in glyph pile
         encoderPivotAlgorithm.encoderPivot(-0.5, 300);
-//        gyroPivotAlgorithm.pivot(0.5, 45, false, false);
 
-//        timer.reset();
-//
-//        // drive forward into glyph pile
-//        while(opModeIsActive() && robot.getGlyphLift().getColorSensor().red() < GLYPH_COLOR_SENSOR_THRESHOLD && timer.milliseconds() < 3000) {
-//            wiggleDriveAlgorithm.drive(1.0,250);
-//        }
-//
-//        // stop after drive
-//        robot.getHDriveTrain().stopDriveMotors();
-//
-//        // back up from glyph pit
-//        robot.getHDriveTrain().directionalDrive(270, 1.0, 14, false);
+        // reset encoders
+        robot.getHDriveTrain().stopDriveMotors();
+        robot.getHDriveTrain().setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.getHDriveTrain().setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        timer.reset();
+
+        // enable intake
+        robot.getGlyphLift().setGlyphIntakeMotorPower(-1.0);
+        robot.getGlyphLift().setIntakeGripPosition();
+
+        // drive forward into glyph pile
+        while(opModeIsActive() && robot.getGlyphLift().getColorSensor().red() < GLYPH_COLOR_SENSOR_THRESHOLD && timer.milliseconds() < 3000) {
+            wiggleDriveAlgorithm.drive(1.0,250);
+        }
+
+        // stop after drive
+        robot.getHDriveTrain().stopDriveMotors();
+
+
+        // back up from glyph pit using encoder
+        robot.getHDriveTrain().getLeftDriveMotor().setTargetPosition(0);
+        robot.getHDriveTrain().getRightDriveMotor().setTargetPosition(0);
+
+        robot.getHDriveTrain().getLeftDriveMotor().setPower(-1);
+        robot.getHDriveTrain().getRightDriveMotor().setPower(-1);
+
+        while(opModeIsActive() && !robot.getHDriveTrain().isDriveTrainBusy()){
+            idle();
+        }
+
+        robot.getHDriveTrain().stopDriveMotors();
+
+        //robot.getHDriveTrain().directionalDrive(270, 1.0, 14, false);
 //
 //        // pivot to face cryptobox again
 //        encoderPivotAlgorithm.encoderPivot(-0.5, 800);

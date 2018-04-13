@@ -182,7 +182,7 @@ public class HDriveTrain implements IDirectionalDriveTrain {
         middleDrive.setPower(0);
     }
 
-    private void setRunMode(DcMotor.RunMode runMode) {
+    public void setRunMode(DcMotor.RunMode runMode) {
         leftDrive.setMode(runMode);
         rightDrive.setMode(runMode);
         middleDrive.setMode(runMode);
