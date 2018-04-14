@@ -27,6 +27,9 @@ import org.firstinspires.ftc.teamcode.algorithms.impl.DistanceSensorDriveAlgorit
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.mechanism.impl.VisionHelper;
 import org.firstinspires.ftc.teamcode.seasons.relicrecovery.algorithms.VuMarkScanAlgorithm;
+import org.firstinspires.ftc.teamcode.utils.DataGramLogServer;
+
+import java.net.SocketException;
 
 
 /**
@@ -63,6 +66,14 @@ public class AutonomousRedLeft extends LinearOpMode {
         leftDistanceSensorDrive = new DistanceSensorDriveAlgorithm(
                 robot, robot.getHDriveTrain(), robot.getLeftRangeSensor(),
                 DistanceSensorDriveAlgorithm.RobotSide.FRONT);
+       // start DataGramLogServer in background
+        DataGramLogServer graphLogger;
+        try {
+            graphLogger= new DataGramLogServer();
+            graphLogger.start();
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
 
         //detect color of stone
         boolean isStoneRed = true;

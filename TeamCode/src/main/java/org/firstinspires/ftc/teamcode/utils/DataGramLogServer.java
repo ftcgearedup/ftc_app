@@ -2,6 +2,11 @@ package org.firstinspires.ftc.teamcode.utils;
 
 import android.util.Log;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.opmode.TelemetryImpl;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.DatagramPacket;
@@ -12,13 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-/**
- * This class creates a custom logger class with the capabilities to
- * write to a file,
- * choose which file to write to,
- * and to clear a file of all data.
- */
-
 public class DataGramLogServer extends Thread {
     private static final int port = 6347;
     private static final String LOG_TAG = "TEAMLOG";
@@ -26,9 +24,10 @@ public class DataGramLogServer extends Thread {
     private DatagramSocket socket;
     private boolean running;
     private byte[] buf = new byte[256];
-
-    public DataGramLogServer() throws SocketException {
+ private OpMode opMode;
+    public DataGramLogServer(OpMode opMode) throws SocketException {
         socket = new DatagramSocket(port);
+        this.opMode= opMode;
     }
 
     public void run() {
@@ -42,6 +41,8 @@ public class DataGramLogServer extends Thread {
                 String received
                         = new String(packet.getData(), 0, packet.getLength());
                 Log.d(LOG_TAG, "Received:" + received);
+                opMode.telemetry.addData("Computer IP address =", packet.getAddress().getHostAddress());
+                opMode.telemetry.update();
             } catch (IOException e) {
                 e.printStackTrace();
             }

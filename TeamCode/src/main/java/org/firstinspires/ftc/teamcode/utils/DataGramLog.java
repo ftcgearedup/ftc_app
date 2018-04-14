@@ -35,7 +35,6 @@ public class DataGramLog {
     }
 
     /**
-     * This method appends the file using data sent by the RC phone. It adds the date, and time, as well as the log tag and message.
      *
      * @param text the text that you want the log message displays.
      * @param tag  the tag is attached to the log message and is used to filter log messages by type.
