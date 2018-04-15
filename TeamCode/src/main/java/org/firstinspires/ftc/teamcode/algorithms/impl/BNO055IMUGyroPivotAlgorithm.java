@@ -3,11 +3,13 @@ package org.firstinspires.ftc.teamcode.algorithms.impl;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.IDriveTrain;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
+import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 /**
  * An implementation of {@link IGyroPivotAlgorithm}
@@ -21,6 +23,8 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
 
     private OpMode opMode;
 
+    private static JSONConfigOptions optionsMap = new JSONConfigOptions("options.json");
+
     private double targetAngle;
     private double error;
     private double desiredSpeed;
@@ -30,11 +34,11 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
     private double previousError = 0;
     private double integral = 0;
 
-    private static final double GYRO_DEGREE_THRESHOLD = 0.2;
+    private static double GYRO_DEGREE_THRESHOLD;
 
-    private static final double P_COEFF = 0.016;
-    private static final double I_COEFF = 0.0000020; // 3
-    private static final double D_COEFF = 0;
+    private static double P_COEFF;
+    private static double I_COEFF;
+    private static double D_COEFF;
 
     /**
      * Create a new instance of this algorithm implementation that will use the specified robot.
@@ -45,6 +49,11 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
     public BNO055IMUGyroPivotAlgorithm(Robot robot, IDriveTrain driveTrain, BNO055IMUWrapper imu) {
         this.opMode = robot.getCurrentOpMode();
         this.driveTrain = driveTrain;
+
+        this.GYRO_DEGREE_THRESHOLD = 0; //optionsMap.retrieveAsDouble("gyroPivotGyroDegreeThreshold");
+        this.P_COEFF = 0.001; //optionsMap.retrieveAsDouble("gyroPivotPCoeff");
+        this.I_COEFF = 0; //optionsMap.retrieveAsDouble("gyroPivotICoeff");
+        this.D_COEFF = 0; //optionsMap.retrieveAsDouble("gyroPivotDCoeff");
 
         this.imu = imu;
     }
@@ -105,6 +114,8 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
         derivative = Math.copySign((error - previousError) / timeDelta, error);
 
         previousError = error;
+
+        RobotLog.dd("GYRO-PIVOT", "I: " + I_COEFF * Math.copySign(integral, error));
 
         actualSpeed = (P_COEFF * error) + (I_COEFF * Math.copySign(integral, error)) + (D_COEFF * derivative);
 

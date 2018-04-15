@@ -8,6 +8,11 @@
   "wheelGearRatioOut" : 1.5,
   "jcsFlashMS":  500,
 
+  "gyroPivotGyroDegreeThreshold" : 1,
+  "gyroPivotPCoeff" : 0.0000000001,
+  "gyroPivotICoeff" : 0.0000000,
+  "gyroPivotDCoeff" : 0.0,
+
   "jewelKnockerRetractPosition" : 0.3,
   "jewelKnockerExtendPosition" : 0.85,
   "jewelKnockerLeftRotation" : 0,
@@ -36,7 +41,7 @@
 
   "relicArmGripperOpenPosition" : 0,
   "relicArmGripperClosePosition" : 0.95,
-  "relicArmMotorMaxPosition": 500,
+  "relicArmMotorMaxPosition": -6500,
   "relicArmMotorMinPosition":  -100,
   "relicArmRaiseArmPosition" : 0.2,
   "relicArmRaiseArmAmount" : 0.05,
@@ -49,5 +54,7 @@
 
   "teleopJoystickDeadzone" : 0.2,
   "teleopIntakeHeightValue" : 1300,
-  "gcsThreshold": 75
+  "gcsThreshold": 75,
+
+  "gyroTestSpeed" : 1.0
 }
