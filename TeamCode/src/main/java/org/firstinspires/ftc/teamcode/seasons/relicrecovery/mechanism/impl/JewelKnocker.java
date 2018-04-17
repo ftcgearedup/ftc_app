@@ -27,6 +27,8 @@ public class JewelKnocker implements IMechanism {
 
     private OpMode opMode;
 
+    ElapsedTime timer = new ElapsedTime();
+
     private final int SECOND_JEWEL_ARM_DELAY_MS;
     private final int FIRST_JEWEL_ARM_DELAY_MS;
     private final int JEWEL_BLUE_LEVEL = 30;
@@ -64,8 +66,6 @@ public class JewelKnocker implements IMechanism {
      *                      if the robot should knock the blue jewel off of the platform.
      */
     public void knockJewel(boolean isRedAlliance) {
-        ElapsedTime timer = new ElapsedTime();
-
         LinearOpMode linearOpMode;
         if(opMode instanceof LinearOpMode) {
             linearOpMode = (LinearOpMode)opMode;
@@ -76,36 +76,32 @@ public class JewelKnocker implements IMechanism {
             extendArm();
 
             timer.reset();
-            while(linearOpMode.opModeIsActive() && timer.milliseconds() < FIRST_JEWEL_ARM_DELAY_MS) {
-                linearOpMode.idle();
-            }
-
-            if(isRedAlliance) {
-                if(isJewelBlue()) {
-                    leftRotation();
+            if(timer.milliseconds() <= FIRST_JEWEL_ARM_DELAY_MS){
+                if(isRedAlliance) {
+                    if(isJewelBlue()) {
+                        leftRotation();
+                    } else {
+                        rightRotation();
+                    }
                 } else {
-                    rightRotation();
+                    if(isJewelBlue()) {
+                        rightRotation();
+                    } else {
+                        leftRotation();
+                    }
                 }
-            } else {
-                if(isJewelBlue()) {
-                    rightRotation();
-                } else {
-                    leftRotation();
+
+                // rotate left or right
+                timer.reset();
+                if(timer.milliseconds() <= SECOND_JEWEL_ARM_DELAY_MS){
+                    // retract servo arm
+                    retractArm();
+
+                    timer.reset();
+                    if(timer.milliseconds() <= SECOND_JEWEL_ARM_DELAY_MS){
+                        linearOpMode.idle();
+                    }
                 }
-            }
-
-            // rotate left or right
-            timer.reset();
-            while(linearOpMode.opModeIsActive() && timer.milliseconds() < SECOND_JEWEL_ARM_DELAY_MS) {
-                linearOpMode.idle();
-            }
-
-            // retract servo arm
-            retractArm();
-
-            timer.reset();
-            while(linearOpMode.opModeIsActive() && timer.milliseconds() < SECOND_JEWEL_ARM_DELAY_MS) {
-                linearOpMode.idle();
             }
         }
     }
