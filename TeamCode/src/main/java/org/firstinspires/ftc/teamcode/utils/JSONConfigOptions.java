@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.utils;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
@@ -13,27 +14,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JSONConfigOptions {
+    private final String LOG_TAG = "JSON_CONFIG";
 
-    public JSONConfigOptions(String fileName){
+    public JSONConfigOptions(String fileName) {
         parseFile(new File(AppUtil.FIRST_FOLDER + "/" + fileName));
     }
 
     private Map<String, JsonElement> result = new HashMap<>();
 
-    private void parseFile(File file){
+    private void parseFile(File file) {
 
         JsonObject obj = null;
         JsonParser parser = new JsonParser();
 
+        RobotLog.d(LOG_TAG, "Parsing file " + file.getPath());
+
         try {
             obj = (JsonObject) parser.parse(new FileReader(file));
         } catch (FileNotFoundException | ClassCastException e) {
-
+            RobotLog.e(LOG_TAG, e.toString());
         }
+
         for(Map.Entry<String, JsonElement> e: obj.entrySet()){
-
+            RobotLog.d(LOG_TAG, "Adding " + e.getKey() + ", " + e.getValue());
             result.put(e.getKey(), e.getValue());
-
         }
     }
 

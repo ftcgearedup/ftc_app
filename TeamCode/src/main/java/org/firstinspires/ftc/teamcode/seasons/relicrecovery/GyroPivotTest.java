@@ -22,11 +22,9 @@ public class GyroPivotTest extends LinearOpMode {
         this.gyroPivotAlgorithm = new BNO055IMUGyroPivotAlgorithm(robot, robot.getHDriveTrain(), bno055IMUWrapper);
         this.timer = new ElapsedTime();
 
-        timer.reset();
-
         bno055IMUWrapper.startIntegration();
 
-        double speed = 0.7; //robot.getOptionsMap().retrieveAsDouble("gyroTestSpeed");
+        double speed = robot.getOptionsMap().retrieveAsDouble("autonomousGyroPivotSpeed");
 
         while(!isStarted() && !opModeIsActive()) {
             telemetry.addData("heading", bno055IMUWrapper.getHeading());
@@ -36,7 +34,8 @@ public class GyroPivotTest extends LinearOpMode {
 
         gyroPivotAlgorithm.pivot(speed, 180, true, false);
 
-        while(60 * 5 >= timer.seconds() && opModeIsActive()){
+        timer.reset();
+        while(timer.seconds() < 300 && opModeIsActive()){
             telemetry.addData("heading", bno055IMUWrapper.getHeading());
             telemetry.addData("error", gyroPivotAlgorithm.getError(180, true));
             telemetry.addData("Threshold", robot.getOptionsMap().retrieveAsDouble("gyroPivotGyroDegreeThreshold"));

@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.IDriveTrain;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.RelicRecoveryRobot;
 import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 /**
@@ -23,7 +24,7 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
 
     private OpMode opMode;
 
-    private static JSONConfigOptions optionsMap = new JSONConfigOptions("options.json");
+    private JSONConfigOptions optionsMap;
 
     private double targetAngle;
     private double error;
@@ -34,11 +35,11 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
     private double previousError = 0;
     private double integral = 0;
 
-    private static double GYRO_DEGREE_THRESHOLD;
+    private final double GYRO_DEGREE_THRESHOLD;
 
-    private static double P_COEFF;
-    private static double I_COEFF;
-    private static double D_COEFF;
+    private final double P_COEFF;
+    private final double I_COEFF;
+    private final double D_COEFF;
 
     /**
      * Create a new instance of this algorithm implementation that will use the specified robot.
@@ -49,11 +50,13 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
     public BNO055IMUGyroPivotAlgorithm(Robot robot, IDriveTrain driveTrain, BNO055IMUWrapper imu) {
         this.opMode = robot.getCurrentOpMode();
         this.driveTrain = driveTrain;
+        this.optionsMap = ((RelicRecoveryRobot)robot).getOptionsMap();
 
-        this.GYRO_DEGREE_THRESHOLD = 0; //optionsMap.retrieveAsDouble("gyroPivotGyroDegreeThreshold");
-        this.P_COEFF = 0.001; //optionsMap.retrieveAsDouble("gyroPivotPCoeff");
-        this.I_COEFF = 0; //optionsMap.retrieveAsDouble("gyroPivotICoeff");
-        this.D_COEFF = 0; //optionsMap.retrieveAsDouble("gyroPivotDCoeff");
+        // parse constants from configuration file
+        this.GYRO_DEGREE_THRESHOLD = optionsMap.retrieveAsDouble("gyroPivotGyroDegreeThreshold");
+        this.P_COEFF = optionsMap.retrieveAsDouble("gyroPivotPCoeff");
+        this.I_COEFF = optionsMap.retrieveAsDouble("gyroPivotICoeff");
+        this.D_COEFF = optionsMap.retrieveAsDouble("gyroPivotDCoeff");
 
         this.imu = imu;
     }
