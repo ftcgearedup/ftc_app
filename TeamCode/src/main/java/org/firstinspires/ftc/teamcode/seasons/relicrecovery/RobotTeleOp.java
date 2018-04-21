@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.vuforia.CameraDevice;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 /**
@@ -30,7 +32,7 @@ import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
  * Left Trigger       - Relic Arm Retract
  * Right Trigger      - Relic Arm Extend
  */
-@TeleOp(name = "TELEOP", group = "teleop")
+@TeleOp(name = "TELEOP \uD83C\uDFAE", group = "teleop")
 public class RobotTeleOp extends LinearOpMode {
     private RelicRecoveryRobot robot;
     private JSONConfigOptions configOptions;
@@ -65,8 +67,14 @@ public class RobotTeleOp extends LinearOpMode {
 
         boolean relicTogglePressed = true;
         boolean relicGripperOpen = false;
+        boolean isJewelColorSensorLEDLit = true;
+        ElapsedTime timer = new ElapsedTime();
 
         robot.getGlyphLift().setIntakeHalfOpenPosition();
+
+        // initialize vuforia
+        robot.getVisionHelper().initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
+
         while (opModeIsActive()) {
             speedX = gamepad1.right_stick_x;
             speedY = -gamepad1.right_stick_y;
@@ -141,6 +149,21 @@ public class RobotTeleOp extends LinearOpMode {
 
                 robot.getGlyphLift().setIntakeHalfOpenPosition();
             }
+
+            // toggle camera LED flash
+            if(robot.getGlyphLift().getColorSensor().red() > glyphColorThreshold) {
+                CameraDevice.getInstance().setFlashTorchMode(isJewelColorSensorLEDLit);
+
+                if(timer.milliseconds() > jewelColorSensorLEDFlash) {
+                    timer.reset();
+
+                    isJewelColorSensorLEDLit = !isJewelColorSensorLEDLit;
+                }
+            } else {
+                CameraDevice.getInstance().setFlashTorchMode(false);
+                isJewelColorSensorLEDLit = true;
+            }
+
 
             telemetry.addData("left intake servo", robot.getGlyphLift().intakeArmLeft.getPosition());
             telemetry.addData("right intake servo", robot.getGlyphLift().intakeArmRight.getPosition());
