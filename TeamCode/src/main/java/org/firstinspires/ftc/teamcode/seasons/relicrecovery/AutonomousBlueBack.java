@@ -46,6 +46,7 @@ public class AutonomousBlueBack extends LinearOpMode {
 
     private int GLYPH_COLOR_SENSOR_THRESHOLD;
     private double GYRO_PIVOT_SPEED;
+    private double MAX_RANGE_DRIVE_DISTANCE;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -55,6 +56,7 @@ public class AutonomousBlueBack extends LinearOpMode {
 
         GLYPH_COLOR_SENSOR_THRESHOLD = configOptions.retrieveAsInt("gcsThreshold");
         GYRO_PIVOT_SPEED = robot.getOptionsMap().retrieveAsDouble("autonomousGyroPivotSpeed");
+        MAX_RANGE_DRIVE_DISTANCE = robot.getOptionsMap().retrieveAsDouble("maxRangeDriveDistance");
 
         vuMarkScanTimeMS = robot.getOptionsMap().retrieveAsDouble("autonomousVuMarkScanTimeMS");
 
@@ -122,7 +124,7 @@ public class AutonomousBlueBack extends LinearOpMode {
         encoderPivotAlgorithm.encoderPivot(0.5, 400);
 
         // drive forward a little more
-        robot.getHDriveTrain().directionalDrive(90,0.5,12,false);
+        robot.getHDriveTrain().directionalDrive(90,0.5,14,false);
 
         // turn on intake and set extra intake to grip position
         robot.getGlyphLift().setGlyphIntakeMotorPower(-1);
@@ -150,32 +152,32 @@ public class AutonomousBlueBack extends LinearOpMode {
         robot.getGlyphLift().setIntakeHalfOpenPosition();
 
         // drive forward in front of cryptobox
-        robot.getHDriveTrain().directionalDrive(90, 0.5, 18, false);
+        robot.getHDriveTrain().directionalDrive(90, 0.5, 20, false);
 
         // align to key column
         do {
-            double columnDist = 24.5;
+            double columnDist = 26.5;
             switch (scannedVuMark) {
                 case LEFT:
 //                    gyroPivotAlgorithm.pivot(0.5, 113, false, false);
-                    columnDist = 19.0;
+                    columnDist = 21;
                     break;
                 case RIGHT:
                   //  gyroPivotAlgorithm.pivot(0.5, 67, false, false);
-                    columnDist = 60.0;
+                    columnDist = 32;
                     break;
                 case UNKNOWN:
                 case CENTER:
                     break;
             }
             gyroPivotAlgorithm.pivot(0.1, 90, true, true);
-            leftDistanceSensorDrive.driveToDistance(columnDist, 1.0, true);
+            leftDistanceSensorDrive.driveToDistance(columnDist, MAX_RANGE_DRIVE_DISTANCE, 1.0, true);
         } while(opModeIsActive() && leftDistanceSensorDrive.isAlgorithmBusy());
 
         // open intake so it won't interfere with turning the glyph
         robot.getGlyphLift().setIntakeHalfOpenPosition();
 
-        //turn glyphs to a 45 degree angle
+        // turn glyphs to a 45 degree angle
         robot.getGlyphLift().spinWheelsInDirection(true,1.0);
 
         // turn off intake
@@ -183,15 +185,15 @@ public class AutonomousBlueBack extends LinearOpMode {
 
         // drive forward into cryptobox
         timer.reset();
-        while(opModeIsActive() && timer.milliseconds() < 400) {
-            robot.getHDriveTrain().drive(0, 0.5);
+        while(opModeIsActive() && timer.milliseconds() < 600) {
+            robot.getHDriveTrain().drive(0, 0.7);
         }
 
         // run intake in reverse to eject glyph
         robot.getGlyphLift().ejectGlyph();
 
         // back up while ejecting glyph
-        robot.getHDriveTrain().directionalDrive(270, 1.0, 6, false);
+        robot.getHDriveTrain().directionalDrive(270, 1.0, 8, false);
 
         // ensure lift is stopped
         robot.getGlyphLift().setLiftMotorPower(0);
@@ -202,13 +204,15 @@ public class AutonomousBlueBack extends LinearOpMode {
         // turn off intake
         robot.getGlyphLift().setGlyphIntakeMotorPower(0);
 
-        // drive right to align with glyph pit
-        do{
-            leftDistanceSensorDrive.driveToDistance(41.1,1,false);
-        } while (opModeIsActive() && leftDistanceSensorDrive.isAlgorithmBusy());
+        if(scannedVuMark != RelicRecoveryVuMark.RIGHT) {
+            // drive right to align with glyph pit
+            do {
+                leftDistanceSensorDrive.driveToDistance(32, MAX_RANGE_DRIVE_DISTANCE, 1, false);
+            } while (opModeIsActive() && leftDistanceSensorDrive.isAlgorithmBusy());
+        }
 
         // turn to face glyph pit
-        gyroPivotAlgorithm.pivot(GYRO_PIVOT_SPEED, 270, true, false);
+        gyroPivotAlgorithm.pivot(GYRO_PIVOT_SPEED, 295, true, false);
 
         // run intake
         robot.getGlyphLift().setGlyphIntakeMotorPower(-1.0);
@@ -217,19 +221,7 @@ public class AutonomousBlueBack extends LinearOpMode {
         // drive into glyph pit
         robot.getHDriveTrain().directionalDrive(90, 1.0, 34, false);
 
-        // gyro pivot once in glyph pile
-        encoderPivotAlgorithm.encoderPivot(-0.5, 300);
-
-        // reset encoders
-        robot.getHDriveTrain().stopDriveMotors();
-        robot.getHDriveTrain().setRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.getHDriveTrain().setRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         timer.reset();
-
-        // enable intake
-        robot.getGlyphLift().setGlyphIntakeMotorPower(-1.0);
-        robot.getGlyphLift().setIntakeGripPosition();
 
         // drive forward into glyph pile
         while(opModeIsActive() && robot.getGlyphLift().getColorSensor().red() < GLYPH_COLOR_SENSOR_THRESHOLD && timer.milliseconds() < 3000) {
@@ -239,19 +231,28 @@ public class AutonomousBlueBack extends LinearOpMode {
         // stop after drive
         robot.getHDriveTrain().stopDriveMotors();
 
+        robot.getHDriveTrain().directionalDrive(270, 0.5, 44, false);
 
-        // back up from glyph pit using encoder
-        robot.getHDriveTrain().getLeftDriveMotor().setTargetPosition(0);
-        robot.getHDriveTrain().getRightDriveMotor().setTargetPosition(0);
+        // turn off intake
+        robot.getGlyphLift().setGlyphIntakeMotorPower(0);
+        robot.getGlyphLift().setIntakeHalfOpenPosition();
 
-        robot.getHDriveTrain().getLeftDriveMotor().setPower(-1);
-        robot.getHDriveTrain().getRightDriveMotor().setPower(-1);
+//        // face cryptobox
+//        gyroPivotAlgorithm.pivot(GYRO_PIVOT_SPEED, 90, false, false);
+//
 
-        while(opModeIsActive() && !robot.getHDriveTrain().isDriveTrainBusy()){
-            idle();
-        }
-
-        robot.getHDriveTrain().stopDriveMotors();
+//        // back up from glyph pit using encoder
+//        robot.getHDriveTrain().getLeftDriveMotor().setTargetPosition(0);
+//        robot.getHDriveTrain().getRightDriveMotor().setTargetPosition(0);
+//
+//        robot.getHDriveTrain().getLeftDriveMotor().setPower(-1);
+//        robot.getHDriveTrain().getRightDriveMotor().setPower(-1);
+//
+//        while(opModeIsActive() && !robot.getHDriveTrain().isDriveTrainBusy()){
+//            idle();
+//        }
+//
+//        robot.getHDriveTrain().stopDriveMotors();
 
         //robot.getHDriveTrain().directionalDrive(270, 1.0, 14, false);
 //

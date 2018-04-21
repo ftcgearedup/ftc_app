@@ -13,17 +13,21 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 @Autonomous(name = "Distance Sensor Test")
 public class DistanceSensorTest extends LinearOpMode {
     private RelicRecoveryRobot robot;
-    private DistanceSensorDriveAlgorithm rightDistanceSensorDrive;
+    private DistanceSensorDriveAlgorithm leftDistanceSensorDrive;
     private IGyroPivotAlgorithm gyroPivotAlgorithm;
     private BNO055IMUWrapper bno055IMUWrapper;
+
+    private double MAX_RANGE_DRIVE_DISTANCE;
 
     @Override
     public void runOpMode() throws InterruptedException {
         this.robot = new RelicRecoveryRobot(this);
 
-        this.rightDistanceSensorDrive = new DistanceSensorDriveAlgorithm(
-                robot, robot.getHDriveTrain(), robot.getRightRangeSensor(),
-                DistanceSensorDriveAlgorithm.RobotSide.RIGHT);
+        MAX_RANGE_DRIVE_DISTANCE = robot.getOptionsMap().retrieveAsDouble("maxRangeDriveDistance");
+
+        this.leftDistanceSensorDrive = new DistanceSensorDriveAlgorithm(
+                robot, robot.getHDriveTrain(), robot.getLeftRangeSensor(),
+                DistanceSensorDriveAlgorithm.RobotSide.LEFT);
 
         this.bno055IMUWrapper = new BNO055IMUWrapper(robot);
         this.gyroPivotAlgorithm = new BNO055IMUGyroPivotAlgorithm(robot, robot.getHDriveTrain(), bno055IMUWrapper);
@@ -32,21 +36,14 @@ public class DistanceSensorTest extends LinearOpMode {
         while(!isStarted() && !opModeIsActive()) {
             telemetry.addData("left", robot.getLeftRangeSensor().getDistance(DistanceUnit.INCH));
             telemetry.addData("right", robot.getRightRangeSensor().getDistance(DistanceUnit.INCH));
+            telemetry.addData("filtered distance", leftDistanceSensorDrive.lastFilteredReading());
             telemetry.update();
         }
 
-        // lower lift
-        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().maxLiftMotorPowerDown);
-
         do {
-            // stop lift if the lift touch sensor is pressed
-            if (robot.getGlyphLift().isLiftTouchSensorPressed()) {
-                robot.getGlyphLift().setLiftMotorPower(0);
-            }
-
-            gyroPivotAlgorithm.pivot(0.1, 180, true, true);
-            rightDistanceSensorDrive.driveToDistance(15.5, 1.0, true);
-        } while (opModeIsActive() && rightDistanceSensorDrive.isAlgorithmBusy());
+            gyroPivotAlgorithm.pivot(0.1, 0, true, true);
+            leftDistanceSensorDrive.driveToDistance(32, MAX_RANGE_DRIVE_DISTANCE, 1.0, true);
+        } while (opModeIsActive() && leftDistanceSensorDrive.isAlgorithmBusy());
 
         //rightDistanceSensorDrive.driveToDistance(25, 1.0, false);
     }

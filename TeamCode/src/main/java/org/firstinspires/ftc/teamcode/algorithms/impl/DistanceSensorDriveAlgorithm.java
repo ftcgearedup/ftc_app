@@ -43,6 +43,7 @@ public class DistanceSensorDriveAlgorithm {
     private ArrayList<Double> filterReadings;
 
     private int numReadings;
+    private double lastReading;
 
     private static final double P_DRIVE_SPEED_COEFF = 0.03;
     private static final double DISTANCE_THRESHOLD = 0.5;
@@ -111,6 +112,19 @@ public class DistanceSensorDriveAlgorithm {
         } else {
             driveToDistanceBlocking(speed);
         }
+    }
+
+    public double lastFilteredReading() {
+        currentDistance = distanceSensor.getDistance(DistanceUnit.INCH);
+
+        if(filterReadings.size() < numReadings) {
+            filterReadings.add(currentDistance);
+        } else {
+            lastReading = median(filterReadings);
+            filterReadings.clear();
+        }
+
+        return lastReading;
     }
 
     private void executionLoop(double speed) {

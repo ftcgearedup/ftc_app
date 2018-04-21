@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
@@ -203,6 +204,8 @@ public class GlyphLift implements IMechanism {
      * Run the intake in reverse in order to eject a glyph
      */
     public void ejectGlyph() {
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -239,6 +242,9 @@ public class GlyphLift implements IMechanism {
      *             Negative values run the intake inward, positive runs it outward
      */
     public void setGlyphIntakeMotorPower(double power) {
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         leftGlyphIntakeMotor.setPower(power);
         rightGlyphIntakeMotor.setPower(-power);
     }
@@ -317,43 +323,25 @@ public class GlyphLift implements IMechanism {
      * @param power power at which to rotate motors at
      */
     public void spinWheelsInDirection(boolean isLeft, double power){
-        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         opMode.telemetry.addData("left mode", leftGlyphIntakeMotor.getMode());
         opMode.telemetry.addData("right mode", rightGlyphIntakeMotor.getMode());
         opMode.telemetry.update();
 
-        int targetPos = leftGlyphIntakeMotor.getTargetPosition() +
-                optionsMap.retrieveAsInt("autonomousRotatePosition");
+        int rotateTime = optionsMap.retrieveAsInt("autonomousRotateTimeMS");
 
-        if(isLeft){
-            leftGlyphIntakeMotor.setTargetPosition(targetPos);
-            rightGlyphIntakeMotor.setTargetPosition(targetPos);
-        } else {
-            leftGlyphIntakeMotor.setTargetPosition(-targetPos);
-            rightGlyphIntakeMotor.setTargetPosition(-targetPos);
-        }
-
-        leftGlyphIntakeMotor.setPower(power);
-        rightGlyphIntakeMotor.setPower(power);
+        ElapsedTime elapsedTime = new ElapsedTime();
 
         LinearOpMode linearOpMode = (LinearOpMode) opMode;
-        while(leftGlyphIntakeMotor.isBusy() && rightGlyphIntakeMotor.isBusy()){
-            linearOpMode.idle();
+        while(linearOpMode.opModeIsActive() && elapsedTime.milliseconds() < rotateTime) {
+            leftGlyphIntakeMotor.setPower(power);
+            rightGlyphIntakeMotor.setPower(power);
         }
-        opMode.telemetry.addData("left mode", leftGlyphIntakeMotor.getMode());
-        opMode.telemetry.addData("right mode", rightGlyphIntakeMotor.getMode());
-        opMode.telemetry.update();
 
         leftGlyphIntakeMotor.setPower(0);
         rightGlyphIntakeMotor.setPower(0);
-
-        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         opMode.telemetry.addData("left mode", leftGlyphIntakeMotor.getMode());
         opMode.telemetry.addData("right mode", rightGlyphIntakeMotor.getMode());

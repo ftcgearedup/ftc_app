@@ -41,6 +41,7 @@ public class AutonomousBlueFront extends LinearOpMode {
     private JSONConfigOptions configOptions;
 
     private int GLYPH_COLOR_SENSOR_THRESHOLD;
+    private double MAX_RANGE_DRIVE_DISTANCE;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -52,6 +53,7 @@ public class AutonomousBlueFront extends LinearOpMode {
 
         vuMarkScanTimeMS = configOptions.retrieveAsDouble("autonomousVuMarkScanTimeMS");
         GLYPH_COLOR_SENSOR_THRESHOLD = configOptions.retrieveAsInt("gcsThreshold");
+        MAX_RANGE_DRIVE_DISTANCE = robot.getOptionsMap().retrieveAsDouble("maxRangeDriveDistance");
 
         // initialize vuforia
         robot.getVisionHelper().initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
@@ -132,7 +134,7 @@ public class AutonomousBlueFront extends LinearOpMode {
             telemetry.update();
 
             gyroPivotAlgorithm.pivot(0.1, 180, true, true);
-            rightDistanceSensorDrive.driveToDistance(15.5, 1.0, true);
+            rightDistanceSensorDrive.driveToDistance(15.5, MAX_RANGE_DRIVE_DISTANCE, 1.0, true);
         } while (opModeIsActive() && rightDistanceSensorDrive.isAlgorithmBusy());
 
         switch (scannedVuMark) {
@@ -205,7 +207,7 @@ public class AutonomousBlueFront extends LinearOpMode {
         // align to middle column
         do {
             gyroPivotAlgorithm.pivot(0.1, 180, true, true);
-            rightDistanceSensorDrive.driveToDistance(15.5, 1.0, true);
+            rightDistanceSensorDrive.driveToDistance(15.5, MAX_RANGE_DRIVE_DISTANCE, 1.0, true);
         } while (opModeIsActive() && leftDistanceSensorDrive.isAlgorithmBusy());
 
         boolean hasTwoGlyphs =
