@@ -73,7 +73,7 @@ public class RobotTeleOp extends LinearOpMode {
         robot.getGlyphLift().setIntakeHalfOpenPosition();
 
         // initialize vuforia
-        robot.getVisionHelper().initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
+        //robot.getVisionHelper().initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
 
         while (opModeIsActive()) {
             speedX = gamepad1.right_stick_x;
@@ -150,19 +150,19 @@ public class RobotTeleOp extends LinearOpMode {
                 robot.getGlyphLift().setIntakeHalfOpenPosition();
             }
 
-            // toggle camera LED flash
-            if(robot.getGlyphLift().getColorSensor().red() > glyphColorThreshold) {
-                CameraDevice.getInstance().setFlashTorchMode(isJewelColorSensorLEDLit);
-
-                if(timer.milliseconds() > jewelColorSensorLEDFlash) {
-                    timer.reset();
-
-                    isJewelColorSensorLEDLit = !isJewelColorSensorLEDLit;
-                }
-            } else {
-                CameraDevice.getInstance().setFlashTorchMode(false);
-                isJewelColorSensorLEDLit = true;
-            }
+//            // toggle camera LED flash
+//            if(robot.getGlyphLift().getColorSensor().red() > glyphColorThreshold) {
+//                CameraDevice.getInstance().setFlashTorchMode(isJewelColorSensorLEDLit);
+//
+//                if(timer.milliseconds() > jewelColorSensorLEDFlash) {
+//                    timer.reset();
+//
+//                    isJewelColorSensorLEDLit = !isJewelColorSensorLEDLit;
+//                }
+//            } else {
+//                CameraDevice.getInstance().setFlashTorchMode(false);
+//                isJewelColorSensorLEDLit = true;
+//            }
 
 
             telemetry.addData("left intake servo", robot.getGlyphLift().intakeArmLeft.getPosition());

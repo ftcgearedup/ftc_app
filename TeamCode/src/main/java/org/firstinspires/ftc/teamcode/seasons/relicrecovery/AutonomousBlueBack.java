@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 /**
  * The Relic Recovery back blue alliance program.
  */
-@Autonomous(name = "Blue Back", group = "autonomous")
+@Autonomous(name = "Blue Back \uD83D\uDC7D", group = "autonomous")
 public class AutonomousBlueBack extends LinearOpMode {
     private RelicRecoveryRobot robot;
     private IGyroPivotAlgorithm gyroPivotAlgorithm;

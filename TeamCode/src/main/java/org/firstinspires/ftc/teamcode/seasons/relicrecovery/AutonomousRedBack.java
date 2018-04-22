@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 /**
  * The Relic Recovery back red alliance program.
  */
-@Autonomous(name = "Red Back", group = "autonomous")
+@Autonomous(name = "Red Back \uD83D\uDE08", group = "autonomous")
 public class AutonomousRedBack extends LinearOpMode {
 
     private RelicRecoveryRobot robot;
