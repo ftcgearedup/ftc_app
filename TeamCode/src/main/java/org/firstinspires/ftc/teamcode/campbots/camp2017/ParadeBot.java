@@ -35,7 +35,7 @@ public class ParadeBot extends OpMode {
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-// set deadzone
+        // set deadzone
         gamepad1.setJoystickDeadzone(0.1f);
     }
 
