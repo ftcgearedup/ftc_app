@@ -42,16 +42,16 @@ public class HolonomicDriveTrain extends OpMode implements IDirectionalDriveTrai
     public void pivoting(double pivotSpeed, boolean directionRight) {
 
         if (directionRight= true) {
-            frontLeftPower += -pivotSpeed;
-            frontRightPower += pivotSpeed;
-            backLeftPower += -pivotSpeed;
-            backRightPower += pivotSpeed;
+            frontLeftPower = -pivotSpeed;
+            frontRightPower = pivotSpeed;
+            backLeftPower = -pivotSpeed;
+            backRightPower = pivotSpeed;
         }
         else {
-            frontLeftPower += pivotSpeed;
-            frontRightPower += -pivotSpeed;
-            backLeftPower += pivotSpeed;
-            backRightPower += -pivotSpeed;
+            frontLeftPower = pivotSpeed;
+            frontRightPower = -pivotSpeed;
+            backLeftPower = pivotSpeed;
+            backRightPower = -pivotSpeed;
         }
     }
 
