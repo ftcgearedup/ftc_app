@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.RelicRecoveryVuMark;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
@@ -40,6 +41,7 @@ public class AutonomousBlueFront extends LinearOpMode {
     private JSONConfigOptions configOptions;
 
     private int GLYPH_COLOR_SENSOR_THRESHOLD;
+    private double MAX_RANGE_DRIVE_DISTANCE;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -51,6 +53,7 @@ public class AutonomousBlueFront extends LinearOpMode {
 
         vuMarkScanTimeMS = configOptions.retrieveAsDouble("autonomousVuMarkScanTimeMS");
         GLYPH_COLOR_SENSOR_THRESHOLD = configOptions.retrieveAsInt("gcsThreshold");
+        MAX_RANGE_DRIVE_DISTANCE = robot.getOptionsMap().retrieveAsDouble("maxRangeDriveDistance");
 
         // initialize vuforia
         robot.getVisionHelper().initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
@@ -118,7 +121,7 @@ public class AutonomousBlueFront extends LinearOpMode {
         encoderPivotAlgorithm.encoderPivot(0.5, 1400);
 
         // lower the lift
-        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().MAX_LIFT_MOTOR_POWER_DOWN);
+        robot.getGlyphLift().setLiftMotorPower(-robot.getGlyphLift().maxLiftMotorPowerDown);
 
         // align to middle column
         do {
@@ -127,8 +130,11 @@ public class AutonomousBlueFront extends LinearOpMode {
                 robot.getGlyphLift().setLiftMotorPower(0);
             }
 
+            telemetry.addData("right distance sensor", robot.getRightRangeSensor().getDistance(DistanceUnit.INCH));
+            telemetry.update();
+
             gyroPivotAlgorithm.pivot(0.1, 180, true, true);
-            rightDistanceSensorDrive.driveToDistance(15.5, 1.0, true);
+            rightDistanceSensorDrive.driveToDistance(15.5, MAX_RANGE_DRIVE_DISTANCE, 1.0, true);
         } while (opModeIsActive() && rightDistanceSensorDrive.isAlgorithmBusy());
 
         switch (scannedVuMark) {
@@ -148,6 +154,9 @@ public class AutonomousBlueFront extends LinearOpMode {
         while (opModeIsActive() && timer.milliseconds() < 400) {
             robot.getHDriveTrain().drive(0, 1.0);
         }
+
+        // ensure lift is stopped
+        robot.getGlyphLift().setLiftMotorPower(0);
 
         robot.getHDriveTrain().drive(0.0, 0.0);
 
@@ -198,7 +207,7 @@ public class AutonomousBlueFront extends LinearOpMode {
         // align to middle column
         do {
             gyroPivotAlgorithm.pivot(0.1, 180, true, true);
-            rightDistanceSensorDrive.driveToDistance(15.5, 1.0, true);
+            rightDistanceSensorDrive.driveToDistance(15.5, MAX_RANGE_DRIVE_DISTANCE, 1.0, true);
         } while (opModeIsActive() && leftDistanceSensorDrive.isAlgorithmBusy());
 
         boolean hasTwoGlyphs =

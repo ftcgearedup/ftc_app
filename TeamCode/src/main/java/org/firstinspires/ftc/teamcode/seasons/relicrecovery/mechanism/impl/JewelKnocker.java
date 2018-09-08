@@ -80,18 +80,18 @@ public class JewelKnocker implements IMechanism {
                 linearOpMode.idle();
             }
 
-            ///For Red///
-            if (isRedAlliance && isJewelBlue()) {
-                leftRotation();
+            if(isRedAlliance) {
+                if(isJewelBlue()) {
+                    leftRotation();
+                } else {
+                    rightRotation();
+                }
             } else {
-                rightRotation();
-            }
-
-            ///For Blue///
-            if (!isRedAlliance && isJewelBlue()) {
-                rightRotation();
-            } else {
-                leftRotation();
+                if(isJewelBlue()) {
+                    rightRotation();
+                } else {
+                    leftRotation();
+                }
             }
 
             // rotate left or right
@@ -157,20 +157,6 @@ public class JewelKnocker implements IMechanism {
      */
     public int getBlue(){
         return jewelColorSensor.blue();
-    }
-
-    /**
-     *
-     */
-    public void enableLED() {
-        jewelColorSensor.enableLed(true);
-    }
-
-    /**
-     *
-     */
-    public void disableLED() {
-        jewelColorSensor.enableLed(false);
     }
 
     private boolean isJewelRed(){

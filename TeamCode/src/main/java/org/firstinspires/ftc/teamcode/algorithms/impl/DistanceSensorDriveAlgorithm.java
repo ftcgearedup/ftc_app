@@ -7,6 +7,13 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.IDirectionalDriveTrain;
+import org.firstinspires.ftc.teamcode.seasons.relicrecovery.RelicRecoveryRobot;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.SortedSet;
 
 /**
  * An algorithm that drives to a specified target currentDistance in inches
@@ -30,6 +37,13 @@ public class DistanceSensorDriveAlgorithm {
 
     private double speedX;
     private double speedY;
+
+    private double maxDistance;
+
+    private ArrayList<Double> filterReadings;
+
+    private int numReadings;
+    private double lastReading;
 
     private static final double P_DRIVE_SPEED_COEFF = 0.03;
     private static final double DISTANCE_THRESHOLD = 0.5;
@@ -63,6 +77,8 @@ public class DistanceSensorDriveAlgorithm {
                                         RobotSide sensorRobotSide) {
         this.opMode = robot.getCurrentOpMode();
         this.driveTrain = driveTrain;
+        this.numReadings = ((RelicRecoveryRobot)robot).getOptionsMap().retrieveAsInt("rangeSensorFilterNumReadings");
+        this.filterReadings = new ArrayList<>(numReadings);
 
         this.distanceSensor = distanceSensor;
         this.sensorRobotSide = sensorRobotSide;
@@ -87,8 +103,9 @@ public class DistanceSensorDriveAlgorithm {
      *                    non-{@link LinearOpMode}, this method will always be non-blocking, regardless
      *                    of the value for this parameter, due to the nature of non-{@link LinearOpMode}.
      */
-    public void driveToDistance(double targetDistance, double speed, boolean nonBlocking) {
+    public void driveToDistance(double targetDistance, double maxDistance, double speed, boolean nonBlocking) {
         this.targetDistance = targetDistance;
+        this.maxDistance = maxDistance;
 
         if(nonBlocking || !(opMode instanceof LinearOpMode)) {
             driveToDistanceNonBlocking(speed);
@@ -97,17 +114,45 @@ public class DistanceSensorDriveAlgorithm {
         }
     }
 
-    private void executionLoop(double speed) {
-        speed *= Math.abs(targetDistance - currentDistance) * P_DRIVE_SPEED_COEFF;
+    public double lastFilteredReading() {
+        currentDistance = distanceSensor.getDistance(DistanceUnit.INCH);
 
-        this.speedX = sensorRobotSide.x * speed;
-        this.speedY = sensorRobotSide.y * speed;
-
-        if(currentDistance > targetDistance) {
-            driveTrain.drive(speedX, speedY);
+        if(filterReadings.size() < numReadings) {
+            filterReadings.add(currentDistance);
         } else {
-            // change both to negative for opposite direction
-            driveTrain.drive(-speedX, -speedY);
+            lastReading = median(filterReadings);
+            filterReadings.clear();
+        }
+
+        return lastReading;
+    }
+
+    private void executionLoop(double speed) {
+        if(filterReadings.size() < numReadings) {
+            filterReadings.add(currentDistance);
+        } else {
+            speed *= Math.abs(targetDistance - median(filterReadings)) * P_DRIVE_SPEED_COEFF;
+            filterReadings.clear();
+
+            this.speedX = sensorRobotSide.x * speed;
+            this.speedY = sensorRobotSide.y * speed;
+
+            if(currentDistance > targetDistance) {
+                driveTrain.drive(speedX, speedY);
+            } else {
+                driveTrain.drive(-speedX, -speedY);
+            }
+        }
+    }
+
+    private double median(List<Double> list) {
+        Collections.sort(list);
+        int middle = list.size() / 2;
+
+        if(list.size() % 2 == 1) {
+            return list.get(middle);
+        } else {
+            return (list.get(middle - 1) + list.get(middle)) / 2;
         }
     }
 

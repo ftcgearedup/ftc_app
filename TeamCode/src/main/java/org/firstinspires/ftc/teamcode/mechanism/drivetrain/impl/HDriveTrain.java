@@ -174,12 +174,15 @@ public class HDriveTrain implements IDirectionalDriveTrain {
 
     @Override
     public void stopDriveMotors() {
+        this.currentSpeedY = 0;
+        this.currentPivot = 0;
+
         leftDrive.setPower(0);
         rightDrive.setPower(0);
         middleDrive.setPower(0);
     }
 
-    private void setRunMode(DcMotor.RunMode runMode) {
+    public void setRunMode(DcMotor.RunMode runMode) {
         leftDrive.setMode(runMode);
         rightDrive.setMode(runMode);
         middleDrive.setMode(runMode);

@@ -3,7 +3,10 @@ package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.vuforia.CameraDevice;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
 
 /**
@@ -29,7 +32,7 @@ import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
  * Left Trigger       - Relic Arm Retract
  * Right Trigger      - Relic Arm Extend
  */
-@TeleOp(name = "TELEOP", group = "teleop")
+@TeleOp(name = "TELEOP \uD83C\uDFAE", group = "teleop")
 public class RobotTeleOp extends LinearOpMode {
     private RelicRecoveryRobot robot;
     private JSONConfigOptions configOptions;
@@ -37,6 +40,7 @@ public class RobotTeleOp extends LinearOpMode {
     private float joystickDeadzone;
     private int glyphColorThreshold;
     private int jewelColorSensorLEDFlash;
+    private int intakeHeightValue;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -45,11 +49,13 @@ public class RobotTeleOp extends LinearOpMode {
         joystickDeadzone = (float) configOptions.retrieveAsDouble("teleopJoystickDeadzone");
         glyphColorThreshold = configOptions.retrieveAsInt("gcsThreshold");
         jewelColorSensorLEDFlash = configOptions.retrieveAsInt("jcsFlashMS");
+        intakeHeightValue = configOptions.retrieveAsInt("teleopIntakeHeightValue");
 
         gamepad1.setJoystickDeadzone(joystickDeadzone);
         gamepad2.setJoystickDeadzone(joystickDeadzone);
 
         robot.getJewelKnocker().retractArm();
+        robot.getGlyphLift().setIntakeInitializePosition();
 
         waitForStart();
 
@@ -61,9 +67,13 @@ public class RobotTeleOp extends LinearOpMode {
 
         boolean relicTogglePressed = true;
         boolean relicGripperOpen = false;
-        boolean isJewelColorSensorLEDLit = false;
-
+        boolean isJewelColorSensorLEDLit = true;
         ElapsedTime timer = new ElapsedTime();
+
+        robot.getGlyphLift().setIntakeHalfOpenPosition();
+
+        // initialize vuforia
+        //robot.getVisionHelper().initializeVuforia(VuforiaLocalizer.CameraDirection.BACK);
 
         while (opModeIsActive()) {
             speedX = gamepad1.right_stick_x;
@@ -87,9 +97,9 @@ public class RobotTeleOp extends LinearOpMode {
             }
 
             // Relic rotation servo control
-            if(gamepad2.dpad_up) {
+            if(gamepad2.dpad_up || gamepad2.right_bumper) {
                 robot.getRelicArm().raiseArmRotation();
-            } else if(gamepad2.dpad_down) {
+            } else if(gamepad2.dpad_down || gamepad2.left_bumper) {
                 robot.getRelicArm().lowerArmRotation();
             }
 
@@ -115,22 +125,48 @@ public class RobotTeleOp extends LinearOpMode {
                 robot.getJewelKnocker().leftRotation();
             }
 
-            if(robot.getGlyphLift().getColorSensor().red() > glyphColorThreshold) {
-                if(timer.milliseconds() > jewelColorSensorLEDFlash) {
-                    timer.reset();
-
-                    isJewelColorSensorLEDLit = !isJewelColorSensorLEDLit;
-
-                    if(isJewelColorSensorLEDLit) {
-                        robot.getJewelKnocker().enableLED();
-                    } else {
-                        robot.getJewelKnocker().disableLED();
-                    }
-                }
-            }
+//                                                              GLYPH LIFT AND INTAKE CONTROLS
 
             // glyph lift intake power control
             robot.getGlyphLift().setGlyphIntakeMotorPower(gamepad2.right_stick_y);
+
+            /*
+             * This adjusts the position of the Glyph Lift Intake. If you are running the intake,
+             * the intake sets to the Grip position to grab the cubes. If you aren't pulling
+             * in glyphs, the intake will go to a 45° angle if it's near the wheel cover,
+             * or fully open if it's not near the cover.
+             */
+            if(gamepad2.right_stick_y < 0) {
+                telemetry.addData("intake", "grip position");
+
+                robot.getGlyphLift().setIntakeGripPosition();
+            } else if(robot.getGlyphLift().getLiftLeftMotorPosition() >= intakeHeightValue) {
+                telemetry.addData("intake", "fully open position");
+
+                robot.getGlyphLift().setIntakeFullyOpenPosition();
+            } else {
+                telemetry.addData("intake", "half open position");
+
+                robot.getGlyphLift().setIntakeHalfOpenPosition();
+            }
+
+//            // toggle camera LED flash
+//            if(robot.getGlyphLift().getColorSensor().red() > glyphColorThreshold) {
+//                CameraDevice.getInstance().setFlashTorchMode(isJewelColorSensorLEDLit);
+//
+//                if(timer.milliseconds() > jewelColorSensorLEDFlash) {
+//                    timer.reset();
+//
+//                    isJewelColorSensorLEDLit = !isJewelColorSensorLEDLit;
+//                }
+//            } else {
+//                CameraDevice.getInstance().setFlashTorchMode(false);
+//                isJewelColorSensorLEDLit = true;
+//            }
+
+
+            telemetry.addData("left intake servo", robot.getGlyphLift().intakeArmLeft.getPosition());
+            telemetry.addData("right intake servo", robot.getGlyphLift().intakeArmRight.getPosition());
 
             telemetry.addData("Red Level", robot.getJewelKnocker().getRed());
             telemetry.addData("Blue Level", robot.getJewelKnocker().getBlue());
@@ -144,7 +180,13 @@ public class RobotTeleOp extends LinearOpMode {
             telemetry.addData("left lift motor position", robot.getGlyphLift().getLiftLeftMotorPosition());
             telemetry.addData("right lift motor position", robot.getGlyphLift().getLiftRightMotorPosition());
 
+            telemetry.addData("left intake encoder position", robot.getGlyphLift().getIntakeLeftMotorPosition());
+            telemetry.addData("right intake encoder position", robot.getGlyphLift().getIntakeRightMotorPosition());
+
             telemetry.addData("relic arm motor position", robot.getRelicArm().getArmMotorPosition());
+
+            telemetry.addData("left range sensor", robot.getLeftRangeSensor().getDistance(DistanceUnit.INCH));
+            telemetry.addData("right range sensor", robot.getRightRangeSensor().getDistance(DistanceUnit.INCH));
 
             telemetry.update();
 

@@ -73,6 +73,9 @@ public class RelicRecoveryRobot extends Robot {
 
         this.rightRangeSensor = new MaxSonarEZ4MB1043(this, "rrs");
         this.leftRangeSensor = new MaxSonarEZ4MB1043(this, "lrs");
+
+        opMode.telemetry.addData(">", "done initializing");
+        opMode.telemetry.update();
     }
 
     public HDriveTrain getHDriveTrain() {

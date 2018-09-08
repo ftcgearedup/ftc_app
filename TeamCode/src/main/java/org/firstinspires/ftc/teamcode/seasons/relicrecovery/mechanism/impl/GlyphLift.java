@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery.mechanism.impl;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
@@ -21,18 +24,32 @@ public class GlyphLift implements IMechanism {
 
     private JSONConfigOptions optionsMap;
 
-    public final double MAX_LIFT_MOTOR_POWER_UP;
-    public final double MAX_LIFT_MOTOR_POWER_DOWN;
+    public final double maxLiftMotorPowerUp;
+    public final double maxLiftMotorPowerDown;
 
-    private final int LIFT_RAISED_POSITION;
-    private final int GLYPH_EJECT_POSITION;
-    private final int LIFT_MAX_ENCODER_POSITION;
+    private final int liftRaisedPosition;
+    private final int glyphEjectPosition;
+    private final int liftMaxEncoderPosition;
+
+    private final double intakeLeftFullOpenPosition;
+    private final double intakeRightFullOpenPosition;
+    private final double intakeLeftHalfwayOpenPosition;
+    private final double intakeRightHalfwayOpenPosition;
+    private final double intakeLeftGripPosition;
+    private final double intakeRightGripPosition;
+    private final double intakeLeftInitializedPosition;
+    private final double intakeRightInitializedPosition;
 
     private OpMode opMode;
 
     private DcMotor liftMotorLeft;
     private DcMotor liftMotorRight;
-    private DcMotor glyphIntakeMotor;
+
+    private DcMotor leftGlyphIntakeMotor;
+    private DcMotor rightGlyphIntakeMotor;
+
+    public Servo intakeArmLeft;
+    public Servo intakeArmRight;
 
     private ColorSensor colorSensor;
 
@@ -46,12 +63,22 @@ public class GlyphLift implements IMechanism {
      */
     public GlyphLift(Robot robot) {
         this.optionsMap = ((RelicRecoveryRobot)robot).getOptionsMap();
-        LIFT_RAISED_POSITION = optionsMap.retrieveAsInt("glyphLiftLiftRaisedPosition");
+        liftRaisedPosition = optionsMap.retrieveAsInt("glyphLiftLiftRaisedPosition");
 
-        MAX_LIFT_MOTOR_POWER_UP = optionsMap.retrieveAsDouble("glyphLiftMotorPowerUp");
-        GLYPH_EJECT_POSITION = optionsMap.retrieveAsInt("glyphLiftGlyphEjectPosition");
-        MAX_LIFT_MOTOR_POWER_DOWN = optionsMap.retrieveAsDouble("glyphLiftMotorPowerDown");
-        LIFT_MAX_ENCODER_POSITION = optionsMap.retrieveAsInt("glyphLiftMaxEncoderPosition");
+        maxLiftMotorPowerUp = optionsMap.retrieveAsDouble("glyphLiftMotorPowerUp");
+        glyphEjectPosition = optionsMap.retrieveAsInt("glyphLiftGlyphEjectPosition");
+        maxLiftMotorPowerDown = optionsMap.retrieveAsDouble("glyphLiftMotorPowerDown");
+        liftMaxEncoderPosition = optionsMap.retrieveAsInt("glyphLiftMaxEncoderPosition");
+
+        intakeLeftInitializedPosition = optionsMap.retrieveAsDouble("intakeLeftInitializedPosition");
+        intakeLeftFullOpenPosition = optionsMap.retrieveAsDouble("intakeLeftFullOpenPosition");
+        intakeLeftGripPosition = optionsMap.retrieveAsDouble("intakeLeftGripPosition");
+        intakeLeftHalfwayOpenPosition = optionsMap.retrieveAsDouble("intakeLeftHalfwayOpenPosition");
+
+        intakeRightInitializedPosition = optionsMap.retrieveAsDouble("intakeRightInitializedPosition");
+        intakeRightFullOpenPosition = optionsMap.retrieveAsDouble("intakeRightFullOpenPosition");
+        intakeRightGripPosition = optionsMap.retrieveAsDouble("intakeRightGripPosition");
+        intakeRightHalfwayOpenPosition = optionsMap.retrieveAsDouble("intakeRightHalfwayOpenPosition");
 
         DcMotorSimple.Direction liftMotorDir;
         DcMotorSimple.Direction intakeMotorDir;
@@ -73,20 +100,36 @@ public class GlyphLift implements IMechanism {
 
         this.liftMotorLeft = hwMap.dcMotor.get("liftml");
         this.liftMotorRight = hwMap.dcMotor.get("liftmr");
-        this.glyphIntakeMotor = hwMap.dcMotor.get("gm");
 
-        this.glyphTouchSensor = hwMap.touchSensor.get("gts");
+        this.intakeArmLeft = hwMap.servo.get("ial");
+        this.intakeArmRight = hwMap.servo.get("iar");
+
+        this.leftGlyphIntakeMotor = hwMap.dcMotor.get("lgm");
+        this.rightGlyphIntakeMotor = hwMap.dcMotor.get("rgm");
+
         this.liftTouchSensor = hwMap.digitalChannel.get("lts");
+        this.glyphTouchSensor = hwMap.touchSensor.get("gts");
+
         this.colorSensor = hwMap.colorSensor.get("gcs");
 
         // reverse lift motor
         liftMotorLeft.setDirection(liftMotorDir);
 
         // reverse glyph intake motor
-        glyphIntakeMotor.setDirection(intakeMotorDir);
+        leftGlyphIntakeMotor.setDirection(intakeMotorDir);
+        rightGlyphIntakeMotor.setDirection(intakeMotorDir);
 
-        // run using encoder
-        glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // reset encoder and switch to using encoder
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // reset lift motor encoders
+        liftMotorLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotorRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // set lift motors to run using encoder
         liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftMotorRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -134,8 +177,9 @@ public class GlyphLift implements IMechanism {
     }
 
     /**
+     * Return whether the lift touch sensor is pressed.
      *
-     * @return
+     * @return if the lift touch sensor is pressed
      */
     public boolean isLiftTouchSensorPressed() {
         // the lift touch sensor value is inverted
@@ -160,20 +204,24 @@ public class GlyphLift implements IMechanism {
      * Run the intake in reverse in order to eject a glyph
      */
     public void ejectGlyph() {
-        glyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        glyphIntakeMotor.setTargetPosition(GLYPH_EJECT_POSITION);
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        glyphIntakeMotor.setPower(1.0);
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        glyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftGlyphIntakeMotor.setTargetPosition(glyphEjectPosition);
+        rightGlyphIntakeMotor.setTargetPosition(-glyphEjectPosition);
+
+        leftGlyphIntakeMotor.setPower(1.0);
+        rightGlyphIntakeMotor.setPower(1.0);
     }
 
     /**
      * Raise the glyph lift
      */
     public void raiseGlyphLift() {
-        setLiftMotorsPosition(LIFT_RAISED_POSITION, MAX_LIFT_MOTOR_POWER_UP);
+        setLiftMotorsPosition(liftRaisedPosition, maxLiftMotorPowerUp);
     }
 
     /**
@@ -194,7 +242,11 @@ public class GlyphLift implements IMechanism {
      *             Negative values run the intake inward, positive runs it outward
      */
     public void setGlyphIntakeMotorPower(double power) {
-        glyphIntakeMotor.setPower(power);
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftGlyphIntakeMotor.setPower(power);
+        rightGlyphIntakeMotor.setPower(-power);
     }
 
     /**
@@ -207,7 +259,7 @@ public class GlyphLift implements IMechanism {
      *              Negative values lower the lift and, likewise, positive values raise the lift.
      */
     public void setLiftMotorPower(double power) {
-        double powerCoefficient = (power < 0 ? MAX_LIFT_MOTOR_POWER_DOWN : MAX_LIFT_MOTOR_POWER_UP);
+        double powerCoefficient = (power < 0 ? maxLiftMotorPowerDown : maxLiftMotorPowerUp);
 
         // set lift motors mode to run using encoders
         liftMotorLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -219,12 +271,89 @@ public class GlyphLift implements IMechanism {
         }
 
         // stop if any of the two lift motors exceeded their max position and the direction is up
-        if((liftMotorLeft.getCurrentPosition() >= LIFT_MAX_ENCODER_POSITION
-                || liftMotorRight.getCurrentPosition() >= LIFT_MAX_ENCODER_POSITION) && power > 0) {
+        if((liftMotorLeft.getCurrentPosition() >= liftMaxEncoderPosition
+                || liftMotorRight.getCurrentPosition() >= liftMaxEncoderPosition) && power > 0) {
             powerCoefficient = 0;
         }
 
         liftMotorLeft.setPower(power * powerCoefficient);
         liftMotorRight.setPower(power * powerCoefficient);
     }
+
+    /**
+     * Closes Intake. Intake will retract in full.
+     */
+    public void setIntakeInitializePosition() {
+        intakeArmLeft.setPosition(intakeLeftInitializedPosition);
+        intakeArmRight.setPosition(intakeRightInitializedPosition);
+    }
+
+    /**
+     * Sets intake position to Grip position. Intake will pull in Glyphs in this position.
+     */
+    public void setIntakeGripPosition() {
+        intakeArmLeft.setPosition(intakeLeftGripPosition);
+        intakeArmRight.setPosition(intakeRightGripPosition);
+    }
+
+    /**
+     * Sets intake position to fully open position. The intake will extend all the way out.
+     * This will hit the wheel cover unless lift is raised high enough.
+     * Use {@link #setIntakeHalfOpenPosition()} for a 45° angle.
+     */
+    public void setIntakeFullyOpenPosition() {
+        intakeArmLeft.setPosition(intakeLeftFullOpenPosition);
+        intakeArmRight.setPosition(intakeRightFullOpenPosition);
+    }
+
+    /**
+     * Sets intake position to the half open position.
+     * The Intake will open just enough to not touch the wheel cover.
+     * For all the way open, use {@link #setIntakeFullyOpenPosition()}.
+     */
+    public void setIntakeHalfOpenPosition() {
+        intakeArmLeft.setPosition(intakeLeftHalfwayOpenPosition);
+        intakeArmRight.setPosition(intakeRightHalfwayOpenPosition);
+    }
+
+    /**
+     * Spin both Glyph Lift wheels in the same direction.
+     *
+     * @param isLeft true is rotate to the left, false is rotate to the right
+     * @param power power at which to rotate motors at
+     */
+    public void spinWheelsInDirection(boolean isLeft, double power){
+        leftGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightGlyphIntakeMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        opMode.telemetry.addData("left mode", leftGlyphIntakeMotor.getMode());
+        opMode.telemetry.addData("right mode", rightGlyphIntakeMotor.getMode());
+        opMode.telemetry.update();
+
+        int rotateTime = optionsMap.retrieveAsInt("autonomousRotateTimeMS");
+
+        ElapsedTime elapsedTime = new ElapsedTime();
+
+        LinearOpMode linearOpMode = (LinearOpMode) opMode;
+        while(linearOpMode.opModeIsActive() && elapsedTime.milliseconds() < rotateTime) {
+            leftGlyphIntakeMotor.setPower(power);
+            rightGlyphIntakeMotor.setPower(power);
+        }
+
+        leftGlyphIntakeMotor.setPower(0);
+        rightGlyphIntakeMotor.setPower(0);
+
+        opMode.telemetry.addData("left mode", leftGlyphIntakeMotor.getMode());
+        opMode.telemetry.addData("right mode", rightGlyphIntakeMotor.getMode());
+        opMode.telemetry.update();
+
+    }
+    public int getIntakeLeftMotorPosition() {
+        return leftGlyphIntakeMotor.getCurrentPosition();
+    }
+
+    public int getIntakeRightMotorPosition() {
+        return rightGlyphIntakeMotor.getCurrentPosition();
+    }
+
 }
