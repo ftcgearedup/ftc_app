@@ -67,13 +67,6 @@ public class HolonomicDriveTrain extends OpMode implements IDirectionalDriveTrai
 
     public void driveDirections(double speedfl, double speedfr, double speedbr, double speedbl) {
 
-        if(driveReversed) {
-            speedfl *= -1;
-            speedfr *= -1;
-            speedbl *= -1;
-            speedbr *= -1;
-        }
-
         frontLeftPower = speedfl;
         frontRightPower = speedfr;
         backLeftPower = speedbr;
@@ -81,7 +74,7 @@ public class HolonomicDriveTrain extends OpMode implements IDirectionalDriveTrai
     }
 
 
-    //Unsued
+    //unused
 
     @Override
     public void directionalDrive(double angleDegrees, double speed, int targetDistance, boolean nonBlocking) {

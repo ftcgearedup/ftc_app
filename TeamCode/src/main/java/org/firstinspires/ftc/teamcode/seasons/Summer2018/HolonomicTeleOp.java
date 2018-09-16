@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.seasons.roverruckus;
+package org.firstinspires.ftc.teamcode.seasons.Summer2018;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -12,21 +12,19 @@ import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HolonomicDriveTr
 /**
  * Created by peace on 8/28/2018.
  */
-@Disabled
-@TeleOp(name = "HolonomicTeleOp", group = "tele-op")
+
+@TeleOp(name = "HolonomicTeleOp", group = "teleop")
 public class HolonomicTeleOp extends LinearOpMode {
 
     private HolonomicDriveTrain robot;
 
-    public void runOpMode() {
+    public void runOpMode () {
+
+        waitForStart();
 
         robot = new HolonomicDriveTrain();
         //set deadzones
         gamepad1.setJoystickDeadzone(.02f);
-
-        waitForStart();
-
-        init();
 
         while (opModeIsActive()) {
 
@@ -62,5 +60,4 @@ public class HolonomicTeleOp extends LinearOpMode {
 
         }
     }
-
 }
