@@ -100,6 +100,7 @@ android {
 
 repositories {
     mavenCentral()
+    google()
     flatDir {
         dirs rootProject.file('libs')
     }
