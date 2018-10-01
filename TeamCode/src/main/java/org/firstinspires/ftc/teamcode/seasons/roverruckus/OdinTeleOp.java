@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.seasons.roverruckus;
 import android.graphics.Path;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HDriveTrain;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.MecanumDrivetrain;
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.RelicRecoveryRobot;
 /**
  * Created by peace on 9/16/2018.
  */
-
+@TeleOp(name = " OdinTeleOp", group = "TeleOp")
 public class OdinTeleOp extends LinearOpMode {
     private RoverRuckusRobot robot;
 
@@ -34,6 +35,7 @@ public class OdinTeleOp extends LinearOpMode {
 
             robot.getMecanumDrivetrain().pivot(pivot);
             robot.getMecanumDrivetrain().drive(speedX, speedY);
+            robot.getMecanumDrivetrain().runOpMode();
 
 
         }

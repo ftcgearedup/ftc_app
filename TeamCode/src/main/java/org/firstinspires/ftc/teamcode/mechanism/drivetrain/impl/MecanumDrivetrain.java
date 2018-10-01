@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.IDirectionalDriveTrain;
@@ -14,6 +16,8 @@ import org.firstinspires.ftc.teamcode.seasons.roverruckus.RoverRuckusRobot;
 
 public class MecanumDrivetrain extends LinearOpMode implements IDirectionalDriveTrain {
 
+
+    private OpMode opMode;
 
     private DcMotor fl;
     private DcMotor fr;
@@ -57,9 +61,23 @@ public class MecanumDrivetrain extends LinearOpMode implements IDirectionalDrive
         }
     }
 
+    private MecanumDrivetrain( RoverRuckusRobot roverRuckusRobot){
+        this.opMode = roverRuckusRobot.getCurrentOpMode();
+        HardwareMap hWMap = opMode.hardwareMap;
+        fl = hWMap.dcMotor.get("fl");
+        fr = hWMap.dcMotor.get("fr");
+        bl = hWMap.dcMotor.get("bl");
+        br = hWMap.dcMotor.get("br");
+
+        // set all motors to brake
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
     @Override
     public void runOpMode() throws InterruptedException {
-
+        telemetry.addData(">","in run opmode");
         //init motors
         fl.setDirection(DcMotorSimple.Direction.FORWARD);
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -70,6 +88,9 @@ public class MecanumDrivetrain extends LinearOpMode implements IDirectionalDrive
         fr.setPower(frontRightPower);
         bl.setPower(backLeftPower);
         br.setPower(backRightPower);
+
+        telemetry.addData("motor speeds","fl "+ frontLeftPower + " fr "+frontRightPower + " bl "+ backLeftPower + " br "+ backRightPower);
+        telemetry.update();
     }
 
     @Override
