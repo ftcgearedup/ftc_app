@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.seasons.roverruckus;
 
 import android.graphics.Path;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,8 +13,9 @@ import org.firstinspires.ftc.teamcode.seasons.relicrecovery.RelicRecoveryRobot;
 /**
  * Created by peace on 9/16/2018.
  */
-@TeleOp(name = " OdinTeleOp", group = "TeleOp")
-public class OdinTeleOp extends LinearOpMode {
+@Disabled
+@TeleOp(name = " OldTeleOp", group = "TeleOp")
+public class OldTeleOp extends LinearOpMode  {
     private RoverRuckusRobot robot;
 
     @Override
@@ -21,7 +23,6 @@ public class OdinTeleOp extends LinearOpMode {
         robot = new RoverRuckusRobot(this);
         gamepad1.setJoystickDeadzone((float) 0.1);
         gamepad2.setJoystickDeadzone((float) 0.1);
-        init();
 
         waitForStart();
         double speedX;

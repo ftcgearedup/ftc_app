@@ -75,6 +75,7 @@ public class MecanumDrivetrain extends LinearOpMode implements IDirectionalDrive
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
+
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry.addData(">","in run opmode");
@@ -99,6 +100,8 @@ public class MecanumDrivetrain extends LinearOpMode implements IDirectionalDrive
         frontRightPower = speedY;
         backLeftPower = speedY;
         backRightPower = speedX;
+        telemetry.addData("motor speeds","fl "+ frontLeftPower + " fr "+frontRightPower + " bl "+ backLeftPower + " br "+ backRightPower);
+        telemetry.update();
     }
 
     @Override
@@ -107,6 +110,8 @@ public class MecanumDrivetrain extends LinearOpMode implements IDirectionalDrive
         frontRightPower = pivotSpeed;
         backLeftPower = pivotSpeed;
         backRightPower = pivotSpeed;
+       // telemetry.addData("motor speeds","fl "+ frontLeftPower + " fr "+frontRightPower + " bl "+ backLeftPower + " br "+ backRightPower);
+       // telemetry.update();
     }
 
     @Override
@@ -115,6 +120,8 @@ public class MecanumDrivetrain extends LinearOpMode implements IDirectionalDrive
         frontRightPower = -speedY;
         backLeftPower = -speedY;
         backRightPower = speedY;
+        telemetry.addData("motor speeds","fl "+ frontLeftPower + " fr "+frontRightPower + " bl "+ backLeftPower + " br "+ backRightPower);
+        telemetry.update();
     }
 
     @Override
@@ -128,6 +135,8 @@ public class MecanumDrivetrain extends LinearOpMode implements IDirectionalDrive
         frontRightPower = 0;
         backLeftPower = 0;
         backRightPower = 0;
+        telemetry.addData("motor speeds","fl "+ frontLeftPower + " fr "+frontRightPower + " bl "+ backLeftPower + " br "+ backRightPower);
+        telemetry.update();
     }
 
     @Override
