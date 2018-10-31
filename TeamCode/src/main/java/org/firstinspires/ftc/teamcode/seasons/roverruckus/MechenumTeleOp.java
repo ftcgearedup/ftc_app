@@ -5,15 +5,17 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Mechenum Test", group = "TeleOp")
+@TeleOp(name = "Mechenum", group = "TeleOp")
 public class MechenumTeleOp extends OpMode {
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
     private DcMotor frontLeft;
     private DcMotor intake;
-
+    private DcMotor lift;
+    private Servo lBucket;
 
     @Override
     public void init() {
@@ -22,6 +24,9 @@ public class MechenumTeleOp extends OpMode {
         backRight = hardwareMap.dcMotor.get("br");
         frontLeft = hardwareMap.dcMotor.get("fl");
         backLeft = hardwareMap.dcMotor.get("bl");
+        intake = hardwareMap.dcMotor.get("intake");
+        lift = hardwareMap.dcMotor.get("lift");
+        lBucket = hardwareMap.servo.get("L-B");
 
 
         // set wheel direction
@@ -34,6 +39,10 @@ public class MechenumTeleOp extends OpMode {
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
+        // init attachments
+        intake.setPower(0);
+        lift.setPower(0);
+        lBucket.setPosition(0);
 
         // set deadzone
         gamepad1.setJoystickDeadzone(0.1f);
@@ -75,6 +84,15 @@ public class MechenumTeleOp extends OpMode {
         } else{
             intakePower = 0;
         }
+
+        double liftPower;
+        liftPower = gamepad2.right_stick_y;
+        lift.setPower(liftPower);
+
+        if( gamepad2.left_trigger > 0){
+            lBucket.setPosition(1);
+        }
+
         telemetry.addData("motor speeds","fl "+ fl + " fr "+fr + " bl "+ bl + " br "+ br);
         telemetry.addData("intake ", "intake ",intakePower);
         telemetry.update();

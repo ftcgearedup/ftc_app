@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.mechanism.IMechanism;
 
+import static java.lang.Thread.sleep;
+
 /**
  * A mechanism that wraps around and abstracts from an BNO055IMU.
  *
@@ -38,15 +40,23 @@ public class BNO055IMUWrapper implements IMechanism {
         this.imu = hardwareMap.get(BNO055IMU.class, "imu");
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = CALIBRATION_DATA_FILE;
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         imu.initialize(parameters);
+        //Calibration is Key to a functioning bot! this code does that!
+        while (!imu.isGyroCalibrated()) {
+            try {
+                sleep(20);
+            } catch (InterruptedException e) {
+            }
+        }
     }
+
 
     /**
      * Start the polling of sensor data and start integration.
