@@ -16,7 +16,7 @@ public class MechenumTeleOp extends OpMode {
     private DcMotor intake;
     private DcMotor lift;
     private Servo lBucket;
-
+    private Servo hook;
     @Override
     public void init() {
         // init the Wheels
@@ -27,6 +27,7 @@ public class MechenumTeleOp extends OpMode {
         intake = hardwareMap.dcMotor.get("intake");
         lift = hardwareMap.dcMotor.get("lift");
         lBucket = hardwareMap.servo.get("L-B");
+        hook = hardwareMap.servo.get("hook");
 
 
         // set wheel direction
@@ -40,9 +41,10 @@ public class MechenumTeleOp extends OpMode {
         backLeft.setPower(0);
         backRight.setPower(0);
         // init attachments
-        intake.setPower(0);
-        lift.setPower(0);
-        lBucket.setPosition(0);
+        //intake.setPower(0);
+        //lift.setPower(0);
+        //lBucket.setPosition(0);
+        hook.setPosition(0);
 
         // set deadzone
         gamepad1.setJoystickDeadzone(0.1f);
@@ -92,9 +94,14 @@ public class MechenumTeleOp extends OpMode {
         if( gamepad2.left_trigger > 0){
             lBucket.setPosition(1);
         }
+        if (gamepad2.dpad_right = true) {
+            hook.setPosition(1);
+        } else if (gamepad2.dpad_left = true) {
+            hook.setPosition(0);
+        }
 
         telemetry.addData("motor speeds","fl "+ fl + " fr "+fr + " bl "+ bl + " br "+ br);
-        telemetry.addData("intake ", "intake ",intakePower);
+        //telemetry.addData("intake ", "intake ",intakePower);
         telemetry.update();
     }
     @Override
