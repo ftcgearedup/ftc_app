@@ -36,7 +36,7 @@ public class AutoTest extends LinearOpMode {
     //The post gear box gear ratio.
     private double gearRatio = 1.0;
     //The circumference of the drive wheel.
-    private double wheelCircumference = 32.986; // ??
+    private double wheelCircumference = 25.1327; // ??
     //Formula to calculate ticks per centimeter for the current drive set up.FORWARDS/BACKWARD ONLY
     private double ticksPerCm = ticksPerRevNR40 * gearRatio / wheelCircumference;
     //Formula to calculate ticks per centimeter for the current drive set up.SIDEWAYS
@@ -46,36 +46,81 @@ public class AutoTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         //Init methods.
         initHW();
-        useVuforia.init();
-        useVuforia.activate();
-        /*
+        //useVuforia = new VuforiaNav(hardwareMap);
+       // useVuforia.init();
+       // useVuforia.activate();
+        //sideLeft(35, .75);
+
         //Wait for start for to start the program.
         waitForStart();
-        //Remove bot form lander
 
+
+        //Remove bot form lander
+/*
         // Sampling stage!!!!!!!!!!!!!
         forward(50, .75);
         //Tensor flow
         //use side left or side right to strafe to gold mineral
         //intake gold
-        // if at middle, sideRight(25, .75);
-        // if at left sideRight(50, .75);
+        if (goldMineralPosition = left) {
+            sideLeft(35, .75);
+            forward(30, .75);
+            //intake
+            //Depot stage!!!!!!!!!!!!!!!!!
+            forward(30, .75);
+            pivotCW(2000, .75);
+            forward(20, .75);
+            //deintake
+            pivotCC(5000, .75);
+            //dump lbucket
+            //crater stage
+            pivotCC(3000, .75);
+            forward(300, .75);
+        } else if (goldMineralPosition = right) {
+            sideRight(35, .75);
+            forward(30, .75);
+            //intake
+            //Depot stage!!!!!!!!!!!!!!!!!
+            forward(30, .75);
+            pivotCC(2000, .75);
+            forward(50, .75);
+            //unintake
+            pivotCC(5000, .75);
+            //l bucket dump
+            //crater stage!!!!!!!!!!!!!!!!
+            forward(250, .75);
+        } else {
+            forward(30, .75);
+            //intake
+            //Depot stage!!!!!!!!!!!!!!!!!
+            forward(50, .75);
+            //spit out intaked cube
+            pivotCC(5000, .75);
+            // dup marker from l buchket
+            pivotCC(2000, .75);
+            //crater stage!!!!!!!!!!!!!!!!
+            forward(270, .75);
+        }
 
-        //Depot stage!!!!!!!!!!!!!!!!!
-        sideLeft(60,.75);
-        useVuforia.activate();
-        pivotCC(45, .75);
-        forward(140, 1);
+        // sideLeft(60,.75);
+        //useVuforia.activate();
+        //pivotCC(45, .75);
+        //forward(140, 1);
         // spit mineral out of intake,
-        pivotCC(5000, .75);
+        //pivotCC(5000, .75);
         // dump marker out of l bucket
 
         //crater stage!!!!!!!!!!!!!!!!
         pivotCW(2000, .75);
         forward(250, 1);
+*/
+        while (opModeIsActive()) {
+            forward(30, .75);
+            //telemetry.addData("visble wall", useVuforia.ruckusTrackables.getName());
+          //  telemetry.addData("mark position", useVuforia.ruckusTrackable.getUserData());
+           // telemetry.update();
+        }
 
-        while (opModeIsActive()){}
-        */
     }
 
 
@@ -122,6 +167,7 @@ public class AutoTest extends LinearOpMode {
         backLeft.setZeroPowerBehavior(behv);
         backRight.setZeroPowerBehavior(behv);
     }
+
     public void setDirection() {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -148,7 +194,7 @@ public class AutoTest extends LinearOpMode {
             currentDistance = (frontRight.getCurrentPosition() +
                     frontLeft.getCurrentPosition() +
                     backRight.getCurrentPosition() +
-                    backLeft.getCurrentPosition()) / 4.0;
+                    backLeft.getCurrentPosition()) / -4.0;
             telemetry.addData("Current pos ticks Avg: ", currentDistance);
             telemetry.update();
 
@@ -196,6 +242,7 @@ public class AutoTest extends LinearOpMode {
         }
 
     }
+
     //clockwise is 0 cc is 1
     public void pivotCW(double degree, double power) {
 
@@ -218,14 +265,14 @@ public class AutoTest extends LinearOpMode {
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         double currentDegree = 0;
-            while (currentDegree < degree) {
-                currentDegree = frontRight.getCurrentPosition();
-                frontLeft.setPower(-power);
-                frontRight.setPower(power);
-                backLeft.setPower(-power);
-                backRight.setPower(power);
-            }
-        stopMotors();
+        while (currentDegree < degree) {
+            currentDegree = frontRight.getCurrentPosition();
+            frontLeft.setPower(-power);
+            frontRight.setPower(power);
+            backLeft.setPower(-power);
+            backRight.setPower(power);
         }
+        stopMotors();
     }
+}
 

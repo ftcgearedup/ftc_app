@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.seasons.roverruckus.utility;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+/*import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -21,9 +24,10 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name = "Vuf + TfLite", group = "TeleOP")
-public class VuforiaTFLite extends LinearOpMode {
-    public static final String TAG = "Vuforia Navigation Sample";
+@TeleOp(name = "Vuf + TfLite", group = "TeleOP")*/
+abstract class VuforiaTFLite extends LinearOpMode {}
+
+   /* public static final String TAG = "Vuforia Navigation Sample";
 
     OpenGLMatrix lastLocation = null;
 
@@ -36,9 +40,6 @@ public class VuforiaTFLite extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
-
-
-
 
     private VuforiaLocalizer vuforia;
 
@@ -67,7 +68,7 @@ public class VuforiaTFLite extends LinearOpMode {
         blueTarget.setName("BlueTarget");  // Chips
 
         /** For convenience, gather together all the trackable objects in one easily-iterable collection */
-        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
+      /*  List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
         allTrackables.addAll(stonesAndChips);
 
         stonesAndChips.activate();
@@ -82,10 +83,10 @@ public class VuforiaTFLite extends LinearOpMode {
         OpenGLMatrix redTargetLocationOnField = OpenGLMatrix
                 /* Then we translate the target off to the RED WALL. Our translation here
                 is a negative translation in X.*/
-                .translation(-mmFTCFieldWidth/2, 0, 0)
+          /*      .translation(-mmFTCFieldWidth/2, 0, 0)
                 .multiplied(Orientation.getRotationMatrix(
                         /* First, in the fixed (field) coordinate system, we rotate 90deg in X, then 90 in Z */
-                        AxesReference.EXTRINSIC, AxesOrder.XZX,
+                   /*     AxesReference.EXTRINSIC, AxesOrder.XZX,
                         AngleUnit.DEGREES, 90, 90, 0));
         redTarget.setLocationFtcFieldFromTarget(redTargetLocationOnField);
         RobotLog.ii(TAG, "Red Target=%s", format(redTargetLocationOnField));
@@ -95,13 +96,13 @@ public class VuforiaTFLite extends LinearOpMode {
          * - First we rotate it 90 around the field's X axis to flip it upright
          * - Finally, we translate it along the Y axis towards the blue audience wall.
          */
-        OpenGLMatrix blueTargetLocationOnField = OpenGLMatrix
+       /* OpenGLMatrix blueTargetLocationOnField = OpenGLMatrix
                 /* Then we translate the target off to the Blue Audience wall.
                 Our translation here is a positive translation in Y.*/
-                .translation(0, mmFTCFieldWidth/2, 0)
+             /*   .translation(0, mmFTCFieldWidth/2, 0)
                 .multiplied(Orientation.getRotationMatrix(
                         /* First, in the fixed (field) coordinate system, we rotate 90deg in X */
-                        AxesReference.EXTRINSIC, AxesOrder.XZX,
+                    /*    AxesReference.EXTRINSIC, AxesOrder.XZX,
                         AngleUnit.DEGREES, 90, 0, 0));
         blueTarget.setLocationFtcFieldFromTarget(blueTargetLocationOnField);
         RobotLog.ii(TAG, "Blue Target=%s", format(blueTargetLocationOnField));
@@ -121,7 +122,7 @@ public class VuforiaTFLite extends LinearOpMode {
 
 
         /** Wait for the game to begin */
-        telemetry.addData(">", "Press Play to start tracking");
+      /*  telemetry.addData(">", "Press Play to start tracking");
         telemetry.update();
         waitForStart();
 
@@ -136,7 +137,7 @@ public class VuforiaTFLite extends LinearOpMode {
                  * the last time that call was made, or if the trackable is not currently visible.
                  * getRobotLocation() will return null if the trackable is not currently visible.
                  */
-                telemetry.addData(trackable.getName(), ((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible());
+      /*          telemetry.addData(trackable.getName(), ((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible());
             }
 
             if (tfod != null) {
@@ -203,7 +204,7 @@ public class VuforiaTFLite extends LinearOpMode {
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          */
-
+/*
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
@@ -230,5 +231,5 @@ public class VuforiaTFLite extends LinearOpMode {
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
     }
+*/
 
-}
