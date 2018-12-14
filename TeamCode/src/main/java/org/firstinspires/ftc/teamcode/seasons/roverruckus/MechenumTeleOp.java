@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.seasons.roverruckus;
 
+import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -14,20 +15,22 @@ public class MechenumTeleOp extends OpMode {
     private DcMotor backLeft;
     private DcMotor frontLeft;
     private DcMotor intake;
+    private DcMotor intakeLift;
     private DcMotor lift;
     private Servo lBucket;
-    private Servo hook;
+   // private Servo hook;
     @Override
     public void init() {
-        // init the Wheels
+        // init the motors
         frontRight = hardwareMap.dcMotor.get("fr");
         backRight = hardwareMap.dcMotor.get("br");
         frontLeft = hardwareMap.dcMotor.get("fl");
         backLeft = hardwareMap.dcMotor.get("bl");
         intake = hardwareMap.dcMotor.get("intake");
+        intakeLift = hardwareMap.dcMotor.get("I-L");
         lift = hardwareMap.dcMotor.get("lift");
         lBucket = hardwareMap.servo.get("L-B");
-        hook = hardwareMap.servo.get("hook");
+        //hook = hardwareMap.servo.get("hook");
 
 
         // set wheel direction
@@ -40,11 +43,11 @@ public class MechenumTeleOp extends OpMode {
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
-        // init attachments
-        //intake.setPower(0);
-        //lift.setPower(0);
-        //lBucket.setPosition(0);
-        hook.setPosition(0);
+        //init attachments
+        intake.setPower(0);
+        lift.setPower(0);
+        lBucket.setPosition(0);
+        //hook.setPosition(0);
 
         // set deadzone
         gamepad1.setJoystickDeadzone(0.1f);
@@ -62,6 +65,9 @@ public class MechenumTeleOp extends OpMode {
         final double fl = r * Math.sin(robotAngle) - leftX;
         final double bl = r * Math.sin(robotAngle) + leftX;
         final double br = r * Math.cos(robotAngle) - leftX;
+
+        double intakePower=0.0;
+
         if (gamepad1.left_trigger > 0) {
             frontRight.setPower(fr / 2);
             frontLeft.setPower(fl / 2);
@@ -79,13 +85,20 @@ public class MechenumTeleOp extends OpMode {
             backRight.setPower(br);
         }
         //attachments
-        double intakePower;
-        if (gamepad2.right_trigger > 0) {
-           intakePower = 1;
-            intake.setPower(intakePower);
-        } else{
-            intakePower = 0;
-        }
+
+       if ( gamepad2.right_bumper = true)
+       {
+            lBucket.setPosition(1);
+       }
+       else
+       {
+           lBucket.setPosition(0);
+       }
+
+
+       intakePower = gamepad2.left_stick_y;
+        intake.setPower(intakePower);
+
 
         double liftPower;
         liftPower = gamepad2.right_stick_y;
@@ -94,11 +107,11 @@ public class MechenumTeleOp extends OpMode {
         if( gamepad2.left_trigger > 0){
             lBucket.setPosition(1);
         }
-        if (gamepad2.dpad_right = true) {
-            hook.setPosition(1);
-        } else if (gamepad2.dpad_left = true) {
-            hook.setPosition(0);
-        }
+     //   if (gamepad2.dpad_right = true) {
+       //     hook.setPosition(1);
+        //} else if (gamepad2.dpad_left = true) {
+          //  hook.setPosition(0);
+        //}
 
         telemetry.addData("motor speeds","fl "+ fl + " fr "+fr + " bl "+ bl + " br "+ br);
         //telemetry.addData("intake ", "intake ",intakePower);

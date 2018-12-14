@@ -41,6 +41,7 @@ public abstract class VufTFLiteHandler extends LinearOpMode {
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 
+    public String goldMineralPosition = "NotSetYet";
 
     private boolean targetVisible;
     private VuforiaLocalizer vuforia;
@@ -62,7 +63,7 @@ public abstract class VufTFLiteHandler extends LinearOpMode {
         List<Recognition> updatedRecognitions = tfod.getRecognitions();
 //            telemetry.addData("# Objects Detected: ", x);
         if (updatedRecognitions != null) {
-            telemetry.addData("# Object Detected", updatedRecognitions.size());
+//            telemetry.addData("# Object Detected", updatedRecognitions.size());
 //                x = updatedRecognitions.size();
             if (updatedRecognitions.size() == 3) {
                 int goldMineralX = -1;
@@ -74,10 +75,10 @@ public abstract class VufTFLiteHandler extends LinearOpMode {
                     if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
                         goldMineralX = (int) recognition.getLeft();
 
-                        telemetry.addData("PixelsToGoldLeftSide", recognition.getLeft());
-                        telemetry.addData("PixelsToGoldRightSide", recognition.getRight());
-
-                        telemetry.addData("GoldMineralPixelWidth", recognition.getRight() - recognition.getLeft());
+//                        telemetry.addData("PixelsToGoldLeftSide", recognition.getLeft());
+//                        telemetry.addData("PixelsToGoldRightSide", recognition.getRight());
+//
+//                        telemetry.addData("GoldMineralPixelWidth", recognition.getRight() - recognition.getLeft());
 
                     } else if (silverMineral1X == -1) {
                         silverMineral1X = (int) recognition.getLeft();
@@ -85,19 +86,26 @@ public abstract class VufTFLiteHandler extends LinearOpMode {
                         silverMineral2X = (int) recognition.getLeft();
                     }
                 }
-                telemetry.addData("goldMineralX", goldMineralX);
-                telemetry.addData("silverMineralX", silverMineral1X);
-                telemetry.addData("silverMineralX2", silverMineral2X);
+//                telemetry.addData("goldMineralX", goldMineralX);
+//                telemetry.addData("silverMineralX", silverMineral1X);
+//                telemetry.addData("silverMineralX2", silverMineral2X);
 
 
                 if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
                     if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                        telemetry.addData("Gold Mineral Position", "Left");
+//                        telemetry.addData("Gold Mineral Position", "Left");
+                        goldMineralPosition = "Left";
                     } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                        telemetry.addData("Gold Mineral Position", "Right");
+//                        telemetry.addData("Gold Mineral Position", "Right");
+                        goldMineralPosition = "Right";
                     } else {
-                        telemetry.addData("Gold Mineral Position", "Center");
+//                        telemetry.addData("Gold Mineral Position", "Center");
+                        goldMineralPosition = "Center";
                     }
+                }
+                else
+                {
+                    goldMineralPosition = "notDetected";
                 }
             }
         }
@@ -141,7 +149,7 @@ public abstract class VufTFLiteHandler extends LinearOpMode {
     }
 
     //This method will init and activate all methods that are needed for both Vuforia and TFLite
-    private void initAll() {
+    public void initAll() {
         initVuforia();
         initTfod();
 
@@ -221,4 +229,11 @@ public abstract class VufTFLiteHandler extends LinearOpMode {
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
     }
+
+    public String getGoldMineralPosition() {
+        return goldMineralPosition;
+    }
+
+
 }
+
