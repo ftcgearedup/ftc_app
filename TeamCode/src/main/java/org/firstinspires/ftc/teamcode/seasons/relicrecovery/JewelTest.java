@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "JewelTest")
+@Disabled
 public class JewelTest extends LinearOpMode {
     private RelicRecoveryRobot robot;
 

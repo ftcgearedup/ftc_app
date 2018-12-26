@@ -42,6 +42,7 @@ public abstract class VufTFLiteHandler extends LinearOpMode {
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 
     public String goldMineralPosition = "NotSetYet";
+    public int numMineralsDetected;
 
     private boolean targetVisible;
     private VuforiaLocalizer vuforia;
@@ -65,7 +66,8 @@ public abstract class VufTFLiteHandler extends LinearOpMode {
         if (updatedRecognitions != null) {
 //            telemetry.addData("# Object Detected", updatedRecognitions.size());
 //                x = updatedRecognitions.size();
-            if (updatedRecognitions.size() == 3) {
+            numMineralsDetected = updatedRecognitions.size();
+            if (updatedRecognitions.size() == 2 || updatedRecognitions.size() ==3 ) {
                 int goldMineralX = -1;
                 int silverMineral1X = -1;
                 int silverMineral2X = -1;
@@ -90,26 +92,40 @@ public abstract class VufTFLiteHandler extends LinearOpMode {
 //                telemetry.addData("silverMineralX", silverMineral1X);
 //                telemetry.addData("silverMineralX2", silverMineral2X);
 
-
-                if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                    if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
+                //if see 3 logic
+                if (updatedRecognitions.size() == 3) {
+                    if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
+                        if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
 //                        telemetry.addData("Gold Mineral Position", "Left");
-                        goldMineralPosition = "Left";
-                    } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
+                            goldMineralPosition = "Left";
+                        } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
 //                        telemetry.addData("Gold Mineral Position", "Right");
-                        goldMineralPosition = "Right";
-                    } else {
+                            goldMineralPosition = "Right";
+                        } else {
 //                        telemetry.addData("Gold Mineral Position", "Center");
-                        goldMineralPosition = "Center";
+                            goldMineralPosition = "Center";
+                        }
+                    }
+                } else {   //if see 2 logic
+                    if (updatedRecognitions.size() == 2) {
+                        if (goldMineralX != -1) {//if see gold mineral out of 2 seen
+                            if (goldMineralX < silverMineral1X) {
+                                goldMineralPosition = "Left";
+                            } else {
+                                goldMineralPosition = "Center";
+                            }
+                        } else {
+                            goldMineralPosition = "Right";
+                        }
                     }
                 }
+            }
                 else
                 {
                     goldMineralPosition = "notDetected";
                 }
             }
         }
-    }
 
     public void stopTensorFlow() {
         if (tfod != null) {

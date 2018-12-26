@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -21,6 +22,7 @@ import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
  * The Relic Recovery back red alliance program.
  */
 @Autonomous(name = "Red Back \uD83D\uDE08", group = "autonomous")
+@Disabled
 public class AutonomousRedBack extends LinearOpMode {
 
     private RelicRecoveryRobot robot;

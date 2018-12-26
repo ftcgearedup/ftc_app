@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.seasons.relicrecovery;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -33,6 +34,7 @@ import org.firstinspires.ftc.teamcode.utils.JSONConfigOptions;
  * Right Trigger      - Relic Arm Extend
  */
 @TeleOp(name = "TELEOP \uD83C\uDFAE", group = "teleop")
+@Disabled
 public class RobotTeleOp extends LinearOpMode {
     private RelicRecoveryRobot robot;
     private JSONConfigOptions configOptions;

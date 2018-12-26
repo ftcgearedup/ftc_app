@@ -71,7 +71,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
  */
 
 @TeleOp(name="Concept: VuMark Id", group ="Concept")
-//@Disabled
+@Disabled
 public class ConceptVuMarkIdentification extends LinearOpMode {
     private static final float mmPerInch        = 25.4f;
     private static final float mmFTCFieldWidth  = (12*6) * mmPerInch;       // the width of the FTC field (from the center point to the outer panels)

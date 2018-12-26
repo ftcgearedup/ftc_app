@@ -16,6 +16,7 @@ public class GyroPivotTest extends LinearOpMode {
     private ElapsedTime timer;
 
     @Override
+
     public void runOpMode() throws InterruptedException {
         this.robot = new RelicRecoveryRobot(this);
         this.bno055IMUWrapper = new BNO055IMUWrapper(robot);

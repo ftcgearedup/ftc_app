@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.mechanism.drivetrain.impl.HolonomicDriveTr
  */
 
 @TeleOp(name = "HolonomicTeleOp", group = "teleop")
+@Disabled
 public class HolonomicTeleOp extends LinearOpMode {
 
     private HolonomicDriveTrain robot;

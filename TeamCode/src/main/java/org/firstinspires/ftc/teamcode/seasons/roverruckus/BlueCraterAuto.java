@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.seasons.roverruckus;
 
-Outreach
+
 import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.seasons.velocityvortex.EncoderValues;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 
 
-@Autonomous(name = "BlueCraterTestAuto", group = "Autonomous")
+@Autonomous(name = "BlueCraterAuto", group = "Autonomous")
 public class BlueCraterAuto extends VufTFLiteHandler {
     private DcMotor frontRight;
     private DcMotor backRight;
@@ -24,8 +25,8 @@ public class BlueCraterAuto extends VufTFLiteHandler {
     private DcMotor frontLeft;
     private DcMotor intake;
     private DcMotor intakeLift;
-    private RevRoboticsCoreHexMotor lift;
-    private Servo lBucket;
+    private DcMotor lift;
+    private CRServo lBucket;
     //private Servo hook;
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
@@ -41,20 +42,26 @@ public class BlueCraterAuto extends VufTFLiteHandler {
     //The circumference of the drive wheel.
     private double wheelCircumference = 25.1327; // ??
     //Formula to calculate ticks per centimeter for the current drive set up.FORWARDS/BACKWARD ONLY
-    private double ticksPerCm = (ticksPerRevNR20 * gearRatio) / wheelCircumference;
+    private double ticksPerCm = (ticksPerRevNR40 * gearRatio) / wheelCircumference;
     //Formula to calculate ticks per centimeter for the current drive set up.SIDEWAYS
 
     @Override
     public void runOpMode() throws InterruptedException {
         initHW();
         initAll();
+        telemetry.addLine("please face robot to 2 leftmost minerals!");
+        telemetry.update();
         waitForStart();
+        telemetry.clear();
         this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         getTensorFlowData();
         //may need to back up in order to get all minerals into view
 
         while (opModeIsActive()) {
-
+        if (numMineralsDetected == 2);
+            {
+                pivotCW(1000,.3);
+            }
             while (isSampling && opModeIsActive()) {
                 getTensorFlowData();
                 if (goldMineralPosition.equals("Left")) {
@@ -94,16 +101,17 @@ public class BlueCraterAuto extends VufTFLiteHandler {
                     break;
                 } else {
                     telemetry.addLine("Not Detecting Gold Mineral");
-
+                    forward(500, 1);
                     //shimmy around to detect all 3 minerals
 
                     while (goldMineralPosition.equals("notDetected") && opModeIsActive()) {
                         pivotCC(5, .3);
                         pivotCW(5, .3);
-                        pivotCW(5, .3);
+                        pivotCW(5,.3);
                         pivotCC(5, .3);
                         getTensorFlowData();
                         if (!goldMineralPosition.equals("notDetected")) {
+                            forward(500, 1);
 
                             break;
                         }
@@ -117,7 +125,6 @@ public class BlueCraterAuto extends VufTFLiteHandler {
     }
 
     //Methods!!!
-
     public void readEncoders() {
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -133,11 +140,16 @@ public class BlueCraterAuto extends VufTFLiteHandler {
 
     public void initHW() {
         // init the Wheels
+        // init the motors
         frontRight = hardwareMap.dcMotor.get("fr");
         backRight = hardwareMap.dcMotor.get("br");
         frontLeft = hardwareMap.dcMotor.get("fl");
         backLeft = hardwareMap.dcMotor.get("bl");
-
+        intake = hardwareMap.dcMotor.get("intake");
+        intakeLift = hardwareMap.dcMotor.get("intakeLift");
+        lift = hardwareMap.dcMotor.get("lift");
+        lBucket = hardwareMap.crservo.get("lbucket");
+        //hook = hardwareMap.servo.get("hook");
 
         // set wheel direction
         this.setDirection();
@@ -164,9 +176,9 @@ public class BlueCraterAuto extends VufTFLiteHandler {
 
     public void setDirection() {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void setDriveMode(DcMotor.RunMode modee) {
@@ -214,8 +226,8 @@ public class BlueCraterAuto extends VufTFLiteHandler {
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double currentDistance = 0;
-        while (currentDistance < targetDistance && opModeIsActive()) {
-            currentDistance = frontRight.getCurrentPosition();
+        while ((currentDistance < targetDistance) && opModeIsActive()) {
+            currentDistance = frontLeft.getCurrentPosition();
             frontLeft.setPower(power);
             frontRight.setPower(-power);
             backLeft.setPower(-power);
@@ -230,7 +242,6 @@ public class BlueCraterAuto extends VufTFLiteHandler {
         double currentDistance = 0;
         while (currentDistance < targetDistance && opModeIsActive()) {
             currentDistance = frontRight.getCurrentPosition();
-            ;
             frontLeft.setPower(-power);
             frontRight.setPower(power);
             backLeft.setPower(power);

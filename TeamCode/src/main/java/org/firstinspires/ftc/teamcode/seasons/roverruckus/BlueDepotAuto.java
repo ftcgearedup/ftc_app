@@ -5,6 +5,7 @@ import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,7 +17,7 @@ import org.firstinspires.ftc.teamcode.seasons.velocityvortex.EncoderValues;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 
 
-@Autonomous(name = "BlueDepotTestAuto", group = "Autonomous")
+@Autonomous(name = "BlueDepotAuto", group = "Autonomous")
 public class BlueDepotAuto extends VufTFLiteHandler {
     private DcMotor frontRight;
     private DcMotor backRight;
@@ -24,8 +25,8 @@ public class BlueDepotAuto extends VufTFLiteHandler {
     private DcMotor frontLeft;
     private DcMotor intake;
     private DcMotor intakeLift;
-    private RevRoboticsCoreHexMotor lift;
-    private Servo lBucket;
+    private DcMotor lift;
+    private CRServo lBucket;
     //private Servo hook;
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
@@ -48,7 +49,11 @@ public class BlueDepotAuto extends VufTFLiteHandler {
     public void runOpMode() throws InterruptedException {
         initHW();
         initAll();
+
+        telemetry.addLine("please face robot to 2 leftmost minerals!");
+        telemetry.update();
         waitForStart();
+        telemetry.clear();
         this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //unlatch from lander
         getTensorFlowData();
@@ -58,12 +63,17 @@ public class BlueDepotAuto extends VufTFLiteHandler {
 
             while (isSampling && opModeIsActive()) {
                 getTensorFlowData();
+
+
+
+
+
                 if (goldMineralPosition.equals("Left")) {
                     telemetry.addData("GoldMineralPosition", "Left");
                     pivotCC(170, .4);
-                    runIntake(.8);
+                    intake.setPower(1);
                     forward(65, .5);
-                    stopIntake();
+                   intake.setPower(0);
                     //set intake in
                     pivotCW(220, .4);
                     forward(55, .5);
@@ -96,9 +106,9 @@ public class BlueDepotAuto extends VufTFLiteHandler {
                     break;
                 } else if (goldMineralPosition.equals("Center")) {
                     telemetry.addData("GoldMineralPosition", "Center");
+                    runIntake(.8);
                     forward(55, .5);
                     //turn intake on
-                    runIntake(.8);
                     forward(40, .75);
                     stopIntake();
                     pivotCW(1000, .3);
@@ -112,7 +122,7 @@ public class BlueDepotAuto extends VufTFLiteHandler {
                     break;
                 } else {
                     telemetry.addLine("Not Detecting Gold Mineral");
-
+                    forward(300, 1);
                     //shimmy around to detect all 3 minerals
 
                     while (goldMineralPosition.equals("notDetected") && opModeIsActive()) {
@@ -122,16 +132,17 @@ public class BlueDepotAuto extends VufTFLiteHandler {
                         pivotCC(5, .3);
                         getTensorFlowData();
                         if (!goldMineralPosition.equals("notDetected")) {
+                            forward(200, 1);
 
                             break;
                         }
                     }
                 }
                 getTensorFlowData();
-            } // isSampling loop end
+            } // isSampling loop end01
             telemetry.update();
 
-        } //opmode loop end
+        }//opmode loop end
     }
 
     //Methods!!!
@@ -149,11 +160,17 @@ public class BlueDepotAuto extends VufTFLiteHandler {
     }
 
     public void initHW() {
-        // init the Wheels and other HardWare
+        // init the motors
         frontRight = hardwareMap.dcMotor.get("fr");
         backRight = hardwareMap.dcMotor.get("br");
         frontLeft = hardwareMap.dcMotor.get("fl");
         backLeft = hardwareMap.dcMotor.get("bl");
+        intake = hardwareMap.dcMotor.get("intake");
+        intakeLift = hardwareMap.dcMotor.get("intakeLift");
+        lift = hardwareMap.dcMotor.get("lift");
+        lBucket = hardwareMap.crservo.get("lbucket");
+        //hook = hardwareMap.servo.get("hook");
+
 
 
         // set wheel direction
@@ -181,9 +198,9 @@ public class BlueDepotAuto extends VufTFLiteHandler {
 
     public void setDirection() {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void setDriveMode(DcMotor.RunMode mode) {
@@ -263,7 +280,7 @@ public class BlueDepotAuto extends VufTFLiteHandler {
 
         double currentDegree = 0;
         while ((currentDegree < degree) && opModeIsActive()) {
-            currentDegree = (frontLeft.getCurrentPosition() + backLeft.getCurrentPosition()) / 2;
+            currentDegree = (frontLeft.getCurrentPosition() + backLeft.getCurrentPosition())/2;
             frontLeft.setPower(power);
             frontRight.setPower(-power);
             backLeft.setPower(power);
@@ -293,7 +310,5 @@ public class BlueDepotAuto extends VufTFLiteHandler {
     public void stopIntake(){
         intake.setPower(0);
     }
-
-
 
 }

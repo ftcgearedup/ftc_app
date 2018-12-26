@@ -4,11 +4,12 @@ import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "Mechenum", group = "TeleOp")
+@TeleOp(name = "MecanumTeleOp", group = "TeleOp")
 public class MechenumTeleOp extends OpMode {
     private DcMotor frontRight;
     private DcMotor backRight;
@@ -17,7 +18,7 @@ public class MechenumTeleOp extends OpMode {
     private DcMotor intake;
     private DcMotor intakeLift;
     private DcMotor lift;
-    private Servo lBucket;
+    private CRServo lBucket;
    // private Servo hook;
     @Override
     public void init() {
@@ -27,17 +28,17 @@ public class MechenumTeleOp extends OpMode {
         frontLeft = hardwareMap.dcMotor.get("fl");
         backLeft = hardwareMap.dcMotor.get("bl");
         intake = hardwareMap.dcMotor.get("intake");
-        intakeLift = hardwareMap.dcMotor.get("I-L");
+        intakeLift = hardwareMap.dcMotor.get("intakeLift");
         lift = hardwareMap.dcMotor.get("lift");
-        lBucket = hardwareMap.servo.get("L-B");
+        lBucket = hardwareMap.crservo.get("lbucket");
         //hook = hardwareMap.servo.get("hook");
 
 
         // set wheel direction
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
         // set wheel power variables
         frontLeft.setPower(0);
         frontRight.setPower(0);
@@ -46,7 +47,7 @@ public class MechenumTeleOp extends OpMode {
         //init attachments
         intake.setPower(0);
         lift.setPower(0);
-        lBucket.setPosition(0);
+        lBucket.setPower(0);
         //hook.setPosition(0);
 
         // set deadzone
@@ -86,13 +87,13 @@ public class MechenumTeleOp extends OpMode {
         }
         //attachments
 
-       if ( gamepad2.right_bumper = true)
+       if ( gamepad2.right_trigger == 1)
        {
-            lBucket.setPosition(1);
+            lBucket.setPower(1);
        }
        else
        {
-           lBucket.setPosition(0);
+           lBucket.setPower(0);
        }
 
 
@@ -104,14 +105,13 @@ public class MechenumTeleOp extends OpMode {
         liftPower = gamepad2.right_stick_y;
         lift.setPower(liftPower);
 
-        if( gamepad2.left_trigger > 0){
-            lBucket.setPosition(1);
-        }
-     //   if (gamepad2.dpad_right = true) {
-       //     hook.setPosition(1);
-        //} else if (gamepad2.dpad_left = true) {
-          //  hook.setPosition(0);
-        //}
+     if (gamepad2.dpad_up){
+         intakeLift.setPower(.7);
+     } else if (gamepad2.dpad_down) {
+         intakeLift.setPower(-.7);
+     }else {
+         intakeLift.setPower(0);
+     }
 
         telemetry.addData("motor speeds","fl "+ fl + " fr "+fr + " bl "+ bl + " br "+ br);
         //telemetry.addData("intake ", "intake ",intakePower);

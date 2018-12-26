@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 /**
  */
 @Autonomous(name = "Distance Sensor Test")
+@Disabled
 public class DistanceSensorTest extends LinearOpMode {
     private RelicRecoveryRobot robot;
     private DistanceSensorDriveAlgorithm leftDistanceSensorDrive;

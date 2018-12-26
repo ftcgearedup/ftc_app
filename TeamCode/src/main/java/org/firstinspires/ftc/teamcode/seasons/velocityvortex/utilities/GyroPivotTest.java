@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.seasons.velocityvortex.LinearOpModeBase;
 @TeleOp(name = "Gyro pivot test", group = "tests")
 public class GyroPivotTest extends LinearOpModeBase {
     @Override
+
     public void runOpMode() throws InterruptedException {
         initializeHardware();
 

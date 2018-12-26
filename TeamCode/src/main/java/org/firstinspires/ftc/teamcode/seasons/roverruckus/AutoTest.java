@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.seasons.roverruckus;
 
 import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,6 +17,7 @@ import org.firstinspires.ftc.teamcode.seasons.velocityvortex.EncoderValues;
 
 // line 44 is where movement starts
 @Autonomous(name = "TestingAuto", group = "Autonomous")
+//@Disabled
 public class AutoTest extends VufTFLiteHandler {
     private DcMotor frontRight;
     private DcMotor backRight;
@@ -22,26 +25,17 @@ public class AutoTest extends VufTFLiteHandler {
     private DcMotor frontLeft;
     private DcMotor intake;
     private DcMotor intakeLift;
-    private RevRoboticsCoreHexMotor lift;
-    private Servo lBucket;
+    private DcMotor lift;
+    private CRServo lBucket;
     //private Servo hook;
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
 
-    /*
-     *   Ticks per rotation for different motor types.
-     *
-     *   Neverest40(1120)
-     *   Neverest20(560)
-     *   NeverestOrbital20(560)
-     *   Neverest60(1680)
-     *
-     */
+    boolean isSampling = true;
+
     private double ticksPerRevNR20 = 560;
     private double ticksPerRevNR40 = 1120;
     private double ticksPerRevNR60 = 1680;
-
-    boolean isSampling = true;
 
     //The post gear box gear ratio.
     private double gearRatio = 1.0;
@@ -51,75 +45,94 @@ public class AutoTest extends VufTFLiteHandler {
     private double ticksPerCm = (ticksPerRevNR40 * gearRatio) / wheelCircumference;
     //Formula to calculate ticks per centimeter for the current drive set up.SIDEWAYS
 
-    // tile is about 60 cm
     @Override
     public void runOpMode() throws InterruptedException {
         initHW();
         initAll();
+
+        telemetry.addLine("please face robot to 2 leftmost minerals!");
+        telemetry.update();
         waitForStart();
+        telemetry.clear();
         this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //unlatch from lander
         getTensorFlowData();
+        //may need to back up in order to get all minerals into view
 
         while (opModeIsActive()) {
-/*
-            //while (isSampling && opModeIsActive()) {
+
+            while (isSampling && opModeIsActive()) {
                 getTensorFlowData();
+
+
                 if (goldMineralPosition.equals("Left")) {
                     telemetry.addData("GoldMineralPosition", "Left");
                     pivotCC(170, .4);
-                    forward(55, .5);
-                    //set intake in
+                    forward(65, .5);
                     pivotCW(220, .4);
                     forward(55, .5);
                     sideRight(10, .5);
-
+                    pivotCW(1200, .3);
+                    sideLeft(2400, .3);
+                    sideRight(250, .3);
+                    forward(225, .7);
                     isSampling = false;
-                    alignAndDriveToCrater();
                     break;
                 } else if (goldMineralPosition.equals("Right")) {
                     telemetry.addData("GoldMineralPosition", "Right");
                     pivotCW(165, .4);
                     forward(55, .5);
-                    //set intake in
                     pivotCC(215, .4);
                     forward(55, .5);
                     sideLeft(10, .5);
+                    pivotCW(1200, .3);
+                    sideLeft(2400, .3);
+                    sideRight(250, .3);
+                    forward(225, .7);
 
-                    isSampling = false;
-                    alignAndDriveToCrater();
+                    pivotCW(1200, .3);
+                    sideLeft(2400, .3);
+                    sideRight(250, .3);
+                    forward(225, .7);
                     break;
                 } else if (goldMineralPosition.equals("Center")) {
                     telemetry.addData("GoldMineralPosition", "Center");
+//                    runIntake(.8);
                     forward(55, .5);
                     //turn intake on
                     forward(40, .75);
-                    isSampling = false;
-                    alignAndDriveToCrater();
+                    pivotCW(1000, .3);
+                    sideLeft(2400, .3);
+                    pivotCW( 30,.7);
+                    sideRight(300, .3);
+                    forward(125,.7);
+                    pivotCC(20,.6);
+                    forward(100,.7);
+
                     break;
                 } else {
                     telemetry.addLine("Not Detecting Gold Mineral");
-
+                    forward(300, 1);
                     //shimmy around to detect all 3 minerals
 
                     while (goldMineralPosition.equals("notDetected") && opModeIsActive()) {
                         pivotCC(5, .3);
                         pivotCW(5, .3);
+                        pivotCW(5,.3);
+                        pivotCC(5, .3);
                         getTensorFlowData();
                         if (!goldMineralPosition.equals("notDetected")) {
+                            forward(200, 1);
 
                             break;
                         }
                     }
                 }
                 getTensorFlowData();
-//            } // isSampling loop end
-*/
-//            alignAndDriveToCrater();
-            alignAndDriveToCrater();
-            sideLeft(10, .3);
-
+            } // isSampling loop end01
             telemetry.update();
-        } //opmode loop end
+
+        }//opmode loop end
 
         telemetry.update();
     }
@@ -188,21 +201,6 @@ public class AutoTest extends VufTFLiteHandler {
         backRight.setMode(mode);
     }
 
-//    public void setIntake(String pos)
-//    {
-//        intakeLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//        if(pos.equals("up"))
-//        {
-//            intakeLift.setTargetPosition(840);
-//        }
-//        else if(pos.equals("down"))
-//        {
-//            intakeLift.setTargetPosition(1680);
-//        }
-//
-//        intakeLift.setPower(.6);
-//    }
     //for backwards use negative power
     //Pass in centimeters.
     public void forward(double targetDistance, double power) {
@@ -223,6 +221,7 @@ public class AutoTest extends VufTFLiteHandler {
 
             frontLeft.setPower(power);
             frontRight.setPower(power);
+
             backLeft.setPower(power);
             backRight.setPower(power);
         }
@@ -241,14 +240,11 @@ public class AutoTest extends VufTFLiteHandler {
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double currentDistance = 0;
         while ((currentDistance < targetDistance) && opModeIsActive()) {
-            currentDistance = frontRight.getCurrentPosition();
+            currentDistance = frontLeft.getCurrentPosition();
             frontLeft.setPower(power);
             frontRight.setPower(-power);
             backLeft.setPower(-power);
             backRight.setPower(power);
-            telemetry.addData("currentDistance",currentDistance);
-            telemetry.addData("targetDistance", targetDistance);
-            telemetry.update();
         }
 
     }
@@ -259,13 +255,11 @@ public class AutoTest extends VufTFLiteHandler {
         double currentDistance = 0;
         while (currentDistance < targetDistance && opModeIsActive()) {
             currentDistance = frontRight.getCurrentPosition();
-            ;
             frontLeft.setPower(-power);
             frontRight.setPower(power);
             backLeft.setPower(power);
             backRight.setPower(-power);
         }
-
     }
     //clockwise is 0 cc is 1
     public void pivotCW(double degree, double power) {
@@ -275,7 +269,7 @@ public class AutoTest extends VufTFLiteHandler {
 
         double currentDegree = 0;
         while ((currentDegree < degree) && opModeIsActive()) {
-            currentDegree = (frontLeft.getCurrentPosition() + backLeft.getCurrentPosition()) / 2;
+            currentDegree = (frontLeft.getCurrentPosition() + backLeft.getCurrentPosition())/2;
             frontLeft.setPower(power);
             frontRight.setPower(-power);
             backLeft.setPower(power);
@@ -299,17 +293,5 @@ public class AutoTest extends VufTFLiteHandler {
         }
         stopMotors();
     }
-    public void alignAndDriveToCrater()
-    {
-        pivotCW(1000, .3);
-        //
-        sideLeft(20, .3);
-        //
-        sideRight(3, .3);
-        //
-        forward(210, .7);
-        //
-//        forward(80,1);
 
-    }
 }
