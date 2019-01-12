@@ -41,6 +41,8 @@ public abstract class VufTFLiteHandler extends LinearOpMode {
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 
+    public int goldMineralX;
+
     public String goldMineralPosition = "NotSetYet";
     public int numMineralsDetected;
 
@@ -67,8 +69,11 @@ public abstract class VufTFLiteHandler extends LinearOpMode {
 //            telemetry.addData("# Object Detected", updatedRecognitions.size());
 //                x = updatedRecognitions.size();
             numMineralsDetected = updatedRecognitions.size();
-            if (updatedRecognitions.size() == 2 || updatedRecognitions.size() ==3 ) {
-                int goldMineralX = -1;
+
+
+
+            if (updatedRecognitions.size() == 1 ||updatedRecognitions.size() == 2 || updatedRecognitions.size() ==3 ) {
+                goldMineralX = -1;
                 int silverMineral1X = -1;
                 int silverMineral2X = -1;
                 for (Recognition recognition : updatedRecognitions) {
