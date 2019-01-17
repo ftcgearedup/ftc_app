@@ -27,7 +27,7 @@ public class AutoTest extends VufTFLiteHandler {
     private DcMotor intakeLift;
     private DcMotor lift;
     private CRServo lBucket;
-    //private Servo hook;
+    private DcMotor hook;
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
 
@@ -60,22 +60,38 @@ public class AutoTest extends VufTFLiteHandler {
         //may need to back up in order to get all minerals into view
 
         while (opModeIsActive()) {
+            telemetry.addLine("unlatching");
+            telemetry.update();
+            hook.setPower(1);
+            getTensorFlowData();
+            hook.setPower(1);
+            hook.setPower(1);
+            hook.setPower(1);
+            hook.setPower(1);
+            forward(109,.2);
+            hook.setPower(0);
+            sideLeft(30,.1);
+            forward(5,.1);
 
-            forward(-100,.2);
-            sideRight(100,.2);
-            pivotCW(1000,.2);
-
-
-//            sideLeft(20,.1);
 
             telemetry.addLine("now laterally Aligning");
             telemetry.update();
 
             lateralAlignToGoldMineral();
+
+//            lBucket.setPower(1);
+            forward(10, .2);
+            lBucket.setPower(.5);
+            sideLeft(7, .2);
+            forward(-25,.2);
+            sideRight(100,.2);
+
+//            sideLeft(20,.1);
+
             telemetry.clear();
             telemetry.update();
             intake.setPower(1);
-            forward(3500,1);
+            forward(3600,1);
             intake.setPower(0);
 
             //unlatch from lander
@@ -89,7 +105,7 @@ public class AutoTest extends VufTFLiteHandler {
 //                    pivotCC(170, .4);
 //                    forward(65, .5);
 //                    pivotCW(220, .4);
-//                    forward(55, .5);
+//                    forward(55, .5);ko
 //                    sideRight(10, .5);
 //                    pivotCW(1200, .3);
 //                    sideLeft(2400, .3);
@@ -176,6 +192,11 @@ public class AutoTest extends VufTFLiteHandler {
         backRight = hardwareMap.dcMotor.get("br");
         frontLeft = hardwareMap.dcMotor.get("fl");
         backLeft = hardwareMap.dcMotor.get("bl");
+        intake = hardwareMap.dcMotor.get("intake");
+        intakeLift = hardwareMap.dcMotor.get("intakeLift");
+        lift = hardwareMap.dcMotor.get("lift");
+        lBucket = hardwareMap.crservo.get("lbucket");
+        hook = hardwareMap.dcMotor.get("hook");
 
 //        intake = hardwareMap.dcMotor.get("intake");
 //        intakeLift = hardwareMap.dcMotor.get("I-L");
@@ -313,17 +334,18 @@ public class AutoTest extends VufTFLiteHandler {
         stopMotors();
     }
     public void lateralAlignToGoldMineral(){
-
+        pivotCW(1000,.2);
+        forward(10,.2);
         getTensorFlowData();
         while(goldMineralX == -1 && opModeIsActive()) {
 //            telemetry.addData("goldMineralX", goldMineralX);
 //            telemetry.update();
-            sideLeft(2,.1);
+            sideRight(2,.1);
             getTensorFlowData();
             telemetry.addLine("search Aligning");
             telemetry.update();
         }
-        while((goldMineralX <= 360 || goldMineralX >= 370) && opModeIsActive() )
+        while((goldMineralX <= 360 || goldMineralX >= 370) && opModeIsActive() && goldMineralX != -1)
         {
 //            telemetry.addData("goldMineralX", goldMineralX);
 //            telemetry.update();

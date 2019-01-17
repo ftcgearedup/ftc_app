@@ -27,7 +27,7 @@ public class BlueDepotAuto extends VufTFLiteHandler {
     private DcMotor intakeLift;
     private DcMotor lift;
     private CRServo lBucket;
-    //private Servo hook;
+    private DcMotor hook;
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
 
@@ -42,7 +42,7 @@ public class BlueDepotAuto extends VufTFLiteHandler {
     //The circumference of the drive wheel.
     private double wheelCircumference = 25.1327; // ??
     //Formula to calculate ticks per centimeter for the current drive set up.FORWARDS/BACKWARD ONLY
-    private double ticksPerCm = (ticksPerRevNR40 * gearRatio) / wheelCircumference;
+    private double ticksPerCm = (ticksPerRevNR20 * gearRatio) / wheelCircumference;
     //Formula to calculate ticks per centimeter for the current drive set up.SIDEWAYS
 
     @Override
@@ -56,6 +56,7 @@ public class BlueDepotAuto extends VufTFLiteHandler {
         telemetry.clear();
         this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //unlatch from lander
+        hook(100);
         getTensorFlowData();
         //may need to back up in order to get all minerals into view
 
@@ -65,15 +66,14 @@ public class BlueDepotAuto extends VufTFLiteHandler {
                 getTensorFlowData();
 
 
-
-
-
                 if (goldMineralPosition.equals("Left")) {
                     telemetry.addData("GoldMineralPosition", "Left");
+                    intakeLift.setPower(-1);
                     pivotCC(170, .4);
+                    intakeLift.setPower(0);
                     intake.setPower(1);
                     forward(65, .5);
-                   intake.setPower(0);
+                    intake.setPower(0);
                     //set intake in
                     pivotCW(220, .4);
                     forward(55, .5);
@@ -86,7 +86,9 @@ public class BlueDepotAuto extends VufTFLiteHandler {
                     break;
                 } else if (goldMineralPosition.equals("Right")) {
                     telemetry.addData("GoldMineralPosition", "Right");
+                    intakeLift.setPower(-1);
                     pivotCW(165, .4);
+                    intakeLift.setPower(0);
                     runIntake(.8);
                     forward(55, .5);
                     stopIntake();
@@ -107,8 +109,10 @@ public class BlueDepotAuto extends VufTFLiteHandler {
                 } else if (goldMineralPosition.equals("Center")) {
                     telemetry.addData("GoldMineralPosition", "Center");
                     runIntake(.8);
+                    intakeLift.setPower(-1);
                     forward(55, .5);
-                    //turn intake on
+                    //turn intake
+                    intakeLift.setPower(0);
                     forward(40, .75);
                     stopIntake();
                     pivotCW(1000, .3);
@@ -169,7 +173,7 @@ public class BlueDepotAuto extends VufTFLiteHandler {
         intakeLift = hardwareMap.dcMotor.get("intakeLift");
         lift = hardwareMap.dcMotor.get("lift");
         lBucket = hardwareMap.crservo.get("lbucket");
-        //hook = hardwareMap.servo.get("hook");
+        hook = hardwareMap.dcMotor.get("hook");
 
 
 
@@ -311,4 +315,41 @@ public class BlueDepotAuto extends VufTFLiteHandler {
         intake.setPower(0);
     }
 
+    public void hook (double degree) {
+        double currentDegree = 0;
+        while (currentDegree < degree && opModeIsActive()) {
+            currentDegree = (hook.getCurrentPosition());
+            hook.setPower(1);
+        }stopMotors();
+    }
+    public void lateralAlignToGoldMineral(){
+
+        getTensorFlowData();
+        while(goldMineralX == -1 && opModeIsActive()) {
+//            telemetry.addData("goldMineralX", goldMineralX);
+//            telemetry.update();
+            sideLeft(2,.1);
+            getTensorFlowData();
+            telemetry.addLine("search Aligning");
+            telemetry.update();
+        }
+        while((goldMineralX <= 360 || goldMineralX >= 370) && opModeIsActive() )
+        {
+//            telemetry.addData("goldMineralX", goldMineralX);
+//            telemetry.update();
+            if (goldMineralX<=360){
+                sideLeft(1,.1);
+            }
+            if (goldMineralX>=370){
+                sideRight(1,.1);
+            }
+            getTensorFlowData();
+            telemetry.addLine("center Aligning");
+            telemetry.update();
+        }
+        if(goldMineralX>360 && goldMineralX<370)
+        {
+            return;
+        }
+    }
 }

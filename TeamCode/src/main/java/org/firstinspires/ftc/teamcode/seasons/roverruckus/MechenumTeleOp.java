@@ -19,7 +19,7 @@ public class MechenumTeleOp extends OpMode {
     private DcMotor intakeLift;
     private DcMotor lift;
     private CRServo lBucket;
-   // private Servo hook;
+    private DcMotor hook;
     @Override
     public void init() {
         // init the motors
@@ -31,7 +31,7 @@ public class MechenumTeleOp extends OpMode {
         intakeLift = hardwareMap.dcMotor.get("intakeLift");
         lift = hardwareMap.dcMotor.get("lift");
         lBucket = hardwareMap.crservo.get("lbucket");
-        //hook = hardwareMap.servo.get("hook");
+        hook = hardwareMap.dcMotor.get("hook");
 
 
         // set wheel direction
@@ -47,8 +47,8 @@ public class MechenumTeleOp extends OpMode {
         //init attachments
         intake.setPower(0);
         lift.setPower(0);
-        lBucket.setPower(0);
-        //hook.setPosition(0);
+        lBucket.setPower(.5);
+        hook.setPower(0);
 
         // set deadzone
         gamepad1.setJoystickDeadzone(0.1f);
@@ -58,7 +58,7 @@ public class MechenumTeleOp extends OpMode {
         //the right Joystick controls movement, and the left controls turning.
         //in order to counteract the differences between the basic formula for strafing and the one for moving forwards and backwards,
         //we use trigonometry to derive relevant powers for each wheel tio move at the correct angles.
-        // translating polar coordanates of joystick to polar coordinates of mechenum drive
+        // translating polar coordanates of joyst   ick to polar coordinates of mechenum drive
         double r = Math.hypot(gamepad1.right_stick_x, gamepad1.left_stick_y);
         double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.right_stick_x) - Math.PI / 4;
         double leftX = gamepad1.left_stick_x;
@@ -87,18 +87,17 @@ public class MechenumTeleOp extends OpMode {
         }
         //attachments
 
-       if ( gamepad2.right_trigger == 1)
-       {
+       if ( gamepad2.right_trigger == 1){
             lBucket.setPower(1);
-       }
-       else
-       {
-           lBucket.setPower(0);
+       } else if (gamepad2.left_trigger == 1){
+            lBucket.setPower(0);
+       } else {
+           lBucket.setPower(.5);
        }
 
 
        intakePower = gamepad2.left_stick_y;
-        intake.setPower(intakePower);
+        intake.setPower(-intakePower);
 
 
         double liftPower;
@@ -113,6 +112,13 @@ public class MechenumTeleOp extends OpMode {
          intakeLift.setPower(0);
      }
 
+     if(gamepad1.dpad_up){
+         hook.setPower(1);
+     }else if (gamepad1.dpad_down) {
+         hook.setPower(-1);
+     }else {
+         hook.setPower(0);
+     }
         telemetry.addData("motor speeds","fl "+ fl + " fr "+fr + " bl "+ bl + " br "+ br);
         //telemetry.addData("intake ", "intake ",intakePower);
         telemetry.update();
