@@ -1,24 +1,17 @@
 package org.firstinspires.ftc.teamcode.seasons.roverruckus;
 
-import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
-import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.Direction;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.VufTFLiteHandler;
-import org.firstinspires.ftc.teamcode.seasons.velocityvortex.EncoderValues;
 
 // line 44 is where movement starts
-@Autonomous(name = "TestingAuto", group = "Autonomous")
+@Autonomous(name = "CopyOfTestingAuto", group = "Autonomous")
 //@Disabled
-public class AutoTest extends VufTFLiteHandler {
+public class CopyOfAutoTest extends VufTFLiteHandler {
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
