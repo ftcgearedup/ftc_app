@@ -32,13 +32,13 @@ public class DemoTeleOp extends LinearOpMode {
         right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        head = hardwareMap.dcMotor.get("h");
 //        head.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        gripper = hardwareMap.servo.get("gripper");
-        gripper.setPosition(.5);
+//        gripper = hardwareMap.servo.get("gripper");
+//        gripper.setPosition(.5);
         waitForStart();
         double speedLeft;
         double speedRight;
 //        double speedHead;
-        double gripperPosition;
+//        double gripperPosition;
 
 
         while (opModeIsActive()) {
@@ -47,13 +47,13 @@ public class DemoTeleOp extends LinearOpMode {
 
             left.setPower(speedLeft);
             right.setPower(speedRight);
-            if(gamepad1.b){
-                gripperPosition = .2;
-                gripper.setPosition(gripperPosition); //closed
-            } else {
-                gripperPosition = .5;
-                gripper.setPosition(gripperPosition); //open
-            }
+//            if(gamepad1.b){
+//                gripperPosition = .2;
+//                gripper.setPosition(gripperPosition); //closed
+//            } else {
+//                gripperPosition = .5;
+//                gripper.setPosition(gripperPosition); //open
+//            }
 //            if (gamepad1.right_bumper) {
 //                speedHead = 0.3;
 //                head.setPower(speedHead);
@@ -63,8 +63,8 @@ public class DemoTeleOp extends LinearOpMode {
 //            } else{
 //                head.setPower(0.0);
 //            }
-        telemetry.addData("gripper", gripperPosition );
-        telemetry.update();
+//        telemetry.addData("gripper", gripperPosition );
+//        telemetry.update();
         }
     }
 }

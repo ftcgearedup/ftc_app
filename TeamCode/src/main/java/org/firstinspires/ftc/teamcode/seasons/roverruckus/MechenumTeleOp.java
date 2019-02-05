@@ -18,7 +18,7 @@ public class MechenumTeleOp extends OpMode {
     private DcMotor intake;
     private DcMotor intakeLift;
     private DcMotor lift;
-    private CRServo lBucket;
+    private Servo lBucket;
     private DcMotor hook;
     @Override
     public void init() {
@@ -30,7 +30,7 @@ public class MechenumTeleOp extends OpMode {
         intake = hardwareMap.dcMotor.get("intake");
         intakeLift = hardwareMap.dcMotor.get("intakeLift");
         lift = hardwareMap.dcMotor.get("lift");
-        lBucket = hardwareMap.crservo.get("lbucket");
+        lBucket = hardwareMap.servo.get("lbucket");
         hook = hardwareMap.dcMotor.get("hook");
 
 
@@ -47,7 +47,7 @@ public class MechenumTeleOp extends OpMode {
         //init attachments
         intake.setPower(0);
         lift.setPower(0);
-        lBucket.setPower(.5);
+        lBucket.setPosition(.5);
         hook.setPower(0);
 
         // set deadzone
@@ -88,13 +88,10 @@ public class MechenumTeleOp extends OpMode {
         //attachments
 
        if ( gamepad2.right_trigger == 1){
-            lBucket.setPower(1);
+            lBucket.setPosition(1);
        } else if (gamepad2.left_trigger == 1){
-            lBucket.setPower(0);
-       } else {
-           lBucket.setPower(.5);
+            lBucket.setPosition(0);
        }
-
 
        intakePower = gamepad2.left_stick_y;
         intake.setPower(-intakePower);

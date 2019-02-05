@@ -1,24 +1,17 @@
 package org.firstinspires.ftc.teamcode.seasons.roverruckus;
 
-import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
-import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.Direction;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.VufTFLiteHandler;
-import org.firstinspires.ftc.teamcode.seasons.velocityvortex.EncoderValues;
 
 // line 44 is where movement starts
-@Autonomous(name = "TestingAuto", group = "Autonomous")
+@Autonomous(name = "CopyOfTestingAuto", group = "Autonomous")
 //@Disabled
-public class AutoTest extends VufTFLiteHandler {
+public class CopyOfAutoTest extends VufTFLiteHandler {
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
@@ -68,40 +61,106 @@ public class AutoTest extends VufTFLiteHandler {
             hook.setPower(1);
             hook.setPower(1);
             hook.setPower(1);
-            pivotCW(15, .5);
-            forward(107,.2);
+            forward(109,.2);
             hook.setPower(0);
-
-            forward(12,.1);
+            sideLeft(30,.1);
+            forward(5,.1);
 
 
             telemetry.addLine("now laterally Aligning");
             telemetry.update();
 
-            pivotCW(1250,.2);
+            lateralAlignToGoldMineral();
+
+//            lBucket.setPower(1);
+            forward(10, .2);
+            lBucket.setPower(.5);
+            sideLeft(7, .2);
+            forward(-25,.2);
+            sideRight(100,.2);
+
+//            sideLeft(20,.1);
 
             telemetry.clear();
             telemetry.update();
-            getTensorFlowData();
-            if(goldMineralPosition == "Center"){
-                forward(200, 1);
+            intake.setPower(1);
+            forward(3600,1);
+            intake.setPower(0);
 
-            }else if (goldMineralPosition == "Left"){
-                pivotCC(250, .5);
-                forward(500, 1);
-                pivotCW(250,1);
-                forward(500, .5);
+            //unlatch from lander
 
-            }else if (goldMineralPosition == "Right"){
-                pivotCW(250, .5);
-                forward(500, 1);
-                pivotCC(250,1);
-                forward(500, .5);
-            }else if (goldMineralPosition == "not detected"){
+//            alignToLeftmost2Minerals();
+//
+//            while (isSampling && opModeIsActive()) {
+//                getTensorFlowData();
+//                if (goldMineralPosition.equals("Left")) {
+//                    telemetry.addData("GoldMineralPosition", "Left");
+//                    pivotCC(170, .4);
+//                    forward(65, .5);
+//                    pivotCW(220, .4);
+//                    forward(55, .5);ko
+//                    sideRight(10, .5);
+//                    pivotCW(1200, .3);
+//                    sideLeft(2400, .3);
+//                    sideRight(250, .3);
+//                    forward(225, .7);
+//                    isSampling = false;
+//                    break;
+//                } else if (goldMineralPosition.equals("Right")) {
+//                    telemetry.addData("GoldMineralPosition", "Right");
+//                    pivotCW(165, .4);
+//                    forward(55, .5);
+//                    pivotCC(215, .4);
+//                    forward(55, .5);
+//                    sideLeft(10, .5);
+//                    pivotCW(1200, .3);
+//                    sideLeft(2400, .3);
+//                    sideRight(250, .3);
+//                    forward(225, .7);
+//
+//                    pivotCW(1200, .3);
+//                    sideLeft(2400, .3);
+//                    sideRight(250, .3);
+//                    forward(225, .7);
+//                    break;
+//                } else if (goldMineralPosition.equals("Center")) {
+//                    telemetry.addData("GoldMineralPosition", "Center");
+////                    runIntake(.8);
+//                    forward(55, .5);
+//                    //turn intake on
+//                    forward(40, .75);
+//                    pivotCW(1000, .3);
+//                    sideLeft(2400, .3);
+//                    pivotCW( 30,.7);
+//                    sideRight(300, .3);
+//                    forward(125,.7);
+//                    pivotCC(20,.6);
+//                    forward(100,.7);
+//
+//                    break;
+//                } else {
+//                    telemetry.addLine("Not Detecting Gold Mineral");
+//                    forward(300, 1);
+//                    //shimmy around to detect all 3 minerals
+//
+//                    while (goldMineralPosition.equals("notDetected") && opModeIsActive()) {
+//                        pivotCC(5, .3);
+//                        pivotCW(5, .3);
+//                        pivotCW(5,.3);
+//                        pivotCC(5, .3);
+//                        getTensorFlowData();
+//                        if (!goldMineralPosition.equals("notDetected")) {
+//                            forward(200, 1);
+//
+//                            break;
+//                        }
+//                    }
+//                }
+//                getTensorFlowData();
+//            } // isSampling loop end01
+            telemetry.update();
 
-            }
-
-        }
+        }//opmode loop end
 
         telemetry.update();
     }
@@ -163,9 +222,9 @@ public class AutoTest extends VufTFLiteHandler {
 
     public void setDirection() {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public void setDriveMode(DcMotor.RunMode mode) {
@@ -195,6 +254,7 @@ public class AutoTest extends VufTFLiteHandler {
 
             frontLeft.setPower(power);
             frontRight.setPower(power);
+
             backLeft.setPower(power);
             backRight.setPower(power);
         }
