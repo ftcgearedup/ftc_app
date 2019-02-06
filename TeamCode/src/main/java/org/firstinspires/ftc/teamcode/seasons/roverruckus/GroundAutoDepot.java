@@ -8,10 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.VufTFLiteHandler;
 
-// line 44 is where movement starts
-@Autonomous(name = "CopyOfTestingAuto", group = "Autonomous")
-//@Disabled
-public class CopyOfAutoTest extends VufTFLiteHandler {
+@Autonomous(name = "Ground", group = "Autonomous")
+
+public class GroundAutoDepot extends VufTFLiteHandler {
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
@@ -53,112 +52,19 @@ public class CopyOfAutoTest extends VufTFLiteHandler {
         //may need to back up in order to get all minerals into view
 
         while (opModeIsActive()) {
-            telemetry.addLine("unlatching");
-            telemetry.update();
-            hook.setPower(1);
-            getTensorFlowData();
-            hook.setPower(1);
-            hook.setPower(1);
-            hook.setPower(1);
-            hook.setPower(1);
-            forward(109,.2);
-            hook.setPower(0);
-            sideLeft(30,.1);
-            forward(5,.1);
-
 
             telemetry.addLine("now laterally Aligning");
             telemetry.update();
 
+            forward(10,.1);
+
             lateralAlignToGoldMineral();
 
-//            lBucket.setPower(1);
-            forward(10, .2);
-            lBucket.setPower(.5);
-            sideLeft(7, .2);
-            forward(-25,.2);
-            sideRight(100,.2);
+            forward(130,.3);
 
-//            sideLeft(20,.1);
-
-            telemetry.clear();
-            telemetry.update();
-            intake.setPower(1);
-            forward(3600,1);
             intake.setPower(0);
 
-            //unlatch from lander
-
-//            alignToLeftmost2Minerals();
-//
-//            while (isSampling && opModeIsActive()) {
-//                getTensorFlowData();
-//                if (goldMineralPosition.equals("Left")) {
-//                    telemetry.addData("GoldMineralPosition", "Left");
-//                    pivotCC(170, .4);
-//                    forward(65, .5);
-//                    pivotCW(220, .4);
-//                    forward(55, .5);ko
-//                    sideRight(10, .5);
-//                    pivotCW(1200, .3);
-//                    sideLeft(2400, .3);
-//                    sideRight(250, .3);
-//                    forward(225, .7);
-//                    isSampling = false;
-//                    break;
-//                } else if (goldMineralPosition.equals("Right")) {
-//                    telemetry.addData("GoldMineralPosition", "Right");
-//                    pivotCW(165, .4);
-//                    forward(55, .5);
-//                    pivotCC(215, .4);
-//                    forward(55, .5);
-//                    sideLeft(10, .5);
-//                    pivotCW(1200, .3);
-//                    sideLeft(2400, .3);
-//                    sideRight(250, .3);
-//                    forward(225, .7);
-//
-//                    pivotCW(1200, .3);
-//                    sideLeft(2400, .3);
-//                    sideRight(250, .3);
-//                    forward(225, .7);
-//                    break;
-//                } else if (goldMineralPosition.equals("Center")) {
-//                    telemetry.addData("GoldMineralPosition", "Center");
-////                    runIntake(.8);
-//                    forward(55, .5);
-//                    //turn intake on
-//                    forward(40, .75);
-//                    pivotCW(1000, .3);
-//                    sideLeft(2400, .3);
-//                    pivotCW( 30,.7);
-//                    sideRight(300, .3);
-//                    forward(125,.7);
-//                    pivotCC(20,.6);
-//                    forward(100,.7);
-//
-//                    break;
-//                } else {
-//                    telemetry.addLine("Not Detecting Gold Mineral");
-//                    forward(300, 1);
-//                    //shimmy around to detect all 3 minerals
-//
-//                    while (goldMineralPosition.equals("notDetected") && opModeIsActive()) {
-//                        pivotCC(5, .3);
-//                        pivotCW(5, .3);
-//                        pivotCW(5,.3);
-//                        pivotCC(5, .3);
-//                        getTensorFlowData();
-//                        if (!goldMineralPosition.equals("notDetected")) {
-//                            forward(200, 1);
-//
-//                            break;
-//                        }
-//                    }
-//                }
-//                getTensorFlowData();
-//            } // isSampling loop end01
-            telemetry.update();
+            break;
 
         }//opmode loop end
 
@@ -222,9 +128,9 @@ public class CopyOfAutoTest extends VufTFLiteHandler {
 
     public void setDirection() {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public void setDriveMode(DcMotor.RunMode mode) {
@@ -294,6 +200,24 @@ public class CopyOfAutoTest extends VufTFLiteHandler {
             backRight.setPower(-power);
         }
     }
+
+    public void setLeftwardState(double power)
+    {
+        frontLeft.setPower(-power);
+        frontRight.setPower(power);
+        backLeft.setPower(power);
+        backRight.setPower(-power);
+    }
+
+    public void setRightwardState(double power)
+    {
+        frontLeft.setPower(power);
+        frontRight.setPower(-power);
+        backLeft.setPower(-power);
+        backRight.setPower(power);
+    }
+
+
     //clockwise is 0 cc is 1
     public void pivotCW(double degree, double power) {
 
@@ -328,29 +252,33 @@ public class CopyOfAutoTest extends VufTFLiteHandler {
     }
     public void lateralAlignToGoldMineral(){
 
-        pivotCW(1000,.2);
-        forward(10,.2);
 
         getTensorFlowData();
+
+        setRightwardState(.1);
+
         while(goldMineralX == -1 && opModeIsActive()) {
 //            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update();
-            sideRight(2,.1);
+//            telemetry.update()
             getTensorFlowData();
             telemetry.addLine("search Aligning");
             telemetry.update();
         }
+
+        stopMotors();
+
         while((goldMineralX <= 360 || goldMineralX >= 370) && opModeIsActive() && goldMineralX != -1)
         {
 //            telemetry.addData("goldMineralX", goldMineralX);
 //            telemetry.update();
-            if (goldMineralX<=360)
+            if (goldMineralX<=345)
             {
-                sideLeft(1,.1);
+                setLeftwardState(.1);
             }
-            if (goldMineralX>=370)
+
+            if (goldMineralX>=385)
             {
-                sideRight(1,.1);
+                setRightwardState(.1);
             }
             getTensorFlowData();
 
@@ -360,6 +288,10 @@ public class CopyOfAutoTest extends VufTFLiteHandler {
         }
         if(goldMineralX>360 && goldMineralX<370)
         {
+            stopMotors();
+            telemetry.addLine("aligned with mineral! :)");
+            telemetry.update();
+
             return;
         }
 
