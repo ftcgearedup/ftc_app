@@ -71,8 +71,8 @@ public class AutoTest extends VufTFLiteHandler {
             pivotCW(15, .5);
             forward(107,.2);
             hook.setPower(0);
-
-            forward(12,.1);
+            intakeLift.setPower(1);
+            forward(2,.1);
 
 
             telemetry.addLine("now laterally Aligning");
@@ -80,13 +80,25 @@ public class AutoTest extends VufTFLiteHandler {
 
             pivotCW(1250,.2);
 
+
             telemetry.clear();
             telemetry.update();
             getTensorFlowData();
 
+            lateralAlignToGoldMineral();
+            intakeLift.setPower(0);
+            forward(130,.3);
+
+            intake.setPower(0);
+
+            pivotCW(1250, .2);
+            forward(200, .5);
+
+            break;
 
 
-            if(goldMineralPosition == "Center"){
+
+        /*    if(goldMineralPosition == "Center"){
                 forward(200, 1);
 
             }else if (goldMineralPosition == "Left"){
@@ -102,7 +114,7 @@ public class AutoTest extends VufTFLiteHandler {
                 forward(500, .5);
             }else if (goldMineralPosition == "not detected"){
 
-            }
+            } */
 
         }
 
@@ -275,33 +287,51 @@ public class AutoTest extends VufTFLiteHandler {
         stopMotors();
     }
 
+    public void setLeftwardState(double power)
+    {
+        frontLeft.setPower(-power);
+        frontRight.setPower(power);
+        backLeft.setPower(power);
+        backRight.setPower(-power);
+    }
 
+    public void setRightwardState(double power)
+    {
+        frontLeft.setPower(power);
+        frontRight.setPower(-power);
+        backLeft.setPower(-power);
+        backRight.setPower(power);
+    }
 
     public void lateralAlignToGoldMineral(){
 
-        pivotCW(1000,.2);
-        forward(10,.2);
 
         getTensorFlowData();
+
+        setRightwardState(.1);
+
         while(goldMineralX == -1 && opModeIsActive()) {
 //            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update();
-            sideRight(2,.1);
+//            telemetry.update()
             getTensorFlowData();
             telemetry.addLine("search Aligning");
             telemetry.update();
         }
+
+        stopMotors();
+
         while((goldMineralX <= 360 || goldMineralX >= 370) && opModeIsActive() && goldMineralX != -1)
         {
 //            telemetry.addData("goldMineralX", goldMineralX);
 //            telemetry.update();
-            if (goldMineralX<=360)
+            if (goldMineralX<=345)
             {
-                sideLeft(1,.1);
+                setLeftwardState(.1);
             }
-            if (goldMineralX>=370)
+
+            if (goldMineralX>=385)
             {
-                sideRight(1,.1);
+                setRightwardState(.1);
             }
             getTensorFlowData();
 
@@ -311,6 +341,10 @@ public class AutoTest extends VufTFLiteHandler {
         }
         if(goldMineralX>360 && goldMineralX<370)
         {
+            stopMotors();
+            telemetry.addLine("aligned with mineral! :)");
+            telemetry.update();
+
             return;
         }
 

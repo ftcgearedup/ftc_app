@@ -8,9 +8,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.VufTFLiteHandler;
 
-@Autonomous(name = "Ground", group = "Autonomous")
+@Autonomous(name = "GroundDepot", group = "Autonomous")
 
 public class GroundAutoDepot extends VufTFLiteHandler {
+
+    // Sampling, mineral in Depot, on Depot Side
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;

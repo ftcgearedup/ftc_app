@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.VufTFLiteHandl
 @Autonomous(name = "Ground", group = "Autonomous")
 
 public class GroundAuto extends VufTFLiteHandler {
+    // sampling, Full Crater..... on crater side
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
