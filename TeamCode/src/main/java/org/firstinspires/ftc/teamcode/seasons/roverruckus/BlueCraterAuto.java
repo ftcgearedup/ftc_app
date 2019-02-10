@@ -27,7 +27,7 @@ public class BlueCraterAuto extends VufTFLiteHandler {
         private DcMotor intake;
         private DcMotor intakeLift;
         private DcMotor lift;
-        private CRServo lBucket;
+        private Servo lBucket;
         private DcMotor hook;
         private BNO055IMUWrapper imu;
         private VuforiaNav useVuforia;
@@ -139,7 +139,7 @@ public class BlueCraterAuto extends VufTFLiteHandler {
             intake = hardwareMap.dcMotor.get("intake");
             intakeLift = hardwareMap.dcMotor.get("intakeLift");
             lift = hardwareMap.dcMotor.get("lift");
-            lBucket = hardwareMap.crservo.get("lbucket");
+            lBucket = hardwareMap.servo.get("lbucket");
             hook = hardwareMap.dcMotor.get("hook");
 
 //        intake = hardwareMap.dcMotor.get("intake");

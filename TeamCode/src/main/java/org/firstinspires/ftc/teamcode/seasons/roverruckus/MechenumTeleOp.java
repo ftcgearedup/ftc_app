@@ -94,8 +94,7 @@ public class MechenumTeleOp extends OpMode {
        }
 
        intakePower = gamepad2.left_stick_y;
-        intake.setPower(-intakePower);
-
+        intake.setPower(intakePower);
 
         double liftPower;
         liftPower = gamepad2.right_stick_y;

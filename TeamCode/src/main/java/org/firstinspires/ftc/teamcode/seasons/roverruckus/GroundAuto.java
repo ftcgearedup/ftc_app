@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.VufTFLiteHandler;
@@ -19,7 +20,7 @@ public class GroundAuto extends VufTFLiteHandler {
     private DcMotor intake;
     private DcMotor intakeLift;
     private DcMotor lift;
-    private CRServo lBucket;
+    private Servo lBucket;
     private DcMotor hook;
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
@@ -95,7 +96,7 @@ public class GroundAuto extends VufTFLiteHandler {
         intake = hardwareMap.dcMotor.get("intake");
         intakeLift = hardwareMap.dcMotor.get("intakeLift");
         lift = hardwareMap.dcMotor.get("lift");
-        lBucket = hardwareMap.crservo.get("lbucket");
+        lBucket = hardwareMap.servo.get("lbucket");
         hook = hardwareMap.dcMotor.get("hook");
 
 //        intake = hardwareMap.dcMotor.get("intake");

@@ -27,7 +27,7 @@ public class BlueDepotAuto extends VufTFLiteHandler {
     private DcMotor intake;
     private DcMotor intakeLift;
     private DcMotor lift;
-    private CRServo lBucket;
+    private Servo lBucket;
     private DcMotor hook;
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
@@ -72,14 +72,15 @@ public class BlueDepotAuto extends VufTFLiteHandler {
             pivotCW(15, .5);
             forward(107,.2);
             hook.setPower(0);
-            intakeLift.setPower(1);
-            forward(2,.1);
+            forward(4,.1);
 
 
             telemetry.addLine("now laterally Aligning");
             telemetry.update();
 
-            pivotCW(1250,.2);
+            pivotCW(625,.2);
+            sideLeft(2, .2);
+            pivotCW(625, .2);
 
 
             telemetry.clear();
@@ -145,7 +146,7 @@ public class BlueDepotAuto extends VufTFLiteHandler {
         intake = hardwareMap.dcMotor.get("intake");
         intakeLift = hardwareMap.dcMotor.get("intakeLift");
         lift = hardwareMap.dcMotor.get("lift");
-        lBucket = hardwareMap.crservo.get("lbucket");
+        lBucket = hardwareMap.servo.get("lbucket");
         hook = hardwareMap.dcMotor.get("hook");
 
 //        intake = hardwareMap.dcMotor.get("intake");
