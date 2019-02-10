@@ -9,11 +9,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.VufTFLiteHandler;
 
-@Autonomous(name = "GroundDepot", group = "Autonomous")
+@Autonomous(name = "GroundCrater", group = "Autonomous")
 
-public class GroundAutoDepot extends VufTFLiteHandler {
-
-    // Sampling, mineral in Depot, on Depot Side
+public class GroundCrater extends VufTFLiteHandler {
+    // sampling, Full Crater..... on crater side
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
@@ -56,14 +55,16 @@ public class GroundAutoDepot extends VufTFLiteHandler {
 
         while (opModeIsActive()) {
 
-            telemetry.addLine("now laterally Aligning");
-            telemetry.update();
+
 
             forward(10,.1);
 
+            telemetry.addLine("now laterally Aligning");
+            telemetry.update();
+
             lateralAlignToGoldMineral();
 
-            forward(130,.3);
+            forward(160,.6);
 
             intake.setPower(0);
 

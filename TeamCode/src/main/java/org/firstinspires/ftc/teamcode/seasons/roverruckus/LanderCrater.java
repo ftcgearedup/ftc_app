@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.seasons.velocityvortex.EncoderValues;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 
 
-@Autonomous(name = "BlueCraterAuto", group = "Autonomous")
-public class BlueCraterAuto extends VufTFLiteHandler {
+@Autonomous(name = "LanderCrater", group = "Autonomous")
+public class LanderCrater extends VufTFLiteHandler {
     //Lander, sampling, Full Crater..... on crater side
         private DcMotor frontRight;
         private DcMotor backRight;

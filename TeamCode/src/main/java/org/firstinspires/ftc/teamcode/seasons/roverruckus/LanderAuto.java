@@ -17,9 +17,9 @@ import org.firstinspires.ftc.teamcode.seasons.velocityvortex.EncoderValues;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 
 
-@Autonomous(name = "BlueDepotAuto", group = "Autonomous")
-public class BlueDepotAuto extends VufTFLiteHandler {
-    //Sampling, Lander, Partial Crater.... on Depot Side
+@Autonomous(name = "LanderAuto", group = "Autonomous")
+public class LanderAuto extends VufTFLiteHandler {
+    //Just Landing
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
@@ -57,66 +57,18 @@ public class BlueDepotAuto extends VufTFLiteHandler {
 //        telemetry.clear();
         this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //unlatch from lander
-        getTensorFlowData();
+
         //may need to back up in order to get all minerals into view
 
         while (opModeIsActive()) {
             telemetry.addLine("unlatching");
             telemetry.update();
             hook.setPower(1);
-            getTensorFlowData();
-            hook.setPower(1);
-            hook.setPower(1);
-            hook.setPower(1);
-            hook.setPower(1);
             pivotCW(15, .5);
             forward(107,.2);
             hook.setPower(0);
-            forward(4,.1);
-
-
-            telemetry.addLine("now laterally Aligning");
-            telemetry.update();
-
-            pivotCW(625,.2);
-            sideLeft(2, .2);
-            pivotCW(625, .2);
-
-
-            telemetry.clear();
-            telemetry.update();
-            getTensorFlowData();
-
-            lateralAlignToGoldMineral();
-            intakeLift.setPower(0);
-            forward(130,.3);
-
-            intake.setPower(0);
-
-            pivotCW(1250, .2);
-            forward(200, .5);
 
             break;
-
-
-
-        /*    if(goldMineralPosition == "Center"){
-                forward(200, 1);
-
-            }else if (goldMineralPosition == "Left"){
-                pivotCC(250, .5);
-                forward(500, 1);
-                pivotCW(250,1);
-                forward(500, .5);
-
-            }else if (goldMineralPosition == "Right"){
-                pivotCW(250, .5);
-                forward(500, 1);
-                pivotCC(250,1);
-                forward(500, .5);
-            }else if (goldMineralPosition == "not detected"){
-
-            } */
 
         }
 
@@ -305,53 +257,9 @@ public class BlueDepotAuto extends VufTFLiteHandler {
         backRight.setPower(power);
     }
 
-    public void lateralAlignToGoldMineral(){
-
-
-        getTensorFlowData();
-
-        setRightwardState(.1);
-
-        while(goldMineralX == -1 && opModeIsActive()) {
-//            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update()
-            getTensorFlowData();
-            telemetry.addLine("search Aligning");
-            telemetry.update();
-        }
-
-        stopMotors();
-
-        while((goldMineralX <= 360 || goldMineralX >= 370) && opModeIsActive() && goldMineralX != -1)
-        {
-//            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update();
-            if (goldMineralX<=345)
-            {
-                setLeftwardState(.1);
-            }
-
-            if (goldMineralX>=385)
-            {
-                setRightwardState(.1);
-            }
-            getTensorFlowData();
-
-
-            telemetry.addLine("center Aligning");
-            telemetry.update();
-        }
-        if(goldMineralX>360 && goldMineralX<370)
-        {
-            stopMotors();
-            telemetry.addLine("aligned with mineral! :)");
-            telemetry.update();
-
-            return;
-        }
 
 
 
-    }
+
 
 }
