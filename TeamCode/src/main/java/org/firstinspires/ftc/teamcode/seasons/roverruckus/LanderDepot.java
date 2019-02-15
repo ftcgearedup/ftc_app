@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.Direction;
@@ -17,7 +18,7 @@ import org.firstinspires.ftc.teamcode.seasons.velocityvortex.EncoderValues;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 
 
-@Autonomous(name = "LanderCrater", group = "Autonomous")
+@Autonomous(name = "LanderDepot", group = "Autonomous")
 public class LanderDepot extends VufTFLiteHandler {
     //Lander, sampling, Full Crater..... on crater side
     private DcMotor frontRight;
@@ -37,7 +38,7 @@ public class LanderDepot extends VufTFLiteHandler {
     private double ticksPerRevNR20 = 560;
     private double ticksPerRevNR40 = 1120;
     private double ticksPerRevNR60 = 1680;
-
+    public ElapsedTime land = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
     //The post gear box gear ratio.
     private double gearRatio = 1.0;
     //The circumference of the drive wheel.
@@ -64,52 +65,35 @@ public class LanderDepot extends VufTFLiteHandler {
             telemetry.addLine("unlatching");
             telemetry.update();
             hook.setPower(1);
-            getTensorFlowData();
-            hook.setPower(1);
-            hook.setPower(1);
-            hook.setPower(1);
-            hook.setPower(1);
-            pivotCW(15, .5);
-            forward(107,.2);
+            land.reset();
+            while(land.milliseconds()<= 5400 && opModeIsActive()){
+                telemetry.addData("landing", land.milliseconds());
+                telemetry.update();
+            }
+            // pivotCW(15, .5);
+            // forward(107,.2);
             hook.setPower(0);
-            forward(2,.1);
+            telemetry.addData("landed", true);
+            forward(4,.1);
 
 
-            telemetry.addLine("now laterally Aligning");
+
             telemetry.update();
 
-            pivotCW(1250,.2);
+            pivotCW(800,.2);
 
-
+            forward(10, .3);
+            sideLeft(15, .4);
             telemetry.clear();
             telemetry.update();
             getTensorFlowData();
 
+            telemetry.addLine("now laterally Aligning");
             lateralAlignToGoldMineral();
             intakeLift.setPower(0);
-            forward(130,1);
+            forward(130,.3);
 
-            break;
-
-
-
-        /*    if(goldMineralPosition == "Center"){
-                forward(200, 1);
-
-            }else if (goldMineralPosition == "Left"){
-                pivotCC(250, .5);
-                forward(500, 1);
-                pivotCW(250,1);
-                forward(500, .5);
-
-            }else if (goldMineralPosition == "Right"){
-                pivotCW(250, .5);
-                forward(500, 1);
-                pivotCC(250,1);
-                forward(500, .5);
-            }else if (goldMineralPosition == "not detected"){
-
-            } */
+            intake.setPower(0);
 
         }
 

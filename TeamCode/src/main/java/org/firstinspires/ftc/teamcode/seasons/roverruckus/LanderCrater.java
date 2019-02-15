@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.Direction;
@@ -31,7 +32,7 @@ public class LanderCrater extends VufTFLiteHandler {
         private DcMotor hook;
         private BNO055IMUWrapper imu;
         private VuforiaNav useVuforia;
-
+    public ElapsedTime land = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
         boolean isSampling = true;
 
         private double ticksPerRevNR20 = 560;
@@ -48,73 +49,56 @@ public class LanderCrater extends VufTFLiteHandler {
 
         @Override
         public void runOpMode() throws InterruptedException {
-            initHW();
-            initAll();
+        initHW();
+    initAll();
 
-//        telemetry.addLine("please face robot to 2 leftmost minerals!");
+    //        telemetry.addLine("please face robot to 2 leftmost minerals!");
 //        telemetry.update();
-            waitForStart();
+    waitForStart();
 //        telemetry.clear();
-            this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //unlatch from lander
-            getTensorFlowData();
-            //may need to back up in order to get all minerals into view
+        this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    //unlatch from lander
+    getTensorFlowData();
+    //may need to back up in order to get all minerals into view
 
-            while (opModeIsActive()) {
-                telemetry.addLine("unlatching");
-                telemetry.update();
-                hook.setPower(1);
-                getTensorFlowData();
-                hook.setPower(1);
-                hook.setPower(1);
-                hook.setPower(1);
-                hook.setPower(1);
-                pivotCW(15, .5);
-                forward(107,.2);
-                hook.setPower(0);
-                forward(2,.1);
-
-
-                telemetry.addLine("now laterally Aligning");
-                telemetry.update();
-
-                pivotCW(1250,.2);
-
-
-                telemetry.clear();
-                telemetry.update();
-                getTensorFlowData();
-
-                lateralAlignToGoldMineral();
-                intakeLift.setPower(0);
-                forward(250,1);
-
-                break;
-
-
-
-        /*    if(goldMineralPosition == "Center"){
-                forward(200, 1);
-
-            }else if (goldMineralPosition == "Left"){
-                pivotCC(250, .5);
-                forward(500, 1);
-                pivotCW(250,1);
-                forward(500, .5);
-
-            }else if (goldMineralPosition == "Right"){
-                pivotCW(250, .5);
-                forward(500, 1);
-                pivotCC(250,1);
-                forward(500, .5);
-            }else if (goldMineralPosition == "not detected"){
-
-            } */
-
-            }
-
+        while (opModeIsActive()) {
+        telemetry.addLine("unlatching");
+        telemetry.update();
+        hook.setPower(1);
+        land.reset();
+        while(land.milliseconds()<= 5400 && opModeIsActive()){
+            telemetry.addData("landing", land.milliseconds());
             telemetry.update();
         }
+        // pivotCW(15, .5);
+        // forward(107,.2);
+        hook.setPower(0);
+        telemetry.addData("landed", true);
+        forward(4,.1);
+
+
+
+        telemetry.update();
+
+        pivotCW(800,.2);
+
+        forward(10, .3);
+        sideLeft(15, .4);
+        telemetry.clear();
+        telemetry.update();
+        getTensorFlowData();
+
+        telemetry.addLine("now laterally Aligning");
+        lateralAlignToGoldMineral();
+        intakeLift.setPower(0);
+        forward(160,1);
+
+        intake.setPower(0);
+
+    }
+
+        telemetry.update();
+}
 
         //Methods!!!
         public void readEncoders() {

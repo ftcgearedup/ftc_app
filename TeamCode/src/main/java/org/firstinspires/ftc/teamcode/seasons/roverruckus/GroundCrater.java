@@ -31,6 +31,7 @@ public class GroundCrater extends VufTFLiteHandler {
     private double ticksPerRevNR40 = 1120;
     private double ticksPerRevNR60 = 1680;
 
+
     //The post gear box gear ratio.
     private double gearRatio = 1.0;
     //The circumference of the drive wheel.
@@ -57,7 +58,7 @@ public class GroundCrater extends VufTFLiteHandler {
 
 
 
-            forward(10,.1);
+            forward(5,.1);
 
             telemetry.addLine("now laterally Aligning");
             telemetry.update();

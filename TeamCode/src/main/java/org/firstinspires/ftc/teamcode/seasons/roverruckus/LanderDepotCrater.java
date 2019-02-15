@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.Direction;
@@ -33,6 +34,7 @@ public class LanderDepotCrater extends VufTFLiteHandler {
     private VuforiaNav useVuforia;
 
     boolean isSampling = true;
+    public ElapsedTime land = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
 
     private double ticksPerRevNR20 = 560;
     private double ticksPerRevNR40 = 1120;
@@ -64,29 +66,30 @@ public class LanderDepotCrater extends VufTFLiteHandler {
             telemetry.addLine("unlatching");
             telemetry.update();
             hook.setPower(1);
-            getTensorFlowData();
-            hook.setPower(1);
-            hook.setPower(1);
-            hook.setPower(1);
-            hook.setPower(1);
-            pivotCW(15, .5);
-            forward(107,.2);
+            land.reset();
+            while(land.milliseconds()<= 5400 && opModeIsActive()){
+                telemetry.addData("landing", land.milliseconds());
+                telemetry.update();
+            }
+           // pivotCW(15, .5);
+            // forward(107,.2);
             hook.setPower(0);
+            telemetry.addData("landed", true);
             forward(4,.1);
 
 
-            telemetry.addLine("now laterally Aligning");
+
             telemetry.update();
 
-            pivotCW(625,.2);
-            sideLeft(2, .2);
-            pivotCW(625, .2);
+            pivotCW(800,.2);
 
-
+            forward(10, .3);
+            sideLeft(15, .4);
             telemetry.clear();
             telemetry.update();
             getTensorFlowData();
 
+            telemetry.addLine("now laterally Aligning");
             lateralAlignToGoldMineral();
             intakeLift.setPower(0);
             forward(130,.3);

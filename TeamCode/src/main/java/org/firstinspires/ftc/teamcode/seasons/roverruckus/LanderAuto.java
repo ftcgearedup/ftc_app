@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.Direction;
@@ -31,7 +32,7 @@ public class LanderAuto extends VufTFLiteHandler {
     private DcMotor hook;
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
-
+    public ElapsedTime land = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
     boolean isSampling = true;
 
     private double ticksPerRevNR20 = 560;
