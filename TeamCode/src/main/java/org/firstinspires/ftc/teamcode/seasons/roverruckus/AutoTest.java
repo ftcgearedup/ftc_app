@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.Direction;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.VufTFLiteHandler;
 import org.firstinspires.ftc.teamcode.seasons.velocityvortex.EncoderValues;
 
-// line 44 is where movement starts
+// Autonomous Program for testing new changes
 @Autonomous(name = "TestingAuto", group = "Autonomous")
 //@Disabled
 public class AutoTest extends VufTFLiteHandler {
@@ -31,7 +31,6 @@ public class AutoTest extends VufTFLiteHandler {
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
 
-    boolean isSampling = true;
 
     private double ticksPerRevNR20 = 560;
     private double ticksPerRevNR40 = 1120;
@@ -97,24 +96,6 @@ public class AutoTest extends VufTFLiteHandler {
             break;
 
 
-
-        /*    if(goldMineralPosition == "Center"){
-                forward(200, 1);
-
-            }else if (goldMineralPosition == "Left"){
-                pivotCC(250, .5);
-                forward(500, 1);
-                pivotCW(250,1);
-                forward(500, .5);
-
-            }else if (goldMineralPosition == "Right"){
-                pivotCW(250, .5);
-                forward(500, 1);
-                pivotCC(250,1);
-                forward(500, .5);
-            }else if (goldMineralPosition == "not detected"){
-
-            } */
 
         }
 

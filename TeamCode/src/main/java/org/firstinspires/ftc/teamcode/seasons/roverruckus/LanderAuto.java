@@ -52,14 +52,9 @@ public class LanderAuto extends VufTFLiteHandler {
         initHW();
         initAll();
 
-//        telemetry.addLine("please face robot to 2 leftmost minerals!");
-//        telemetry.update();
-        waitForStart();
-//        telemetry.clear();
-        this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //unlatch from lander
 
-        //may need to back up in order to get all minerals into view
+        waitForStart();
+        this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         while (opModeIsActive()) {
             telemetry.addLine("unlatching");
@@ -102,9 +97,6 @@ public class LanderAuto extends VufTFLiteHandler {
         lBucket = hardwareMap.servo.get("lbucket");
         hook = hardwareMap.dcMotor.get("hook");
 
-//        intake = hardwareMap.dcMotor.get("intake");
-//        intakeLift = hardwareMap.dcMotor.get("I-L");
-
 
         // set wheel direction
         this.setDirection();
@@ -119,8 +111,6 @@ public class LanderAuto extends VufTFLiteHandler {
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
-//        intake.setPower(0);
-//        intakeLift.setPower(0);
 
     }
 
