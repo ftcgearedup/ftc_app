@@ -34,8 +34,11 @@ public class LanderDepotCrater extends VufTFLiteHandler {
     private VuforiaNav useVuforia;
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     boolean isSampling = true;
     public ElapsedTime land = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 
@@ -82,7 +85,10 @@ public class LanderDepotCrater extends VufTFLiteHandler {
 
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 
             telemetry.update();
 >>>>>>> Stashed changes
@@ -99,6 +105,10 @@ public class LanderDepotCrater extends VufTFLiteHandler {
 
             telemetry.addLine("now laterally Aligning");
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 =======
 
 >>>>>>> Stashed changes

@@ -33,8 +33,12 @@ public class LanderCrater extends VufTFLiteHandler {
         private BNO055IMUWrapper imu;
         private VuforiaNav useVuforia;
 
+
         public ElapsedTime land = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
         boolean isSampling = true;
+
+
+
 
         private double ticksPerRevNR20 = 560;
         private double ticksPerRevNR40 = 1120;
@@ -52,6 +56,7 @@ public class LanderCrater extends VufTFLiteHandler {
         public void runOpMode() throws InterruptedException {
         initHW();
     initAll();
+
 
 
     //        telemetry.addLine("please face robot to 2 leftmost minerals!");
@@ -80,6 +85,7 @@ public class LanderCrater extends VufTFLiteHandler {
 
 
 
+
         telemetry.update();
 
 
@@ -91,6 +97,7 @@ public class LanderCrater extends VufTFLiteHandler {
         telemetry.update();
         getTensorFlowData();
 
+
         telemetry.addLine("now laterally Aligning");
         lateralAlignToGoldMineral();
         intakeLift.setPower(0);
@@ -99,6 +106,7 @@ public class LanderCrater extends VufTFLiteHandler {
         intake.setPower(0);
 
     }
+
 
 
 
