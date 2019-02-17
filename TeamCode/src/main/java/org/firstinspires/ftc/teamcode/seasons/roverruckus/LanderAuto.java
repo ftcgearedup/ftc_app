@@ -65,10 +65,16 @@ public class LanderAuto extends VufTFLiteHandler {
             telemetry.addLine("unlatching");
             telemetry.update();
             hook.setPower(1);
-            pivotCW(15, .5);
-            forward(107,.2);
+            land.reset();
+            while(land.milliseconds()<= 5400 && opModeIsActive()){
+                telemetry.addData("landing", land.milliseconds());
+                telemetry.update();
+            }
+            // pivotCW(15, .5);
+            // forward(107,.2);
             hook.setPower(0);
-
+            telemetry.addData("landed", true);
+            forward(4,.1);
             break;
 
         }
