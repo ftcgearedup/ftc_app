@@ -32,8 +32,13 @@ public class LanderCrater extends VufTFLiteHandler {
         private DcMotor hook;
         private BNO055IMUWrapper imu;
         private VuforiaNav useVuforia;
-    public ElapsedTime land = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
+
+
+        public ElapsedTime land = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
         boolean isSampling = true;
+
+
+
 
         private double ticksPerRevNR20 = 560;
         private double ticksPerRevNR40 = 1120;
@@ -51,6 +56,8 @@ public class LanderCrater extends VufTFLiteHandler {
         public void runOpMode() throws InterruptedException {
         initHW();
     initAll();
+
+
 
     //        telemetry.addLine("please face robot to 2 leftmost minerals!");
 //        telemetry.update();
@@ -78,7 +85,9 @@ public class LanderCrater extends VufTFLiteHandler {
 
 
 
+
         telemetry.update();
+
 
         pivotCW(800,.2);
 
@@ -88,6 +97,7 @@ public class LanderCrater extends VufTFLiteHandler {
         telemetry.update();
         getTensorFlowData();
 
+
         telemetry.addLine("now laterally Aligning");
         lateralAlignToGoldMineral();
         intakeLift.setPower(0);
@@ -96,6 +106,9 @@ public class LanderCrater extends VufTFLiteHandler {
         intake.setPower(0);
 
     }
+
+
+
 
         telemetry.update();
 }
@@ -126,9 +139,6 @@ public class LanderCrater extends VufTFLiteHandler {
             lBucket = hardwareMap.servo.get("lbucket");
             hook = hardwareMap.dcMotor.get("hook");
 
-//        intake = hardwareMap.dcMotor.get("intake");
-//        intakeLift = hardwareMap.dcMotor.get("I-L");
-
 
             // set wheel direction
             this.setDirection();
@@ -143,8 +153,7 @@ public class LanderCrater extends VufTFLiteHandler {
             frontRight.setPower(0);
             backLeft.setPower(0);
             backRight.setPower(0);
-//        intake.setPower(0);
-//        intakeLift.setPower(0);
+
 
         }
 
@@ -290,8 +299,7 @@ public class LanderCrater extends VufTFLiteHandler {
             setRightwardState(.1);
 
             while(goldMineralX == -1 && opModeIsActive()) {
-//            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update()
+
                 getTensorFlowData();
                 telemetry.addLine("search Aligning");
                 telemetry.update();
@@ -301,8 +309,7 @@ public class LanderCrater extends VufTFLiteHandler {
 
             while((goldMineralX <= 360 || goldMineralX >= 370) && opModeIsActive() && goldMineralX != -1)
             {
-//            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update();
+
                 if (goldMineralX<=345)
                 {
                     setLeftwardState(.1);

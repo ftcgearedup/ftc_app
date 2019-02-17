@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.Direction;
@@ -20,7 +19,7 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 
 @Autonomous(name = "LanderDepot", group = "Autonomous")
 public class LanderDepot extends VufTFLiteHandler {
-    //Lander, sampling, Full Crater..... on crater side
+    //Lander, sampling, Depot..... on Depot side
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
@@ -33,12 +32,11 @@ public class LanderDepot extends VufTFLiteHandler {
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
 
-    boolean isSampling = true;
 
     private double ticksPerRevNR20 = 560;
     private double ticksPerRevNR40 = 1120;
     private double ticksPerRevNR60 = 1680;
-    public ElapsedTime land = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
+
     //The post gear box gear ratio.
     private double gearRatio = 1.0;
     //The circumference of the drive wheel.
@@ -52,48 +50,48 @@ public class LanderDepot extends VufTFLiteHandler {
         initHW();
         initAll();
 
-//        telemetry.addLine("please face robot to 2 leftmost minerals!");
-//        telemetry.update();
+
         waitForStart();
-//        telemetry.clear();
+
         this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //unlatch from lander
+
         getTensorFlowData();
-        //may need to back up in order to get all minerals into view
+
 
         while (opModeIsActive()) {
             telemetry.addLine("unlatching");
             telemetry.update();
             hook.setPower(1);
-            land.reset();
-            while(land.milliseconds()<= 5400 && opModeIsActive()){
-                telemetry.addData("landing", land.milliseconds());
-                telemetry.update();
-            }
-            // pivotCW(15, .5);
-            // forward(107,.2);
+            getTensorFlowData();
+            hook.setPower(1);
+            hook.setPower(1);
+            hook.setPower(1);
+            hook.setPower(1);
+            pivotCW(15, .5);
+            forward(107,.2);
             hook.setPower(0);
-            telemetry.addData("landed", true);
-            forward(4,.1);
+            forward(2,.1);
 
 
-
+            telemetry.addLine("now laterally Aligning");
             telemetry.update();
 
-            pivotCW(800,.2);
+            pivotCW(1250,.2);
 
-            forward(10, .3);
-            sideLeft(15, .4);
+
             telemetry.clear();
             telemetry.update();
             getTensorFlowData();
 
-            telemetry.addLine("now laterally Aligning");
             lateralAlignToGoldMineral();
             intakeLift.setPower(0);
-            forward(130,.3);
+            forward(130,1);
 
-            intake.setPower(0);
+            break;
+
+
+
+
 
         }
 
@@ -126,8 +124,6 @@ public class LanderDepot extends VufTFLiteHandler {
         lBucket = hardwareMap.servo.get("lbucket");
         hook = hardwareMap.dcMotor.get("hook");
 
-//        intake = hardwareMap.dcMotor.get("intake");
-//        intakeLift = hardwareMap.dcMotor.get("I-L");
 
 
         // set wheel direction
@@ -143,8 +139,7 @@ public class LanderDepot extends VufTFLiteHandler {
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
-//        intake.setPower(0);
-//        intakeLift.setPower(0);
+
 
     }
 
@@ -290,8 +285,7 @@ public class LanderDepot extends VufTFLiteHandler {
         setRightwardState(.1);
 
         while(goldMineralX == -1 && opModeIsActive()) {
-//            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update()
+
             getTensorFlowData();
             telemetry.addLine("search Aligning");
             telemetry.update();
@@ -301,8 +295,7 @@ public class LanderDepot extends VufTFLiteHandler {
 
         while((goldMineralX <= 360 || goldMineralX >= 370) && opModeIsActive() && goldMineralX != -1)
         {
-//            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update();
+
             if (goldMineralX<=345)
             {
                 setLeftwardState(.1);

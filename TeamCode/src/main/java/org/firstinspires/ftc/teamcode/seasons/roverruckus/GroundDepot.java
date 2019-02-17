@@ -45,14 +45,12 @@ public class GroundDepot extends VufTFLiteHandler {
         initHW();
         initAll();
 
-//        telemetry.addLine("please face robot to 2 leftmost minerals!");
-//        telemetry.update();
+
         waitForStart();
-//        telemetry.clear();
+
         this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //unlatch from lander
+
         getTensorFlowData();
-        //may need to back up in order to get all minerals into view
 
         while (opModeIsActive()) {
 
@@ -102,8 +100,6 @@ public class GroundDepot extends VufTFLiteHandler {
         lBucket = hardwareMap.servo.get("lbucket");
         hook = hardwareMap.dcMotor.get("hook");
 
-//        intake = hardwareMap.dcMotor.get("intake");
-//        intakeLift = hardwareMap.dcMotor.get("I-L");
 
 
         // set wheel direction
@@ -119,8 +115,7 @@ public class GroundDepot extends VufTFLiteHandler {
         frontRight.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
-//        intake.setPower(0);
-//        intakeLift.setPower(0);
+
 
     }
 
@@ -263,8 +258,7 @@ public class GroundDepot extends VufTFLiteHandler {
         setRightwardState(.1);
 
         while(goldMineralX == -1 && opModeIsActive()) {
-//            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update()
+
             getTensorFlowData();
             telemetry.addLine("search Aligning");
             telemetry.update();
@@ -274,8 +268,7 @@ public class GroundDepot extends VufTFLiteHandler {
 
         while((goldMineralX <= 360 || goldMineralX >= 370) && opModeIsActive() && goldMineralX != -1)
         {
-//            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update();
+
             if (goldMineralX<=345)
             {
                 setLeftwardState(.1);
