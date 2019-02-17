@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 
 @Autonomous(name = "LanderDepotCrater", group = "Autonomous")
 public class LanderDepotCrater extends VufTFLiteHandler {
-    //Sampling, Lander, Partial Crater.... on Depot Side
+    //Lander, Sampling, Depot Partial Crater.... on Depot Side
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
@@ -33,8 +33,14 @@ public class LanderDepotCrater extends VufTFLiteHandler {
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     boolean isSampling = true;
     public ElapsedTime land = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
+=======
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
     private double ticksPerRevNR20 = 560;
     private double ticksPerRevNR40 = 1120;
@@ -58,7 +64,7 @@ public class LanderDepotCrater extends VufTFLiteHandler {
         waitForStart();
 //        telemetry.clear();
         this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //unlatch from lander
+
         getTensorFlowData();
         //may need to back up in order to get all minerals into view
 
@@ -78,6 +84,14 @@ public class LanderDepotCrater extends VufTFLiteHandler {
             forward(4,.1);
 
 
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+=======
+>>>>>>> Stashed changes
+
+            telemetry.update();
+>>>>>>> Stashed changes
 
             telemetry.update();
 
@@ -90,6 +104,14 @@ public class LanderDepotCrater extends VufTFLiteHandler {
             getTensorFlowData();
 
             telemetry.addLine("now laterally Aligning");
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
+=======
+
+>>>>>>> Stashed changes
             lateralAlignToGoldMineral();
             intakeLift.setPower(0);
             forward(130,.3);

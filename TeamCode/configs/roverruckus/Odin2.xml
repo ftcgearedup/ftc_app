@@ -14,7 +14,7 @@
             <NeveRest20Gearmotor name="fl" port="1" />
             <NeveRest40Gearmotor name="lift" port="2" />
             <NeveRest20Gearmotor name="fr" port="3" />
-            <ContinuousRotationServo name="lbucket" port="0" />
+            <Servo name="lbucket" port="0" />
             <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
         </LynxModule>
     </LynxUsbDevice>

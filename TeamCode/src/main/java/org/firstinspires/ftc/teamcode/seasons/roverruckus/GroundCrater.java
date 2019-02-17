@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.VufTFLiteHandl
 @Autonomous(name = "GroundCrater", group = "Autonomous")
 
 public class GroundCrater extends VufTFLiteHandler {
-    // sampling, Full Crater..... on crater side
+    // sampling, Full Crater..... Starts on crater side, No landing
     private DcMotor frontRight;
     private DcMotor backRight;
     private DcMotor backLeft;
@@ -25,7 +25,7 @@ public class GroundCrater extends VufTFLiteHandler {
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
 
-    boolean isSampling = true;
+
 
     private double ticksPerRevNR20 = 560;
     private double ticksPerRevNR40 = 1120;
@@ -45,14 +45,9 @@ public class GroundCrater extends VufTFLiteHandler {
         initHW();
         initAll();
 
-//        telemetry.addLine("please face robot to 2 leftmost minerals!");
-//        telemetry.update();
         waitForStart();
-//        telemetry.clear();
         this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //unlatch from lander
         getTensorFlowData();
-        //may need to back up in order to get all minerals into view
 
         while (opModeIsActive()) {
 
@@ -263,8 +258,7 @@ public class GroundCrater extends VufTFLiteHandler {
         setRightwardState(.1);
 
         while(goldMineralX == -1 && opModeIsActive()) {
-//            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update()
+
             getTensorFlowData();
             telemetry.addLine("search Aligning");
             telemetry.update();
@@ -274,8 +268,7 @@ public class GroundCrater extends VufTFLiteHandler {
 
         while((goldMineralX <= 360 || goldMineralX >= 370) && opModeIsActive() && goldMineralX != -1)
         {
-//            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update();
+
             if (goldMineralX<=345)
             {
                 setLeftwardState(.1);
