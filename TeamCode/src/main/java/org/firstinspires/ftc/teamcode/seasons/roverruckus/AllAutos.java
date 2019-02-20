@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.seasons.roverruckus;
 
-public class AllAutos {
 
-<<<<<<< Updated upstream
-}
-=======
+
 import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -458,4 +455,4 @@ public class AllAutos extends VufTFLiteHandler {
 
 
 }
->>>>>>> Stashed changes
+
