@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.seasons.velocityvortex.EncoderValues;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 
 
-@Autonomous(name = "AllAutos \uD83D\uF196 ", group = "Autonomous")
+@Autonomous(name = "LanderAuto", group = "Autonomous")
 public class AllAutos extends VufTFLiteHandler {
     //All Autos, in one class!
     private DcMotor frontRight;
