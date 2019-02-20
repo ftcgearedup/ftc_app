@@ -33,14 +33,8 @@ public class LanderDepotCrater extends VufTFLiteHandler {
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    boolean isSampling = true;
+
     public ElapsedTime land = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     private double ticksPerRevNR20 = 560;
     private double ticksPerRevNR40 = 1120;
@@ -83,15 +77,8 @@ public class LanderDepotCrater extends VufTFLiteHandler {
             telemetry.addData("landed", true);
             forward(4,.1);
 
-
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
-
             telemetry.update();
->>>>>>> Stashed changes
+
 
             telemetry.update();
 
@@ -104,14 +91,7 @@ public class LanderDepotCrater extends VufTFLiteHandler {
             getTensorFlowData();
 
             telemetry.addLine("now laterally Aligning");
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
-=======
-
->>>>>>> Stashed changes
             lateralAlignToGoldMineral();
             intakeLift.setPower(0);
             forward(130,.3);

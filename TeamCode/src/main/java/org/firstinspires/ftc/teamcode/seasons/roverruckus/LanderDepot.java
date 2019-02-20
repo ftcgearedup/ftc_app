@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.Direction;
@@ -31,6 +32,8 @@ public class LanderDepot extends VufTFLiteHandler {
     private DcMotor hook;
     private BNO055IMUWrapper imu;
     private VuforiaNav useVuforia;
+
+    public ElapsedTime land = new ElapsedTime(ElapsedTime.MILLIS_IN_NANO);
 
 
     private double ticksPerRevNR20 = 560;
@@ -62,16 +65,15 @@ public class LanderDepot extends VufTFLiteHandler {
             telemetry.addLine("unlatching");
             telemetry.update();
             hook.setPower(1);
-            getTensorFlowData();
-            hook.setPower(1);
-            hook.setPower(1);
-            hook.setPower(1);
-            hook.setPower(1);
-            pivotCW(15, .5);
-            forward(107,.2);
+            land.reset();
+            while(land.milliseconds()<= 5400 && opModeIsActive()){
+                telemetry.addData("landing", land.milliseconds());
+                telemetry.update();
+            }
+            // pivotCW(15, .5);
+            // forward(107,.2);
             hook.setPower(0);
-            forward(2,.1);
-
+            telemetry.addData("landed", true);
 
             telemetry.addLine("now laterally Aligning");
             telemetry.update();
