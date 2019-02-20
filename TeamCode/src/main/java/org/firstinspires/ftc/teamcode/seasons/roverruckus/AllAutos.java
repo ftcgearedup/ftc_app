@@ -1,21 +1,14 @@
 package org.firstinspires.ftc.teamcode.seasons.roverruckus;
 
 
-
-import com.qualcomm.hardware.motors.RevRoboticsCoreHexMotor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
-import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.Direction;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.VufTFLiteHandler;
-import org.firstinspires.ftc.teamcode.seasons.velocityvortex.EncoderValues;
-import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 
 
 @Autonomous(name = "LanderAuto", group = "Autonomous")
@@ -47,11 +40,11 @@ public class AllAutos extends VufTFLiteHandler {
     private double ticksPerCm = (ticksPerRevNR20 * gearRatio) / wheelCircumference;
     //Formula to calculate ticks per centimeter for the current drive set up.SIDEWAYS
 
-    int ground =0;
-    int landing =0;
-    int clickedbefore = 0 ;
+    int ground = 0;
+    int landing = 0;
+    int clickedbefore = 0;
 
-    String[][] autos = new String[][]  {  {  "LanderStart", "GroundStart" },{  "nothing else", "Depot",  "Crater"} };
+    String[][] autos = new String[][]{{"LanderStart", "GroundStart"}, {"nothing else", "Depot", "Crater"}};
 
     String selectedAuto = "";
 
@@ -60,67 +53,68 @@ public class AllAutos extends VufTFLiteHandler {
         initHW();
         initAll();
 
-        while (!isStarted())
-        {
+        while (!isStarted()) {
 
             telemetry.clear();
 
             clickedbefore = 0;
 
-            while(gamepad1.dpad_up)
-            {
-                telemetry.addData("",autos[0][landing] +" : "+ autos[1][ground]);
+            while (gamepad1.dpad_up) {
+                telemetry.addData("", autos[0][landing] + " : " + autos[1][ground]);
                 telemetry.update();
 
 
-                if(clickedbefore == 0 )
-                { landing++; clickedbefore =1;}
-                if(landing >1)
+                if (clickedbefore == 0) {
+                    landing++;
+                    clickedbefore = 1;
+                }
+                if (landing > 1)
                     landing = 0;
             }
             clickedbefore = 0;
-            while (gamepad1.dpad_down)
-            {
-                telemetry.addData("",autos[0][landing] +" : "+ autos[1][ground]);
+            while (gamepad1.dpad_down) {
+                telemetry.addData("", autos[0][landing] + " : " + autos[1][ground]);
                 telemetry.update();
 
-                if(clickedbefore == 0 )
-                { landing--; clickedbefore =1;}
-                if(landing <0)
+                if (clickedbefore == 0) {
+                    landing--;
+                    clickedbefore = 1;
+                }
+                if (landing < 0)
                     landing = 1;
             }
 
             clickedbefore = 0;
-            while(gamepad1.dpad_right)
-            {
-                telemetry.addData("",autos[0][landing] +" : "+ autos[1][ground]);
+            while (gamepad1.dpad_right) {
+                telemetry.addData("", autos[0][landing] + " : " + autos[1][ground]);
                 telemetry.update();
 
-                if(clickedbefore == 0 )
-                { ground++; clickedbefore =1;}
-                if(ground >2)
+                if (clickedbefore == 0) {
+                    ground++;
+                    clickedbefore = 1;
+                }
+                if (ground > 2)
                     ground = 0;
             }
             clickedbefore = 0;
-            while (gamepad1.dpad_left)
-            {
-                telemetry.addData("",autos[0][landing] +" : "+ autos[1][ground]);
+            while (gamepad1.dpad_left) {
+                telemetry.addData("", autos[0][landing] + " : " + autos[1][ground]);
                 telemetry.update();
 //                telemetry.addData("DpadLEFT",ground);
 //                telemetry.update();
 
-                if(clickedbefore == 0 )
-                { ground--; clickedbefore =1;}
-                if(ground <0)
+                if (clickedbefore == 0) {
+                    ground--;
+                    clickedbefore = 1;
+                }
+                if (ground < 0)
                     ground = 2;
             }
-            selectedAuto =autos[0][landing] +" : "+ autos[1][ground];
-            if (selectedAuto == "GroundStart : nothing else")
-            {
+            selectedAuto = autos[0][landing] + " : " + autos[1][ground];
+            if (selectedAuto == "GroundStart : nothing else") {
                 telemetry.addLine("invalid Auto, will switch to Ground Depot");
-            } else
-            {
-                telemetry.addData("",selectedAuto);
+            } else {
+                telemetry.addData("", selectedAuto);
             }
 
 
@@ -131,8 +125,7 @@ public class AllAutos extends VufTFLiteHandler {
         waitForStart();
 
 
-        if(selectedAuto == "GroundStart : nothing else")
-        {
+        if (selectedAuto == "GroundStart : nothing else") {
             selectedAuto = "GroundStart : Depot";
         }
 
@@ -140,48 +133,48 @@ public class AllAutos extends VufTFLiteHandler {
 
         while (opModeIsActive()) {
 
-            switch(selectedAuto){
+            switch (selectedAuto) {
 
                 case "LanderStart : nothing else":
                     land();
                     break;
                 case "LanderStart : Depot":
                     land();
-                    pivotCW(1250,.2);
+                    pivotCW(1250, .2);
 
-                    forward(10,.1);
+                    forward(10, .1);
 
                     telemetry.clear();
                     telemetry.update();
                     lateralAlignToGoldMineral();
-                    forward(130,1);
+                    forward(130, 1);
                     break;
-                case "LanderStart : Crater" :
+                case "LanderStart : Crater":
                     land();
-                    pivotCW(1250,.2);
+                    pivotCW(1250, .2);
 
-                    forward(10,.1);
+                    forward(10, .1);
 
                     telemetry.clear();
                     telemetry.update();
                     lateralAlignToGoldMineral();
-                    forward(160,1);
+                    forward(160, 1);
                     break;
-                case "GroundStart : Depot" :
-                    forward(10,.1);
+                case "GroundStart : Depot":
+                    forward(10, .1);
 
                     telemetry.clear();
                     telemetry.update();
                     lateralAlignToGoldMineral();
-                    forward(130,1);
+                    forward(130, 1);
                     break;
-                case "GroundStart : Crater" :
-                    forward(10,.1);
+                case "GroundStart : Crater":
+                    forward(10, .1);
 
                     telemetry.clear();
                     telemetry.update();
                     lateralAlignToGoldMineral();
-                    forward(160,1);
+                    forward(160, 1);
                     break;
                 default:
                     telemetry.addLine("something is wrong with selectedAuto String variable");
@@ -321,9 +314,6 @@ public class AllAutos extends VufTFLiteHandler {
     }
 
 
-
-
-
     //clockwise is 0 cc is 1
     public void pivotCW(double degree, double power) {
 
@@ -332,7 +322,7 @@ public class AllAutos extends VufTFLiteHandler {
 
         double currentDegree = 0;
         while ((currentDegree < degree) && opModeIsActive()) {
-            currentDegree = (frontLeft.getCurrentPosition() + backLeft.getCurrentPosition())/2;
+            currentDegree = (frontLeft.getCurrentPosition() + backLeft.getCurrentPosition()) / 2;
             frontLeft.setPower(power);
             frontRight.setPower(-power);
             backLeft.setPower(power);
@@ -348,7 +338,7 @@ public class AllAutos extends VufTFLiteHandler {
 
         double currentDegree = 0;
         while (currentDegree < degree && opModeIsActive()) {
-            currentDegree = (frontRight.getCurrentPosition() + backRight.getCurrentPosition())/2;
+            currentDegree = (frontRight.getCurrentPosition() + backRight.getCurrentPosition()) / 2;
             frontLeft.setPower(-power);
             frontRight.setPower(power);
             backLeft.setPower(-power);
@@ -357,29 +347,27 @@ public class AllAutos extends VufTFLiteHandler {
         stopMotors();
     }
 
-    public void setLeftwardState(double power)
-    {
+    public void setLeftwardState(double power) {
         frontLeft.setPower(-power);
         frontRight.setPower(power);
         backLeft.setPower(power);
         backRight.setPower(-power);
     }
 
-    public void setRightwardState(double power)
-    {
+    public void setRightwardState(double power) {
         frontLeft.setPower(power);
         frontRight.setPower(-power);
         backLeft.setPower(-power);
         backRight.setPower(power);
     }
 
-    public void land(){
+    public void land() {
 
         telemetry.addLine("unlatching");
         telemetry.update();
         hook.setPower(1);
         land.reset();
-        while(land.milliseconds()<= 5400 && opModeIsActive()){
+        while (land.milliseconds() <= 5400 && opModeIsActive()) {
             telemetry.addData("landing", land.milliseconds());
             telemetry.update();
         }
@@ -390,8 +378,7 @@ public class AllAutos extends VufTFLiteHandler {
     }
 
 
-
-    public void lateralAlignToGoldMineral(){
+    public void lateralAlignToGoldMineral() {
 
         int timesTriedAligning = 0;
 
@@ -402,7 +389,7 @@ public class AllAutos extends VufTFLiteHandler {
 
         setRightwardState(.1);
 
-        while(goldMineralX == -1 && opModeIsActive()) {
+        while (goldMineralX == -1 && opModeIsActive()) {
 //            telemetry.addData("goldMineralX", goldMineralX);
 //            telemetry.update()
             getTensorFlowData();
@@ -412,19 +399,16 @@ public class AllAutos extends VufTFLiteHandler {
 
         stopMotors();
 
-        while((goldMineralX <= 360 || goldMineralX >= 370)
-                && opModeIsActive() && goldMineralX != -1 && timesTriedAligning <=5)
-        {
+        while ((goldMineralX <= 360 || goldMineralX >= 370)
+                && opModeIsActive() && goldMineralX != -1 && timesTriedAligning <= 5) {
 //            telemetry.addData("goldMineralX", goldMineralX);
 //            telemetry.update();
-            while (goldMineralX<=345)
-            {
+            while (goldMineralX <= 345) {
                 setLeftwardState(.1);
             }
             timesTriedAligning++;
             getTensorFlowData();
-            while (goldMineralX>=385)
-            {
+            while (goldMineralX >= 385) {
                 setRightwardState(.1);
             }
             timesTriedAligning++;
@@ -434,8 +418,7 @@ public class AllAutos extends VufTFLiteHandler {
             telemetry.addLine("center Aligning");
             telemetry.update();
         }
-        if(goldMineralX>360 && goldMineralX<370)
-        {
+        if (goldMineralX > 360 && goldMineralX < 370) {
             stopMotors();
 
 
@@ -446,12 +429,7 @@ public class AllAutos extends VufTFLiteHandler {
         }
 
 
-
     }
-
-
-
-
 
 
 }
