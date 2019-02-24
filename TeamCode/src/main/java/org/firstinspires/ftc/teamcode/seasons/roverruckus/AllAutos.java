@@ -127,7 +127,7 @@ public class AllAutos extends VufTFLiteHandler {
 
 
         if (selectedAuto == "GroundStart : nothing else") {
-            selectedAuto = "GroundStart : Depot";
+//            selectedAuto = "GroundStart : Depot";
         }
 
         this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -181,6 +181,14 @@ public class AllAutos extends VufTFLiteHandler {
                     telemetry.update();
                     forward(160, .7);
                     break;
+                case "GroundStart : nothingElse":
+                    while (opModeIsActive())
+                    {
+                        readEncoders();
+                    }
+
+                    break;
+
                 default:
                     telemetry.addLine("something is wrong with selectedAuto String variable");
                     telemetry.update();
