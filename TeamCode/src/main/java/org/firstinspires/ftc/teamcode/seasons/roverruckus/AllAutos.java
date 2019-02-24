@@ -112,7 +112,8 @@ public class AllAutos extends VufTFLiteHandler {
             }
             selectedAuto = autos[0][landing] + " : " + autos[1][ground];
             if (selectedAuto == "GroundStart : nothing else") {
-                telemetry.addLine("invalid Auto, will switch to Ground Depot");
+                telemetry.addLine("invalid Auto, switching to Ground Depot");
+                telemetry.update();
             } else {
                 telemetry.addData("", selectedAuto);
             }
@@ -147,7 +148,7 @@ public class AllAutos extends VufTFLiteHandler {
                     telemetry.clear();
                     telemetry.update();
                     lateralAlignToGoldMineral();
-                    forward(130, 1);
+                    forward(130, .7);
                     break;
                 case "LanderStart : Crater":
                     land();
@@ -158,7 +159,7 @@ public class AllAutos extends VufTFLiteHandler {
                     telemetry.clear();
                     telemetry.update();
                     lateralAlignToGoldMineral();
-                    forward(160, 1);
+                    forward(160, .7);
                     break;
                 case "GroundStart : Depot":
                     forward(10, .1);
@@ -166,22 +167,30 @@ public class AllAutos extends VufTFLiteHandler {
                     telemetry.clear();
                     telemetry.update();
                     lateralAlignToGoldMineral();
-                    forward(130, 1);
+                    forward(130, .7);
                     break;
                 case "GroundStart : Crater":
                     forward(10, .1);
 
                     telemetry.clear();
                     telemetry.update();
+                    telemetry.addLine("PreLatAlign");
+                    telemetry.update();
                     lateralAlignToGoldMineral();
-                    forward(160, 1);
+                    telemetry.addLine("PostLatAlign");
+                    telemetry.update();
+                    forward(160, .7);
                     break;
                 default:
                     telemetry.addLine("something is wrong with selectedAuto String variable");
                     telemetry.update();
                     break;
             }
-            break;
+            while(opModeIsActive()) {
+                telemetry.addLine("finished!");
+                telemetry.update();
+                stopMotors();
+            }
 
 
         }
@@ -261,15 +270,15 @@ public class AllAutos extends VufTFLiteHandler {
         double targetDistanceTicks = targetDistance * ticksPerCm;
         double currentDistanceTicks = 0;
         while ((currentDistanceTicks < targetDistanceTicks) && opModeIsActive()) {
-            telemetry.addData("Target pos ticks: ", targetDistanceTicks);
-            telemetry.addData("Target Distance:", targetDistance + "cm");
+//            telemetry.addData("Target pos ticks: ", targetDistanceTicks);
+//            telemetry.addData("Target Distance:", targetDistance + "cm");
             currentDistanceTicks = (frontRight.getCurrentPosition() +
                     frontLeft.getCurrentPosition() +
                     backRight.getCurrentPosition() +
                     backLeft.getCurrentPosition()) / 4.0;
-            telemetry.addData("Current pos ticks Avg: ", currentDistanceTicks);
-            telemetry.addData("Current Distance cm", currentDistanceTicks / ticksPerCm);
-            telemetry.update();
+//            telemetry.addData("Current pos ticks Avg: ", currentDistanceTicks);
+//            telemetry.addData("Current Distance cm", currentDistanceTicks / ticksPerCm);
+//            telemetry.update();
 
             frontLeft.setPower(power);
             frontRight.setPower(power);
@@ -382,55 +391,92 @@ public class AllAutos extends VufTFLiteHandler {
 
         int timesTriedAligning = 0;
 
-        telemetry.addLine("now laterally Aligning");
-        telemetry.update();
-
         getTensorFlowData();
 
         setRightwardState(.1);
+        boolean drivingRight  = true;
+        ElapsedTime scrolltime = new ElapsedTime();
+        scrolltime.reset();
 
-        while (goldMineralX == -1 && opModeIsActive()) {
-//            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update()
-            getTensorFlowData();
-            telemetry.addLine("search Aligning");
+
+        while (opModeIsActive() && scrolltime.seconds() < 2 ) {
+
+            telemetry.addLine("Debugging line");
             telemetry.update();
         }
 
-        stopMotors();
 
-        while ((goldMineralX <= 360 || goldMineralX >= 370)
-                && opModeIsActive() && goldMineralX != -1 && timesTriedAligning <= 5) {
-//            telemetry.addData("goldMineralX", goldMineralX);
-//            telemetry.update();
-            while (goldMineralX <= 345) {
+        while (opModeIsActive()) {
+
+            telemetry.addData("Scolltime",scrolltime.seconds());
+            telemetry.update();
+
+
+            //Minerial in Center
+            if ((goldMineralX <= 360 || goldMineralX >= 370)
+                    && opModeIsActive() ){
+                break;
+            }
+
+            if (scrolltime.seconds() > 4 && drivingRight ){
                 setLeftwardState(.1);
-            }
-            timesTriedAligning++;
-            getTensorFlowData();
-            while (goldMineralX >= 385) {
+                scrolltime.reset();
+                drivingRight = false;
+                telemetry.addData("Driving ", drivingRight);
+            } else if (scrolltime.seconds() > 4 ){
                 setRightwardState(.1);
+                scrolltime.reset();
+                drivingRight = true;
+                telemetry.addData("Driving ", drivingRight);
             }
-            timesTriedAligning++;
-            getTensorFlowData();
+            if (this.time > 27 ){
+                telemetry.addLine("Excced Aligning Time");
+                break;
+            }
 
-            telemetry.addData("timesTriedAligning", timesTriedAligning);
-            telemetry.addLine("center Aligning");
+
+            while ((goldMineralX <= 360 || goldMineralX >= 370)
+                    && opModeIsActive() && goldMineralX > 0 //){
+                    && timesTriedAligning <= 5) {
+
+
+                telemetry.addData("mineral","center Aligning");
+                telemetry.update();
+
+                while (goldMineralX <= 345 && opModeIsActive()) {
+//            if(goldMineralX <= 345){
+                    setLeftwardState(.1);
+
+                    telemetry.addData("setting","LeftwardState");
+                    telemetry.update();
+                }
+                timesTriedAligning++;
+                getTensorFlowData();
+                while (goldMineralX >= 385 && opModeIsActive()) {
+//            if(goldMineralX >=385){
+                    setRightwardState(.1);
+                    telemetry.addData("setting", "RightwardState");
+                    telemetry.update();
+
+                }
+                timesTriedAligning++;
+                getTensorFlowData();
+
+                telemetry.addData("timesTriedAligning", timesTriedAligning);
+                telemetry.update();
+
+            }
             telemetry.update();
         }
         if (goldMineralX > 360 && goldMineralX < 370) {
             stopMotors();
 
-
             telemetry.addLine("aligned with mineral! :)");
             telemetry.update();
-
             return;
         }
 
 
     }
-
-
 }
 
