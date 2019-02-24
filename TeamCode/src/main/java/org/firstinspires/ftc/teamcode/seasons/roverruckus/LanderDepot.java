@@ -66,7 +66,7 @@ public class LanderDepot extends VufTFLiteHandler {
             telemetry.update();
             hook.setPower(1);
             land.reset();
-            while(land.milliseconds()<= 5400 && opModeIsActive()){
+            while(land.milliseconds()<= 5300 && opModeIsActive()){
                 telemetry.addData("landing", land.milliseconds());
                 telemetry.update();
             }
@@ -74,26 +74,26 @@ public class LanderDepot extends VufTFLiteHandler {
             // forward(107,.2);
             hook.setPower(0);
             telemetry.addData("landed", true);
+            pivotCW(15, .5);
+            forward(15,.1);
 
-            telemetry.addLine("now laterally Aligning");
             telemetry.update();
 
-            pivotCW(1250,.2);
+            pivotCW(850,.2);
 
-
+            forward(10, .3);
+            sideLeft(15, .4);
             telemetry.clear();
             telemetry.update();
             getTensorFlowData();
 
+            telemetry.addLine("now laterally Aligning");
             lateralAlignToGoldMineral();
             intakeLift.setPower(0);
-            forward(130,1);
+            forward(160,.5);
 
+            intake.setPower(0);
             break;
-
-
-
-
 
         }
 

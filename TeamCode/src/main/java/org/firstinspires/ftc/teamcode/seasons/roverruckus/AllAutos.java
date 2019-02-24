@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.VufTFLiteHandler;
 
 
-@Autonomous(name = "LanderAuto", group = "Autonomous")
+@Autonomous(name = "AllAutos", group = "Autonomous")
 public class AllAutos extends VufTFLiteHandler {
     //All Autos, in one class!
     private DcMotor frontRight;

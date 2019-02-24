@@ -81,13 +81,10 @@ public class LanderCrater extends VufTFLiteHandler {
         // forward(107,.2);
         hook.setPower(0);
         telemetry.addData("landed", true);
-        forward(4,.1);
-
-
-
+        pivotCW(15, .5);
+        forward(15,.1);
 
         telemetry.update();
-
 
         pivotCW(800,.2);
 
@@ -101,14 +98,11 @@ public class LanderCrater extends VufTFLiteHandler {
         telemetry.addLine("now laterally Aligning");
         lateralAlignToGoldMineral();
         intakeLift.setPower(0);
-        forward(160,1);
+        forward(160,.5);
 
         intake.setPower(0);
 
     }
-
-
-
 
         telemetry.update();
 }
