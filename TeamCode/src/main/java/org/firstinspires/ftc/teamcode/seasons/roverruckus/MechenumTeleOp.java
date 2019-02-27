@@ -116,6 +116,12 @@ public class MechenumTeleOp extends OpMode {
          hook.setPower(0);
      }
         telemetry.addData("motor speeds","fl "+ fl + " fr "+fr + " bl "+ bl + " br "+ br);
+        telemetry.addData("enc values",
+                "fl " + frontLeft.getCurrentPosition() +
+                        " fr " + frontRight.getCurrentPosition() +
+                        " bl " + backLeft.getCurrentPosition() +
+                        " br " + backRight.getCurrentPosition());
+
         //telemetry.addData("intake ", "intake ",intakePower);
         telemetry.update();
     }

@@ -172,7 +172,6 @@ public abstract class VufTFLiteHandler extends LinearOpMode {
     //This method will init and activate all methods that are needed for both Vuforia and TFLite
     public void initAll() {
         initVuforia();
-        initTfod();
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
             initTfod();

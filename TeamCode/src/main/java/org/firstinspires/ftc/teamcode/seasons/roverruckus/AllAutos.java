@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.seasons.roverruckus;
 
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
 import org.firstinspires.ftc.teamcode.seasons.roverruckus.utility.VufTFLiteHandler;
@@ -123,6 +126,8 @@ public class AllAutos extends VufTFLiteHandler {
 
         }
 
+
+        log("Waiting for start");
         waitForStart();
 
 
@@ -182,12 +187,12 @@ public class AllAutos extends VufTFLiteHandler {
                     forward(160, .7);
                     break;
                 case "GroundStart : nothingElse":
-                    while (opModeIsActive())
+                    while (true)
                     {
                         readEncoders();
                     }
 
-                    break;
+
 
                 default:
                     telemetry.addLine("something is wrong with selectedAuto String variable");
@@ -206,12 +211,16 @@ public class AllAutos extends VufTFLiteHandler {
         telemetry.update();
     }
 
+    private void log(String message) {
+        RobotLog.d("GU: "+ message);
+    }
+
     //Methods!!!
     public void readEncoders() {
         setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
         setZeroPowBehv(DcMotor.ZeroPowerBehavior.FLOAT);
-        while (opModeIsActive()) {
+        while (true) {
             telemetry.addData("Front right encoder ticks: ", frontRight.getCurrentPosition());
             telemetry.addData("Front left encoder ticks: ", frontLeft.getCurrentPosition());
             telemetry.addData("Back right encoder ticks: ", backRight.getCurrentPosition());
@@ -409,8 +418,10 @@ public class AllAutos extends VufTFLiteHandler {
 
         while (opModeIsActive() && scrolltime.seconds() < 2 ) {
 
-            telemetry.addLine("Debugging line");
+            telemetry.addData("Debugging line",scrolltime.seconds());
             telemetry.update();
+            log("Debugging line"+ scrolltime.seconds());
+
         }
 
 
@@ -421,8 +432,11 @@ public class AllAutos extends VufTFLiteHandler {
 
 
             //Minerial in Center
-            if ((goldMineralX <= 360 || goldMineralX >= 370)
+            if ((goldMineralX >= 360 || goldMineralX <= 370)
                     && opModeIsActive() ){
+                telemetry.addLine("Mineral in Center");
+                log("Mineral in Center");
+                telemetry.update();
                 break;
             }
 
@@ -431,16 +445,24 @@ public class AllAutos extends VufTFLiteHandler {
                 scrolltime.reset();
                 drivingRight = false;
                 telemetry.addData("Driving ", drivingRight);
+                log("Driving " + drivingRight);
             } else if (scrolltime.seconds() > 4 ){
                 setRightwardState(.1);
                 scrolltime.reset();
                 drivingRight = true;
                 telemetry.addData("Driving ", drivingRight);
+                log("Driving " + drivingRight);
             }
             if (this.time > 27 ){
                 telemetry.addLine("Excced Aligning Time");
+                log("Excced Aligning Time");
+                telemetry.update();
                 break;
             }
+
+            int temp;
+            if (true)
+                temp = 1/0;
 
 
             while ((goldMineralX <= 360 || goldMineralX >= 370)
@@ -456,6 +478,7 @@ public class AllAutos extends VufTFLiteHandler {
                     setLeftwardState(.1);
 
                     telemetry.addData("setting","LeftwardState");
+                    log("setting LeftwardState");
                     telemetry.update();
                 }
                 timesTriedAligning++;
@@ -464,6 +487,7 @@ public class AllAutos extends VufTFLiteHandler {
 //            if(goldMineralX >=385){
                     setRightwardState(.1);
                     telemetry.addData("setting", "RightwardState");
+                    log("setting RightwardState");
                     telemetry.update();
 
                 }
@@ -471,6 +495,7 @@ public class AllAutos extends VufTFLiteHandler {
                 getTensorFlowData();
 
                 telemetry.addData("timesTriedAligning", timesTriedAligning);
+                log("timesTriedAligning" + timesTriedAligning);
                 telemetry.update();
 
             }
@@ -480,6 +505,7 @@ public class AllAutos extends VufTFLiteHandler {
             stopMotors();
 
             telemetry.addLine("aligned with mineral! :)");
+            log("aligned with mineral! ");
             telemetry.update();
             return;
         }
