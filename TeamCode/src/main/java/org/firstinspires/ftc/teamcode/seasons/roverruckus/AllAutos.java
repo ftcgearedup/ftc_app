@@ -432,7 +432,7 @@ public class AllAutos extends VufTFLiteHandler {
 
 
             //Minerial in Center
-            if ((goldMineralX >= 360 || goldMineralX <= 370)
+            if ((goldMineralX >=360|| goldMineralX <=370)
                     && opModeIsActive() ){
                 telemetry.addLine("Mineral in Center");
                 log("Mineral in Center");
@@ -470,7 +470,7 @@ public class AllAutos extends VufTFLiteHandler {
                     && timesTriedAligning <= 5) {
 
 
-                telemetry.addData("mineral","center Aligning");
+                telemetry.addData("mineral","Mineral aligning");
                 telemetry.update();
 
                 while (goldMineralX <= 345 && opModeIsActive()) {

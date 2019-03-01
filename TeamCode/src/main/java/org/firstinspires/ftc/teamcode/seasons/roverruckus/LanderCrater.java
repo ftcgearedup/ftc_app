@@ -285,41 +285,37 @@ public class LanderCrater extends VufTFLiteHandler {
             backRight.setPower(power);
         }
 
-        public void lateralAlignToGoldMineral(){
+    public void lateralAlignToGoldMineral(){
 
+
+        getTensorFlowData();
+
+        setRightwardState(.1);
+
+        while(goldMineralX == -1 && opModeIsActive()) {
 
             getTensorFlowData();
+            telemetry.addLine("search Aligning");
+            telemetry.update();
+        }
 
-            setRightwardState(.1);
+        stopMotors();
 
-            while(goldMineralX == -1 && opModeIsActive()) {
+        while((goldMineralX >= 360 || goldMineralX <= 370) && opModeIsActive() && goldMineralX != -1)
+        {
 
-                getTensorFlowData();
-                telemetry.addLine("search Aligning");
-                telemetry.update();
-            }
-
-            stopMotors();
-
-            while((goldMineralX <= 360 || goldMineralX >= 370) && opModeIsActive() && goldMineralX != -1)
+            if (goldMineralX<=345)
             {
-
-                if (goldMineralX<=345)
-                {
-                    setLeftwardState(.1);
-                }
-
-                if (goldMineralX>=385)
-                {
-                    setRightwardState(.1);
-                }
-                getTensorFlowData();
-
-
-                telemetry.addLine("center Aligning");
-                telemetry.update();
+                setLeftwardState(.075);
             }
-            if(goldMineralX>360 && goldMineralX<370)
+
+            if (goldMineralX>=385)
+            {
+                setRightwardState(.075);
+            }
+            getTensorFlowData();
+
+            if(goldMineralX>350 && goldMineralX<380)
             {
                 stopMotors();
                 telemetry.addLine("aligned with mineral! :)");
@@ -328,8 +324,18 @@ public class LanderCrater extends VufTFLiteHandler {
                 return;
             }
 
-
-
+            telemetry.addLine("Mineral Aligning");
+            telemetry.update();
         }
+        if(goldMineralX>350 && goldMineralX<380)
+        {
+            stopMotors();
+            telemetry.addLine("aligned with mineral! :)");
+            telemetry.update();
+
+            return;
+        }
+
+    }
 
     }

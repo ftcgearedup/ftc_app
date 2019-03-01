@@ -54,14 +54,15 @@ public class GroundDepot extends VufTFLiteHandler {
 
         while (opModeIsActive()) {
 
-
-
+            intakeLift.setPower(-1);
             forward(10,.1);
 
             telemetry.addLine("now laterally Aligning");
             telemetry.update();
+            intakeLift.setPower(0);
 
             lateralAlignToGoldMineral();
+            intake.setPower(1);
 
             forward(130,.3);
 
@@ -266,25 +267,33 @@ public class GroundDepot extends VufTFLiteHandler {
 
         stopMotors();
 
-        while((goldMineralX <= 360 || goldMineralX >= 370) && opModeIsActive() && goldMineralX != -1)
+        while((goldMineralX >= 360 || goldMineralX <= 370) && opModeIsActive() && goldMineralX != -1)
         {
 
             if (goldMineralX<=345)
             {
-                setLeftwardState(.1);
+                setLeftwardState(.075);
             }
 
             if (goldMineralX>=385)
             {
-                setRightwardState(.1);
+                setRightwardState(.075);
             }
             getTensorFlowData();
 
+            if(goldMineralX>350 && goldMineralX<380)
+            {
+                stopMotors();
+                telemetry.addLine("aligned with mineral! :)");
+                telemetry.update();
 
-            telemetry.addLine("center Aligning");
+                return;
+            }
+
+            telemetry.addLine("Mineral Aligning");
             telemetry.update();
         }
-        if(goldMineralX>360 && goldMineralX<370)
+        if(goldMineralX>350 && goldMineralX<380)
         {
             stopMotors();
             telemetry.addLine("aligned with mineral! :)");
@@ -292,8 +301,6 @@ public class GroundDepot extends VufTFLiteHandler {
 
             return;
         }
-
-
 
     }
 
