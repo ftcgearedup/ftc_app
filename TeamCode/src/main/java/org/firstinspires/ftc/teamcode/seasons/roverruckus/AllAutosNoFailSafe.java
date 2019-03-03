@@ -395,9 +395,6 @@ public class AllAutosNoFailSafe extends VufTFLiteHandler {
 
 
     public void lateralAlignToGoldMineral() {
-
-
-
         getTensorFlowData();
 
         setRightwardState(.1);
@@ -408,6 +405,8 @@ public class AllAutosNoFailSafe extends VufTFLiteHandler {
         while(goldMineralX==-1 && opModeIsActive())
         {
             setRightwardState(.1);
+            telemetry.addData("mineral", "search aligning");
+            telemetry.update();
         }
 
         stopMotors();
@@ -421,14 +420,16 @@ public class AllAutosNoFailSafe extends VufTFLiteHandler {
 
             while ((goldMineralX <= 360 || goldMineralX >= 370)
                     && opModeIsActive() && goldMineralX !=-1 ) {//goldMineral IS seen, but not center
-
+                getTensorFlowData();
 
                 telemetry.addData("mineral","center Aligning");
                 telemetry.update();
 
-                while (goldMineralX <= 345 && opModeIsActive()) {
+                while (goldMineralX <= 345 && opModeIsActive() && goldMineralX !=-1) {
 //            if(goldMineralX <= 345){
+                    getTensorFlowData();
                     setLeftwardState(.1);
+                    telemetry.addData("mineral","center Aligning");
 
                     telemetry.addData("setting","LeftwardState");
                     telemetry.update();
@@ -437,17 +438,24 @@ public class AllAutosNoFailSafe extends VufTFLiteHandler {
                 getTensorFlowData();
                 while (goldMineralX >= 385 && opModeIsActive()) {
 //            if(goldMineralX >=385){
+                    getTensorFlowData();
                     setRightwardState(.1);
+                    telemetry.addData("mineral","center Aligning");
+
                     telemetry.addData("setting", "RightwardState");
                     telemetry.update();
 
                 }
 
+                if (goldMineralX > 360 && goldMineralX < 370) {
+                    stopMotors();
+
+                    telemetry.addLine("aligned with mineral! :)");
+                    telemetry.update();
+                    return;
+                }
                 getTensorFlowData();
-
-
                 telemetry.update();
-
             }
             telemetry.update();
         }

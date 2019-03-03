@@ -433,7 +433,7 @@ public class AllAutos extends VufTFLiteHandler {
 
             //Minerial in Center
             if ((goldMineralX >=360|| goldMineralX <=370)
-                    && opModeIsActive() ){
+                    && opModeIsActive() && goldMineralX != -1){
                 telemetry.addLine("Mineral in Center");
                 log("Mineral in Center");
                 telemetry.update();
@@ -460,21 +460,21 @@ public class AllAutos extends VufTFLiteHandler {
                 break;
             }
 
-            int temp;
-            if (true)
-                temp = 1/0;
+
 
 
             while ((goldMineralX <= 360 || goldMineralX >= 370)
                     && opModeIsActive() && goldMineralX > 0 //){
                     && timesTriedAligning <= 5) {
-
+                getTensorFlowData();
 
                 telemetry.addData("mineral","Mineral aligning");
                 telemetry.update();
 
-                while (goldMineralX <= 345 && opModeIsActive()) {
+                while (goldMineralX <= 345 && opModeIsActive() && goldMineralX !=-1) {
+
 //            if(goldMineralX <= 345){
+                    getTensorFlowData();
                     setLeftwardState(.1);
 
                     telemetry.addData("setting","LeftwardState");
@@ -485,6 +485,7 @@ public class AllAutos extends VufTFLiteHandler {
                 getTensorFlowData();
                 while (goldMineralX >= 385 && opModeIsActive()) {
 //            if(goldMineralX >=385){
+                    getTensorFlowData();
                     setRightwardState(.1);
                     telemetry.addData("setting", "RightwardState");
                     log("setting RightwardState");
