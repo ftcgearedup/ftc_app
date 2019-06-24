@@ -29,4 +29,17 @@ public class TimeDriveAlgorithm {
             }
         }
     }
+    public void forward(double speed, double milliseconds) {
+        timer.reset();
+        if (opMode instanceof LinearOpMode) {
+            LinearOpMode linearOpMode = (LinearOpMode) opMode;
+            while (linearOpMode.opModeIsActive() && timer.milliseconds() < milliseconds) {
+                driveTrain.drive(speed, 0);
+            }
+
+        }
+    }
+
+
+
 }

@@ -5,7 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.teamcode.JsonRobot;
 import org.firstinspires.ftc.teamcode.Robot;
+
 import org.firstinspires.ftc.teamcode.algorithms.IGyroPivotAlgorithm;
 import org.firstinspires.ftc.teamcode.mechanism.drivetrain.IDriveTrain;
 import org.firstinspires.ftc.teamcode.mechanism.impl.BNO055IMUWrapper;
@@ -50,7 +52,7 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
     public BNO055IMUGyroPivotAlgorithm(Robot robot, IDriveTrain driveTrain, BNO055IMUWrapper imu) {
         this.opMode = robot.getCurrentOpMode();
         this.driveTrain = driveTrain;
-        this.optionsMap = ((RelicRecoveryRobot)robot).getOptionsMap();
+        this.optionsMap = ((JsonRobot)robot).getOptionsMap();
 
         // parse constants from configuration file
         this.GYRO_DEGREE_THRESHOLD = optionsMap.retrieveAsDouble("gyroPivotGyroDegreeThreshold");
@@ -125,9 +127,12 @@ public class BNO055IMUGyroPivotAlgorithm implements IGyroPivotAlgorithm {
         // speed is negative when error is positive because robot needs to turn counterclockwise
         driveTrain.pivot(-desiredSpeed * Range.clip(actualSpeed, -1, 1));
 
+        opMode.telemetry.addData("heading",imu.getHeading()-desiredSpeed * Range.clip(actualSpeed, -1, 1));
+//        opMode.telemetry.addData("pivot speed", desiredSpeed);
         opMode.telemetry.addData("Z axis difference from targetAngle", error);
-        opMode.telemetry.addData("integral term", I_COEFF * integral);
+//        opMode.telemetry.addData("integral term", I_COEFF * integral);
         opMode.telemetry.addData("actual speed", actualSpeed);
+        opMode.telemetry.addData("P_COEFF",P_COEFF);
         opMode.telemetry.update();
     }
 
