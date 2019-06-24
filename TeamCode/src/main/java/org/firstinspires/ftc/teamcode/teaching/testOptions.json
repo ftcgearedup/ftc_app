@@ -1,0 +1,10 @@
+{
+  "testSpeed" : 0.3,
+  "testValue1" : 1,
+  "joystickDeadZone" : 0.02,
+
+  "gyroPivotGyroDegreeThreshold" : 1,
+  "gyroPivotPCoeff" : 0.001,
+  "gyroPivotICoeff" : 0.0000000,
+  "gyroPivotDCoeff" : 0.0
+}
